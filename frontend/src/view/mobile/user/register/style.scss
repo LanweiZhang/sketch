@@ -1,0 +1,15 @@
+.nav-button{
+  color: var(--color-primary);
+}
+.pre-reg-info {
+  margin-bottom: 0;
+  height: 100%;
+  p {
+    color: var(--color-font-light);
+  }
+  p.title {
+    color: var(--color-font);
+    font-size: var(--font-size-4);
+    margin: 0;
+  }
+}
