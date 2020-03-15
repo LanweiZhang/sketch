@@ -11,11 +11,15 @@ import '../../message/style.scss';  // TODO: extract common css
 import './style.scss';
 import { RegOptions } from './reg-options';
 import { RegMail1 } from './reg-mail1';
+import { RegMail2 } from './reg-mail2';
+import { RegisterByInvitationEmail } from './sampleData';
 
+export type QuizAnswer = {[key:number]:number};
 interface State {
   registrationOption:RegistrationOption;
   step:Step;
   email:string;
+  quizAnswer:QuizAnswer;
 }
 
 export type RegistrationOption = 'code' | 'mail';
@@ -25,12 +29,17 @@ export type RegistrationOption = 'code' | 'mail';
 // thus we can make sure user cannot skip any steps
 // and attackers cannot get to final registration page without clicking through all the previous steps
 // if user refreshes page, he just has start from the very beginning
-export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1';
+export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
+  'reg-mail-2';
+
+const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
+
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     registrationOption: 'code',
     step: 'info',
     email: '',
+    quizAnswer:{},
   };
 
   public async componentDidMount() {
@@ -53,6 +62,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
         this.setState({ step: 'reg-mail-1' });
         break;
       case 'reg-mail-1':
+        // TODO: serverl branches here
+        this.setState({ step: 'reg-mail-2' });
+        break;
+      case 'reg-mail-2':
         console.log(111);
         break;
     }
@@ -65,13 +78,18 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'choose-reg-option':
         return <span>下一步</span>;
       case 'reg-mail-1':
+      case 'reg-mail-2':
         return <span>提交</span>;
     }
   }
 
   private getMenuButtonIsInvalid() {
-    const { registrationOption, step, email } = this.state;
+    const { registrationOption, step, email, quizAnswer } = this.state;
     if (step == 'reg-mail-1' && !email) { return true; }
+    if (step == 'reg-mail-2') {
+      if (!email) { return true; }
+      if (Object.keys(quizAnswer).length != quiz.length) { return true; }
+    }
     return false;
   }
 
@@ -82,12 +100,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'choose-reg-option':
         return '注册';
       case 'reg-mail-1':
+      case 'reg-mail-2':
         return '通过邮件注册';
     }
   }
 
   private getPageContent() {
-    const { registrationOption, step, email } = this.state;
+    const { registrationOption, step, email, quizAnswer } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -101,6 +120,14 @@ export class Register extends React.Component<MobileRouteProps, State> {
           <RegMail1
             email={email}
             changeMailAddress={this.updateState('email')}/>);
+      case 'reg-mail-2':
+        return (
+          <RegMail2
+            email={email}
+            quizAnswer={quizAnswer}
+            changeQuizAnswer={this.updateState('quizAnswer')}
+          />
+        );
     }
   }
 
@@ -113,7 +140,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
           buttonInvalid={this.getMenuButtonIsInvalid()}>
           {this.getMenuTitle()}
         </NavBar>}>
-          {/* <RegMail1 /> */}
+          {/* <RegMail2
+            email={this.state.email}
+            quizAnswer={this.state.quizAnswer}
+            changeQuizAnswer={this.updateState('quizAnswer')}/> */}
           {this.getPageContent()}
       </Page>);
   }

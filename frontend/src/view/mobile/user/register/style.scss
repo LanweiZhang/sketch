@@ -13,13 +13,31 @@
     color: var(--color-font);
     font-size: var(--font-size-2);
   }
-  a {
+  a, p.small-warning {
     color: var(--color-primary);
     font-size: var(--font-size-small);
+    margin-block-start: var(--top-margin-2);
+    margin-block-end: var(--top-margin-2);
+  }
+
+  #quiz {
+    font-size: var(--font-size-2);
+    color: var(--color-font);
+    .quiz-question {
+      p {
+        color: var(--color-font);
+        margin-block-start: var(--top-margin-2);
+        margin-block-end: var(--top-margin-2);
+      }
+      .quiz-option {
+        margin: var(--top-margin-3) 0;
+      }
+      margin-bottom: 26px;
+    }
   }
 
   #reg-mail1-info {
-    margin-bottom: var(--top-margin-4);
+    margin-bottom: var(--top-margin-5);
   }
 
   .input-text {
@@ -31,15 +49,13 @@
       font-size: var(--font-size-2);
     }
   }
+  input[type="radio"] {
+    margin: 0 8px 0 0;
+    vertical-align: middle;
+  }
 
 
   .reg-option {
     margin-top: 32px;
-    input[type="radio"] {
-      margin: -3px 8px 0 0;
-      height: 16px;
-      width: 16px;
-      vertical-align: middle;
-    }
   }
 }

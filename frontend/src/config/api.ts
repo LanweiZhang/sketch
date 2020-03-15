@@ -487,6 +487,24 @@ export namespace ResData {
       answer:string;
     };
   }
+
+  // registration
+  export interface QuizQuestion {
+    type:'quiz';
+    id:number;
+    attributes:{
+      body:string;
+      hint:string;
+      options:QuizQuestionOption[];
+    };
+  }
+  export interface QuizQuestionOption {
+    type:'quiz_option';
+    id:number;
+    attributes:{
+      body:string;
+    };
+  }
 }
 
 export namespace ReqData {
