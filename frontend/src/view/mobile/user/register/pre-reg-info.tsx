@@ -5,7 +5,7 @@ export function PreRegInfo (props:{
   className?:string;
 }) {
   return (
-    <Card className="pre-reg">
+    <Card className="reg">
       {/* TODO: use h2 here, after h2 is defined in common.scss */}
       <p className="title">Hi，你好</p>
       <p>不知道你是从什么地方知道废文网的，在你心中，这又是一个什么样的地方？</p>

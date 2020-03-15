@@ -10,10 +10,12 @@ import { PreRegInfo } from './pre-reg-info';
 import '../../message/style.scss';  // TODO: extract common css
 import './style.scss';
 import { RegOptions } from './reg-options';
+import { RegMail1 } from './reg-mail1';
 
 interface State {
   registrationOption:RegistrationOption;
   step:Step;
+  email:string;
 }
 
 export type RegistrationOption = 'code' | 'mail';
@@ -23,31 +25,35 @@ export type RegistrationOption = 'code' | 'mail';
 // thus we can make sure user cannot skip any steps
 // and attackers cannot get to final registration page without clicking through all the previous steps
 // if user refreshes page, he just has start from the very beginning
-export type Step = 'info' | 'choose-reg-option';
+export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1';
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     registrationOption: 'code',
     step: 'info',
+    email: '',
   };
 
   public async componentDidMount() {
   }
 
-  public changeRegOption = (o:RegistrationOption) => () => {
+  // QUESTION: 像这个情况,type该怎么写呢..
+  public updateState = (key:keyof State) => (value:any) => () => {
     this.setState({
-      registrationOption: o,
-    });
+      [key]: value,
+    } as any);
   }
 
   public nextStep = () => {
     const { registrationOption, step } = this.state;
     switch (step) {
       case 'info':
-        this.setState({ step: 'choose-reg-option'});
+        this.setState({ step: 'choose-reg-option' });
         break;
       case 'choose-reg-option':
-        // const url = registrationOption == 'code' ? '/register/code' : '/register/mail';
-        // this.props.history.push('/');
+        this.setState({ step: 'reg-mail-1' });
+        break;
+      case 'reg-mail-1':
+        console.log(111);
         break;
     }
   }
@@ -58,6 +64,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'info':
       case 'choose-reg-option':
         return <span className="nav-button">下一步</span>;
+      case 'reg-mail-1':
+        return <span className={`nav-button`}>提交</span>;
     }
   }
 
@@ -67,11 +75,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'info':
       case 'choose-reg-option':
         return '注册';
+      case 'reg-mail-1':
+        return '通过邮件注册';
     }
   }
 
   private getPageContent() {
-    const { registrationOption, step } = this.state;
+    const { registrationOption, step, email } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -79,7 +89,12 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return (
           <RegOptions
             regOption={this.state.registrationOption}
-            changeRegOption={this.changeRegOption} />);
+            changeRegOption={this.updateState('registrationOption')} />);
+      case 'reg-mail-1':
+        return (
+          <RegMail1
+            email={email}
+            changeMailAddress={this.updateState('email')}/>);
     }
   }
 
@@ -91,6 +106,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
           menuButton={this.getMenuButton()}>
           {this.getMenuTitle()}
         </NavBar>}>
+          {/* <RegMail1 /> */}
           {this.getPageContent()}
       </Page>);
   }

@@ -28,6 +28,7 @@
   --margin-size-8: 8px;
   --margin-size-16: 16px;
   --margin-size-24: 24px;
+  --margin-size-32: 32px;
 }
 
 html, body {
@@ -59,6 +60,11 @@ i {
 // set h1, h2, h3, h4, h5 font-size, font-family
 title {
   font-family: var(--font-family-bold)
+}
+
+p {
+  margin-block-start: 18px;
+  margin-block-end: 18px;
 }
 
 b {

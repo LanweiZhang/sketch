@@ -8,7 +8,7 @@ export function RegOptions (props:{
   changeRegOption:(o:RegistrationOption) => () => void;
 }) {
   return (
-    <Card className="pre-reg">
+    <Card className="reg">
       {/* TODO: use h2 here, after h2 is defined in common.scss */}
       <p className="title">请选择一种注册方式</p>
       {/* 邀请码 */}

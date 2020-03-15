@@ -1,9 +1,9 @@
 .nav-button{
   color: var(--color-primary);
 }
-.pre-reg {
+.reg {
   margin-bottom: 0;
-  height: 100%;
+  min-height: 100%;
   p {
     color: var(--color-font-light);
   }
@@ -16,20 +16,33 @@
     color: var(--color-font);
     font-size: var(--font-size-2);
   }
+  a {
+    color: var(--color-primary);
+    font-size: var(--font-size-small);
+  }
+
+  #reg-mail1-info {
+    margin-bottom: var(--top-margin-4);
+  }
+
+  .input-text {
+    background-color: var(--color-bg-base);
+    padding: var(--padding-1);
+    input[type="text"] {
+      width: 100%;
+      background-color: var(--color-bg-base);
+      font-size: var(--font-size-2);
+    }
+  }
+
 
   .reg-option {
     margin-top: 32px;
-    input {
+    input[type="radio"] {
       margin: -3px 8px 0 0;
       height: 16px;
       width: 16px;
       vertical-align: middle;
-    }
-    .option-info {
-      p {
-        margin-block-start: 18px;
-        margin-block-end: 18px;
-      }
     }
   }
 }
