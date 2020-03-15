@@ -21,6 +21,7 @@
   }
 
   .menu-icon, .menu-text {
+    color: var(--color-primary);
     cursor: pointer;
     padding: 0 8px;
   }
@@ -32,5 +33,6 @@
 
   .menu-text.disabled {
     color: var(--color-font-disabled);
+    pointer-events: none
   }
 }

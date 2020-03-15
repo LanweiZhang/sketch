@@ -22,7 +22,7 @@ export function RegMail1 (props:{
       </div>
 
       <div className="input-text">
-        {/* TODO: check if valid mail address */}
+        {/* TODO: check if valid mail address, replace with common component inputText */}
         <input type="text"
           value={props.email}
           onChange={(e) => props.changeMailAddress(e.target.value)()}

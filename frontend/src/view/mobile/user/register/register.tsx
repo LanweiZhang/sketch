@@ -59,14 +59,20 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getMenuButton() {
-    const { registrationOption, step } = this.state;
+    const { registrationOption, step, email } = this.state;
     switch (step) {
       case 'info':
       case 'choose-reg-option':
-        return <span className="nav-button">下一步</span>;
+        return <span>下一步</span>;
       case 'reg-mail-1':
-        return <span className={`nav-button`}>提交</span>;
+        return <span>提交</span>;
     }
+  }
+
+  private getMenuButtonIsInvalid() {
+    const { registrationOption, step, email } = this.state;
+    if (step == 'reg-mail-1' && !email) { return true; }
+    return false;
   }
 
   private getMenuTitle() {
@@ -103,7 +109,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         top={<NavBar
           goBack={this.props.core.route.back}
           onMenuClick={this.nextStep}
-          menuButton={this.getMenuButton()}>
+          menuButton={this.getMenuButton()}
+          buttonInvalid={this.getMenuButtonIsInvalid()}>
           {this.getMenuTitle()}
         </NavBar>}>
           {/* <RegMail1 /> */}
