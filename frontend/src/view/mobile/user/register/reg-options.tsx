@@ -35,9 +35,9 @@ export function RegOptions (props:{
       {/* 邀请码 */}
       <div className="reg-option">
         <div className="sub-title">
-          <input type="radio" value="link"
-            checked={props.regOption == 'link'}
-            onChange={props.changeRegOption('link')} />
+          <input type="radio" value="mail"
+            checked={props.regOption == 'mail'}
+            onChange={props.changeRegOption('mail')} />
           通过含邀请链接的邮件注册及进度查询（测试中）
         </div>
         <p>获得邀请码的渠道:</p>
