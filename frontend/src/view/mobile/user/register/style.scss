@@ -1,15 +1,35 @@
 .nav-button{
   color: var(--color-primary);
 }
-.pre-reg-info {
+.pre-reg {
   margin-bottom: 0;
   height: 100%;
   p {
     color: var(--color-font-light);
   }
-  p.title {
+  .title {
     color: var(--color-font);
     font-size: var(--font-size-4);
     margin: 0;
+  }
+  .sub-title {
+    color: var(--color-font);
+    font-size: var(--font-size-2);
+  }
+
+  .reg-option {
+    margin-top: 32px;
+    input {
+      margin: -3px 8px 0 0;
+      height: 16px;
+      width: 16px;
+      vertical-align: middle;
+    }
+    .option-info {
+      p {
+        margin-block-start: 18px;
+        margin-block-end: 18px;
+      }
+    }
   }
 }

@@ -9,15 +9,26 @@ import { Menu, MenuItem } from '../../../components/common/menu';
 import { PreRegInfo } from './pre-reg-info';
 import '../../message/style.scss';  // TODO: extract common css
 import './style.scss';
+import { RegOptions } from './reg-options';
 
 interface State {
+  registrationOption:RegistrationOption;
 }
+
+export type RegistrationOption = 'code' | 'link';
 
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
+    registrationOption: 'code',
   };
 
   public async componentDidMount() {
+  }
+
+  public changeRegOption = (o:RegistrationOption) => () => {
+    this.setState({
+      registrationOption: o,
+    });
   }
 
   public render () {
@@ -26,10 +37,12 @@ export class Register extends React.Component<MobileRouteProps, State> {
           goBack={this.props.core.route.back}
           onMenuClick={() => console.log('open setting')}
           menuButton={<span className="nav-button">下一步</span>}>
-          {/* <MessageMenu/> */}
           注册
         </NavBar>}>
-          <PreRegInfo />
+          {/* <PreRegInfo /> */}
+          <RegOptions
+            regOption={this.state.registrationOption}
+            changeRegOption={this.changeRegOption} />
       </Page>);
   }
 }

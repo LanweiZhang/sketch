@@ -61,6 +61,11 @@ title {
   font-family: var(--font-family-bold)
 }
 
+b {
+  font-family: var(--font-family-medium);
+  font-weight: bold;
+  color: var(--color-font);
+}
 hr {
   border: 0;
   height: 0;
