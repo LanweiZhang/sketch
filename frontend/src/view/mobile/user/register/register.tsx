@@ -19,6 +19,7 @@ import { Popup } from '../../../components/common/popup';
 import { RegMail4Confirm } from './reg-mail4-confirm';
 import { RegMailInfo } from './reg-mail-info';
 import { RegMailProgress } from './reg-mail-progress';
+import { RegCode } from './reg-code';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
@@ -30,6 +31,7 @@ interface State {
   email:string;
   quizAnswer:QuizAnswer;
   regMailToken:string;
+  regCode:string;
   essayAnswer:string;
   showPopup:boolean;
 }
@@ -43,7 +45,7 @@ export type RegistrationOption = 'code' | 'mail';
 // if user refreshes page, he just has start from the very beginning
 export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
   'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4' | 'reg-mail-info' |
-  'reg-mail-progress';
+  'reg-mail-progress' | 'reg-code';
 
 const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
 
@@ -54,6 +56,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
     email: '',
     quizAnswer:{},      // reg-mail2
     regMailToken: '',   // reg-mail3
+    regCode: '',
     essayAnswer: '',
     showPopup:false,
   };
@@ -96,6 +99,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         break;
       case 'reg-mail-progress':
         break;
+      case 'reg-code':
+        break;
     }
   }
   // 通过邮件注册的详细步骤
@@ -112,6 +117,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-info':
         return <span>确认</span>;
       case 'reg-mail-4':
+      case 'reg-code':
         return <span>提交</span>;
       case 'reg-mail-progress':
         return '';
@@ -119,7 +125,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getMenuButtonIsInvalid() {
-    const { registrationOption, step, email, quizAnswer, regMailToken, essayAnswer } = this.state;
+    const { registrationOption, step, email, quizAnswer, regMailToken, essayAnswer, regCode } = this.state;
     if (step == 'reg-mail-1' && !email) { return true; }
     if (step == 'reg-mail-2') {
       if (!email) { return true; }
@@ -133,6 +139,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       return true;
     }
     if (step == 'reg-mail-progress') { return true; }
+    if (step == 'reg-code' && !regCode) { return true; }
     return false;
   }
 
@@ -151,11 +158,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return '通过邮件注册的详细步骤';
       case 'reg-mail-progress':
         return '查询注册申请进度';
+      case 'reg-code':
+        return '通过邀请码注册';
     }
   }
 
   private getPageContent() {
-    const { registrationOption, step, email, quizAnswer, essayAnswer } = this.state;
+    const { registrationOption, step, email, quizAnswer, essayAnswer, regMailToken, regCode } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -180,7 +189,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-3':
         return (
           <RegMail3
-            regMailToken={this.state.regMailToken}
+            regMailToken={regMailToken}
             changeRegMailToken={this.updateState('regMailToken')}
             email={email}/>
         );
@@ -194,8 +203,12 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-info':
         return <RegMailInfo />;
       case 'reg-mail-progress':
-        return <RegMailProgress email={this.state.email}/>;
-
+        return <RegMailProgress email={email}/>;
+      case 'reg-code':
+        return (
+          <RegCode
+            regCode={regCode}
+            changeRegCode={this.updateState('regCode')}/>);
     }
   }
 
@@ -214,7 +227,9 @@ export class Register extends React.Component<MobileRouteProps, State> {
             changeEssayAnswer={this.updateState('essayAnswer')}/> */}
 
             {/* {this.getPageContent()} */}
-            <RegMailProgress email={this.state.email}/>
+            <RegCode
+            regCode={this.state.regCode}
+            changeRegCode={this.updateState('regCode')}/>
             {this.state.showPopup && <Popup
               className="reg"
               onClose={() => {}}>
