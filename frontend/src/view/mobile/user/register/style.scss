@@ -4,6 +4,9 @@
   p {
     color: var(--color-font-light);
   }
+  p:first-child {
+    margin-top: 0;
+  }
   .title {
     color: var(--color-font);
     font-size: var(--font-size-4);
@@ -13,7 +16,7 @@
     color: var(--color-font);
     font-size: var(--font-size-2);
   }
-  a, p.small-warning {
+  a, .small-warning {
     color: var(--color-primary);
     font-size: var(--font-size-small);
     margin-block-start: var(--top-margin-2);
@@ -43,10 +46,16 @@
   .input-text {
     background-color: var(--color-bg-base);
     padding: var(--padding-1);
+    display: flex;
     input[type="text"] {
-      width: 100%;
+      flex-grow: 1;
       background-color: var(--color-bg-base);
       font-size: var(--font-size-2);
+    }
+
+    #resend-token {
+      width: 90px;
+      margin: var(--margin-2);
     }
   }
   input[type="radio"] {
@@ -57,5 +66,23 @@
 
   .reg-option {
     margin-top: 32px;
+  }
+
+  .accordion{
+    .accordion-title {
+      color: var(--color-font-light);
+    }
+    .warning-content {
+      font-size: var(--font-size-small);
+    }
+  }
+
+  #verify-token {
+    margin: 24px 0;
+  }
+  
+
+  .red {
+    color: var(--color-primary);
   }
 }
