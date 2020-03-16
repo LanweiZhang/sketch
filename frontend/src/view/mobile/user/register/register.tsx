@@ -14,8 +14,10 @@ import { RegMail1 } from './reg-mail1';
 import { RegMail2 } from './reg-mail2';
 import { RegMail3 } from './reg-mail3';
 import { RegisterByInvitationEmail } from './sampleData';
+import { RegMail4 } from './reg-mail4';
 
 const regMailTokenLength = 10;
+const essayMinLength = 500;
 
 export type QuizAnswer = {[key:number]:number};
 interface State {
@@ -24,6 +26,7 @@ interface State {
   email:string;
   quizAnswer:QuizAnswer;
   regMailToken:string;
+  essayAnswer:string;
 }
 
 export type RegistrationOption = 'code' | 'mail';
@@ -34,7 +37,7 @@ export type RegistrationOption = 'code' | 'mail';
 // and attackers cannot get to final registration page without clicking through all the previous steps
 // if user refreshes page, he just has start from the very beginning
 export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
-  'reg-mail-2' | 'reg-mail-3';
+  'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4';
 
 const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
 
@@ -43,8 +46,9 @@ export class Register extends React.Component<MobileRouteProps, State> {
     registrationOption: 'code',
     step: 'info',
     email: '',
-    quizAnswer:{},
-    regMailToken: '',
+    quizAnswer:{},      // reg-mail2
+    regMailToken: '',   // reg-mail3
+    essayAnswer: '',
   };
 
   public async componentDidMount() {
@@ -75,7 +79,11 @@ export class Register extends React.Component<MobileRouteProps, State> {
         this.setState({ step: 'reg-mail-3' });
         break;
       case 'reg-mail-3':
+        this.setState({ step: 'reg-mail-4' });
         console.log(222);
+        break;
+      case 'reg-mail-4':
+        console.log(1);
         break;
     }
   }
@@ -91,11 +99,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return <span>提交</span>;
       case 'reg-mail-3':
         return <span>确认</span>;
+      case 'reg-mail-4':
+        return <span>提交</span>;
     }
   }
 
   private getMenuButtonIsInvalid() {
-    const { registrationOption, step, email, quizAnswer, regMailToken } = this.state;
+    const { registrationOption, step, email, quizAnswer, regMailToken, essayAnswer } = this.state;
     if (step == 'reg-mail-1' && !email) { return true; }
     if (step == 'reg-mail-2') {
       if (!email) { return true; }
@@ -104,7 +114,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
     if (step == 'reg-mail-3' &&
       regMailToken.length != regMailTokenLength) {
         return true;
-      }
+    }
+    if (step == 'reg-mail-4' && essayAnswer.length < essayMinLength) {
+      return true;
+    }
     return false;
   }
 
@@ -117,12 +130,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-1':
       case 'reg-mail-2':
       case 'reg-mail-3':
+      case 'reg-mail-4':
         return '通过邮件注册';
     }
   }
 
   private getPageContent() {
-    const { registrationOption, step, email, quizAnswer } = this.state;
+    const { registrationOption, step, email, quizAnswer, essayAnswer } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -151,6 +165,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
             changeRegMailToken={this.updateState('regMailToken')}
             email={email}/>
         );
+      case 'reg-mail-4':
+        return (
+          <RegMail4
+            email={email}
+            essayAnswer={essayAnswer}
+            changeEssayAnswer={this.updateState('essayAnswer')}/>
+        );
     }
   }
 
@@ -163,10 +184,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
           buttonInvalid={this.getMenuButtonIsInvalid()}>
           {this.getMenuTitle()}
         </NavBar>}>
-          {/* {<RegMail3
-            changeRegMailToken={this.updateState('regMailToken')}
-            regMailToken={this.state.regMailToken}
-            email={this.state.email}/> } */}
+        {/* <RegMail4
+            email={this.state.email}
+            essayAnswer={this.state.essayAnswer}
+            changeEssayAnswer={this.updateState('essayAnswer')}/> */}
           {this.getPageContent()}
       </Page>);
   }

@@ -505,6 +505,14 @@ export namespace ResData {
       body:string;
     };
   }
+  export interface Essay {
+    type:'essay';
+    id:number;
+    attributes:{
+      body:string,
+      hint:string,
+    };
+  }
 }
 
 export namespace ReqData {

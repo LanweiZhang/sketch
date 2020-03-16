@@ -20,6 +20,7 @@ export function RegMail3 (props:{
 
         <div className="input-text">
           <input type="text"
+            maxLength={10}
             value={props.regMailToken}
             onChange={(e) => props.changeRegMailToken(e.target.value)() }
             placeholder="请输入确认码"></input>

@@ -63,6 +63,24 @@
     vertical-align: middle;
   }
 
+  // the textarea could possibly moved to common component
+  #essay-textarea{
+    display: flex;
+    padding: var(--padding-1);
+    background: var(--color-bg-base);
+    textarea {
+      flex-grow: 1;
+      height: 260px;
+      border: none;
+      background: var(--color-bg-base);
+      resize: none;
+    }
+    textarea:focus {
+      outline: none;
+    }
+  }
+
+
 
   .reg-option {
     margin-top: 32px;
@@ -80,7 +98,6 @@
   #verify-token {
     margin: 24px 0;
   }
-  
 
   .red {
     color: var(--color-primary);

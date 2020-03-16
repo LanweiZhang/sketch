@@ -450,3 +450,12 @@ export const RegisterByInvitationEmail = {
       ],
   },
 };
+
+export const essay = {
+  'type': 'essay',
+  'id': 16,
+  'attributes': {
+    'body': '小作文',
+    'hint': '小作文描述',
+  },
+};
