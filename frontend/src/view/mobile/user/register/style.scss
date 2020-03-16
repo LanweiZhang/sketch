@@ -103,6 +103,17 @@
     color: var(--color-primary);
   }
 
+  #application-result {
+    p {
+      font-size: var(--font-size-2);
+      color: var(--color-font);
+      margin-bottom: var(--top-margin-1);
+    }
+    a {
+      font-size: var(--font-size-1);
+    }
+  }
+
   .popup-content {
     p.message {
       color: var(--color-font);

@@ -18,6 +18,7 @@ import { RegMail4 } from './reg-mail4';
 import { Popup } from '../../../components/common/popup';
 import { RegMail4Confirm } from './reg-mail4-confirm';
 import { RegMailInfo } from './reg-mail-info';
+import { RegMailProgress } from './reg-mail-progress';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
@@ -41,7 +42,8 @@ export type RegistrationOption = 'code' | 'mail';
 // and attackers cannot get to final registration page without clicking through all the previous steps
 // if user refreshes page, he just has start from the very beginning
 export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
-  'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4' | 'reg-mail-info';
+  'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4' | 'reg-mail-info' |
+  'reg-mail-progress';
 
 const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
 
@@ -92,6 +94,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         break;
       case 'reg-mail-info':
         break;
+      case 'reg-mail-progress':
+        break;
     }
   }
   // 通过邮件注册的详细步骤
@@ -109,6 +113,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return <span>确认</span>;
       case 'reg-mail-4':
         return <span>提交</span>;
+      case 'reg-mail-progress':
+        return '';
     }
   }
 
@@ -126,6 +132,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
     if (step == 'reg-mail-4' && essayAnswer.length < essayMinLength) {
       return true;
     }
+    if (step == 'reg-mail-progress') { return true; }
     return false;
   }
 
@@ -142,6 +149,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return '通过邮件注册';
       case 'reg-mail-info':
         return '通过邮件注册的详细步骤';
+      case 'reg-mail-progress':
+        return '查询注册申请进度';
     }
   }
 
@@ -184,6 +193,9 @@ export class Register extends React.Component<MobileRouteProps, State> {
         );
       case 'reg-mail-info':
         return <RegMailInfo />;
+      case 'reg-mail-progress':
+        return <RegMailProgress email={this.state.email}/>;
+
     }
   }
 
@@ -202,7 +214,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
             changeEssayAnswer={this.updateState('essayAnswer')}/> */}
 
             {/* {this.getPageContent()} */}
-            {/* <RegMailInfo /> */}
+            <RegMailProgress email={this.state.email}/>
             {this.state.showPopup && <Popup
               className="reg"
               onClose={() => {}}>

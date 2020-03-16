@@ -513,6 +513,19 @@ export namespace ResData {
       hint:string,
     };
   }
+  export interface RegistrationApplication {
+    type:'registration_application';
+    id:number;
+    attributes:{
+      email:string,
+      has_quizzed:boolean,
+      email_verified_at:Timestamp,
+      submitted_at:Timestamp,
+      is_passed:boolean,
+      last_invited_at:Timestamp,
+      is_in_cooldown:boolean,
+    };
+  }
 }
 
 export namespace ReqData {

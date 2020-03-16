@@ -1,3 +1,16 @@
+export const registrationApplication = {
+  'id': 1,
+  'type': 'registration_application',
+  'attributes': {
+      'email': 'test1@gmail.com',
+      'has_quizzed': true,
+      'email_verified_at': '2020-01-20',
+      'submitted_at': '2020-01-20',
+      'is_passed': true,
+      'last_invited_at': '',
+      'is_in_cooldown': false,
+  },
+};
 export const RegisterByInvitationEmail = {
   'code': 200,
   'data': {
