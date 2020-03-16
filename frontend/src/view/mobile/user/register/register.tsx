@@ -17,6 +17,7 @@ import { RegisterByInvitationEmail } from './sampleData';
 import { RegMail4 } from './reg-mail4';
 import { Popup } from '../../../components/common/popup';
 import { RegMail4Confirm } from './reg-mail4-confirm';
+import { RegMailInfo } from './reg-mail-info';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
@@ -40,7 +41,7 @@ export type RegistrationOption = 'code' | 'mail';
 // and attackers cannot get to final registration page without clicking through all the previous steps
 // if user refreshes page, he just has start from the very beginning
 export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
-  'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4';
+  'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4' | 'reg-mail-info';
 
 const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
 
@@ -89,9 +90,11 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-4':
         console.log(1);
         break;
+      case 'reg-mail-info':
+        break;
     }
   }
-
+  // 通过邮件注册的详细步骤
   private getMenuButton() {
     const { registrationOption, step, email } = this.state;
     switch (step) {
@@ -102,6 +105,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-2':
         return <span>提交</span>;
       case 'reg-mail-3':
+      case 'reg-mail-info':
         return <span>确认</span>;
       case 'reg-mail-4':
         return <span>提交</span>;
@@ -136,6 +140,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-3':
       case 'reg-mail-4':
         return '通过邮件注册';
+      case 'reg-mail-info':
+        return '通过邮件注册的详细步骤';
     }
   }
 
@@ -176,6 +182,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
             essayAnswer={essayAnswer}
             changeEssayAnswer={this.updateState('essayAnswer')}/>
         );
+      case 'reg-mail-info':
+        return <RegMailInfo />;
     }
   }
 
@@ -193,8 +201,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
             essayAnswer={this.state.essayAnswer}
             changeEssayAnswer={this.updateState('essayAnswer')}/> */}
 
-            {this.getPageContent()}
-
+            {/* {this.getPageContent()} */}
+            {/* <RegMailInfo /> */}
             {this.state.showPopup && <Popup
               className="reg"
               onClose={() => {}}>
