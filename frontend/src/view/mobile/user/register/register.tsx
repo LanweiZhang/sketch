@@ -15,6 +15,8 @@ import { RegMail2 } from './reg-mail2';
 import { RegMail3 } from './reg-mail3';
 import { RegisterByInvitationEmail } from './sampleData';
 import { RegMail4 } from './reg-mail4';
+import { Popup } from '../../../components/common/popup';
+import { RegMail4Confirm } from './reg-mail4-confirm';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
@@ -27,6 +29,7 @@ interface State {
   quizAnswer:QuizAnswer;
   regMailToken:string;
   essayAnswer:string;
+  showPopup:boolean;
 }
 
 export type RegistrationOption = 'code' | 'mail';
@@ -49,6 +52,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
     quizAnswer:{},      // reg-mail2
     regMailToken: '',   // reg-mail3
     essayAnswer: '',
+    showPopup:false,
   };
 
   public async componentDidMount() {
@@ -188,7 +192,14 @@ export class Register extends React.Component<MobileRouteProps, State> {
             email={this.state.email}
             essayAnswer={this.state.essayAnswer}
             changeEssayAnswer={this.updateState('essayAnswer')}/> */}
-          {this.getPageContent()}
+
+            {this.getPageContent()}
+
+            {this.state.showPopup && <Popup
+              className="reg"
+              onClose={() => {}}>
+              <RegMail4Confirm onClick={() => console.log(1)}/>
+            </Popup>}
       </Page>);
   }
 }

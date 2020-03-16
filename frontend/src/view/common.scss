@@ -79,9 +79,13 @@ b {
 
 small {
   font-size: var(--font-size-small);
-}hr {
+}
+hr {
   border: 0;
   height: 0;
   border-top: 0.25px solid rgba(0, 0, 0, 0.1);
   border-bottom: 0.25px solid #3333334D;
+}
+button {
+  border: none;
 }
