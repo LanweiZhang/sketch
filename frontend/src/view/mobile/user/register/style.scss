@@ -40,7 +40,7 @@
   }
 
   #reg-mail1-info {
-    margin-bottom: var(--top-margin-5);
+    margin-bottom: var(--top-margin-6);
   }
 
   .input-text {
@@ -59,12 +59,36 @@
     }
   }
   #reg-code-input.input-text {
-    margin-top: var(--top-margin-5);
+    margin-top: var(--top-margin-6);
+  }
+  .creat-account-input {
+    margin: var(--top-margin-5) 0;
+    p {
+      font-size: var(--font-size-2);
+      color: var(--color-font);
+      margin-bottom: var(--top-margin-1);
+    }
+    .input-text {
+      margin: var(--top-margin-1) 0;
+    }
+    .note {
+      font-size: var(--font-size-1);
+      color: var(--color-font-light);
+      margin: 0;
+    }
   }
   input[type="radio"] {
     margin: 0 8px 0 0;
     vertical-align: middle;
   }
+  .checkboxes{
+    margin: var(--top-margin-5) 0 ;
+    .checkbox {
+      margin: var(--top-margin-1) 0;
+      color: var(--color-font-light);
+    }
+  }
+  
 
   // the textarea could possibly moved to common component
   #essay-textarea{

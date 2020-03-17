@@ -20,11 +20,16 @@ import { RegMail4Confirm } from './reg-mail4-confirm';
 import { RegMailInfo } from './reg-mail-info';
 import { RegMailProgress } from './reg-mail-progress';
 import { RegCode } from './reg-code';
+import { CreateAccount } from './create-account';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
 
 export type QuizAnswer = {[key:number]:number};
+export type Account = {
+  username:string;
+  password:string;
+};
 interface State {
   registrationOption:RegistrationOption;
   step:Step;
@@ -33,6 +38,7 @@ interface State {
   regMailToken:string;
   regCode:string;
   essayAnswer:string;
+  account:Account;
   showPopup:boolean;
 }
 
@@ -45,20 +51,24 @@ export type RegistrationOption = 'code' | 'mail';
 // if user refreshes page, he just has start from the very beginning
 export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
   'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4' | 'reg-mail-info' |
-  'reg-mail-progress' | 'reg-code';
+  'reg-mail-progress' | 'reg-code' | 'create-account';
 
 const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
 
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     registrationOption: 'code',
-    step: 'info',
+    step: 'create-account',
     email: '',
     quizAnswer:{},      // reg-mail2
     regMailToken: '',   // reg-mail3
     regCode: '',
     essayAnswer: '',
     showPopup:false,
+    account:{
+      username: '',
+      password: '',
+    }
   };
 
   public async componentDidMount() {
@@ -101,6 +111,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         break;
       case 'reg-code':
         break;
+      case 'create-account':
+        break;
     }
   }
   // 通过邮件注册的详细步骤
@@ -118,6 +130,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return <span>确认</span>;
       case 'reg-mail-4':
       case 'reg-code':
+      case 'create-account':
         return <span>提交</span>;
       case 'reg-mail-progress':
         return '';
@@ -140,6 +153,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
     }
     if (step == 'reg-mail-progress') { return true; }
     if (step == 'reg-code' && !regCode) { return true; }
+    if (step == 'create-account') {
+      // TODO: a lot checks
+      return true;
+    }
     return false;
   }
 
@@ -160,6 +177,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return '查询注册申请进度';
       case 'reg-code':
         return '通过邀请码注册';
+      case 'create-account':
+        return '填写注册信息';
     }
   }
 
@@ -209,6 +228,12 @@ export class Register extends React.Component<MobileRouteProps, State> {
           <RegCode
             regCode={regCode}
             changeRegCode={this.updateState('regCode')}/>);
+      case 'create-account':
+        return (
+          <CreateAccount
+            email={email}
+            changeAccount={this.updateState('account')}/>
+        );
     }
   }
 
@@ -226,10 +251,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
             essayAnswer={this.state.essayAnswer}
             changeEssayAnswer={this.updateState('essayAnswer')}/> */}
 
-            {/* {this.getPageContent()} */}
-            <RegCode
+            {this.getPageContent()}
+            {/* <RegCode
             regCode={this.state.regCode}
-            changeRegCode={this.updateState('regCode')}/>
+            changeRegCode={this.updateState('regCode')}/> */}
             {this.state.showPopup && <Popup
               className="reg"
               onClose={() => {}}>
