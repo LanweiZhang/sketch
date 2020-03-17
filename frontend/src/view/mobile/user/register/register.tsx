@@ -24,18 +24,17 @@ import { CreateAccount } from './create-account';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
-
-export type QuizAnswer = {[key:number]:number};
 export type Account = {
   username:string;
   password:string;
 };
+export type QuizQuestionAnswer = {id:number, answer:string};
 interface State {
   registrationOption:RegistrationOption;
   email:string;
   registrationStatus:ResData.RegistrationApplication;
   quiz:ResData.QuizQuestion[];
-  quizAnswer:QuizAnswer;
+  quizAnswer:QuizQuestionAnswer[];
   regMailToken:string;
   regCode:string;
   essay:ResData.Essay;
@@ -56,16 +55,14 @@ export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
   'reg-mail-2' | 'reg-mail-3' | 'reg-mail-4' | 'reg-mail-info' |
   'reg-mail-progress' | 'reg-code' | 'create-account';
 
-const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
-
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     // internal state
     registrationOption: 'code',
-    email: '',
+    email: 'bb@gmail.com',
     registrationStatus: ResData.allocRegistrationApplication(),
     quiz: [],
-    quizAnswer:{},      // reg-mail2
+    quizAnswer:[],      // reg-mail2
     regMailToken: '',   // reg-mail3
     regCode: '',
     essay: ResData.allocEssay(),
@@ -74,7 +71,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       username: '',
       password: '',
     },
-    step: 'info',
+    step: 'reg-mail-1',
     showPopup:false,
   };
 
@@ -89,8 +86,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   public nextStep = async () => {
-    const { registerByInvitationEmailSubmitEmail } = this.props.core.db;
-    const { registrationOption, step, email, registrationStatus, quiz, essay } = this.state;
+    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz } = this.props.core.db;
+    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay } = this.state;
     switch (step) {
       case 'info':
         this.setState({ step: 'choose-reg-option' });
@@ -101,6 +98,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
         break;
       }
       case 'reg-mail-1': {
+        // submit email, request quiz
         try {
           const res = await registerByInvitationEmailSubmitEmail(email);
           const newState = {
@@ -130,15 +128,46 @@ export class Register extends React.Component<MobileRouteProps, State> {
           }
           this.setState(newState);
         } catch (e) {
+          // TODO: toast
+          alert(e.message);
           console.log(e);
         }
         break;
       }
-        // TODO: serverl branches here
-      case 'reg-mail-2':
-        // TODO: submit quiz
-        this.setState({ step: 'reg-mail-3' });
+      case 'reg-mail-2': {
+        // submit quiz
+        console.log(quizAnswer);
+        // format quiz answer
+        try {
+          const res = await registerByInvitationEmailSubmitQuiz(email, quizAnswer);
+          const newState = {
+            registrationStatus: res.registration_application,
+            essay,
+            quizAnswer,
+            step: step as Step,
+          };
+          if (!res.registration_application.attributes.has_quizzed) {
+            // TODO
+            alert('考试挂课,回去重考');
+            newState.quizAnswer = [];
+            newState.step = 'reg-mail-1';
+          } else {
+            if (!essay) {
+              console.error('这是后端bug,没有返回essay');
+            } else {
+              // next step: confirm your email
+              newState.essay = essay;
+              newState.step = 'reg-mail-3';
+             }
+          }
+          this.setState(newState);
+        } catch (e) {
+          alert(e.message);
+          alert('错误为550的话,是后端error,回到第一步,再次确认后会直接到第三步邮箱确认');
+          console.log(e);
+        }
         break;
+      }
       case 'reg-mail-3':
         this.setState({ step: 'reg-mail-4' });
         console.log(222);
@@ -183,7 +212,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getMenuButtonIsInvalid() {
-    const { registrationOption, step, email, quizAnswer, regMailToken, essayAnswer, regCode } = this.state;
+    const { registrationOption, step, email, quiz, quizAnswer, regMailToken, essayAnswer, regCode } = this.state;
     if (step == 'reg-mail-1' && !email) {
       // TODO: check if email valid
       return true;
@@ -231,7 +260,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getPageContent() {
-    const { registrationOption, step, email, quizAnswer, essayAnswer, regMailToken, regCode } = this.state;
+    const { registrationOption, step, email, quiz, quizAnswer, essayAnswer, regMailToken, regCode } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -249,7 +278,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return (
           <RegMail2
             email={email}
-            quizAnswer={quizAnswer}
+            quiz={quiz}
             changeQuizAnswer={this.updateState('quizAnswer')}
           />
         );

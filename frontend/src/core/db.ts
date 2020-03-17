@@ -558,6 +558,27 @@ export class DB {
       },
     });
   }
+  public registerByInvitationEmailSubmitQuiz =
+    (email:string, quizzes:{id:number, answer:string}[]) :
+    Promise<{
+      registration_application:ResData.RegistrationApplication;
+      essay?:ResData.Essay;
+    }> => {
+    return this._post('/register/by_invitation_email/submit_quiz', {
+      body: {
+        email,
+        quizzes,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        409: '已经成功回答题，不需要再答题',
+        422: '请求数据格式有误',
+        444: '回答的题目和数据库中应该回答的题不符合',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
   public async login (email:string, password:string, backTo?:string) {
     const res = await this._post('/login', {
       query: {

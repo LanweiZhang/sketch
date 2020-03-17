@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Card } from '../../../components/common/card';
 import { RegisterByInvitationEmail } from './sampleData';
 import { ResData } from '../../../../config/api';
-import { QuizAnswer } from './register';
 
 interface Props {
   email:string;
