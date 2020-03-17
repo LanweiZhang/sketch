@@ -513,6 +513,16 @@ export namespace ResData {
       hint:string,
     };
   }
+  export function allocEssay() : Essay {
+    return {
+      type:'essay',
+      id:0,
+      attributes:{
+        body:'',
+        hint:'',
+      },
+    };
+  }
   export interface RegistrationApplication {
     type:'registration_application';
     id:number;
@@ -524,6 +534,21 @@ export namespace ResData {
       is_passed:boolean,
       last_invited_at:Timestamp,
       is_in_cooldown:boolean,
+    };
+  }
+  export function allocRegistrationApplication () : RegistrationApplication {
+    return {
+      type: 'registration_application',
+      id: 0,
+      attributes: {
+        email:'',
+        has_quizzed:false,
+        email_verified_at:'',
+        submitted_at:'',
+        is_passed:false,
+        last_invited_at:'',
+        is_in_cooldown:false,
+      },
     };
   }
 }

@@ -13,7 +13,7 @@ import { RegOptions } from './reg-options';
 import { RegMail1 } from './reg-mail1';
 import { RegMail2 } from './reg-mail2';
 import { RegMail3 } from './reg-mail3';
-import { RegisterByInvitationEmail } from './sampleData';
+import { RegisterByInvitationEmail, registrationApplication } from './sampleData';
 import { RegMail4 } from './reg-mail4';
 import { Popup } from '../../../components/common/popup';
 import { RegMail4Confirm } from './reg-mail4-confirm';
@@ -32,13 +32,16 @@ export type Account = {
 };
 interface State {
   registrationOption:RegistrationOption;
-  step:Step;
   email:string;
+  registrationStatus:ResData.RegistrationApplication;
+  quiz:ResData.QuizQuestion[];
   quizAnswer:QuizAnswer;
   regMailToken:string;
   regCode:string;
+  essay:ResData.Essay;
   essayAnswer:string;
   account:Account;
+  step:Step;
   showPopup:boolean;
 }
 
@@ -57,18 +60,22 @@ const quiz = RegisterByInvitationEmail.data.quizzes as ResData.QuizQuestion[];
 
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
+    // internal state
     registrationOption: 'code',
-    step: 'create-account',
     email: '',
+    registrationStatus: ResData.allocRegistrationApplication(),
+    quiz: [],
     quizAnswer:{},      // reg-mail2
     regMailToken: '',   // reg-mail3
     regCode: '',
+    essay: ResData.allocEssay(),
     essayAnswer: '',
-    showPopup:false,
     account:{
       username: '',
       password: '',
-    }
+    },
+    step: 'info',
+    showPopup:false,
   };
 
   public async componentDidMount() {
@@ -81,19 +88,53 @@ export class Register extends React.Component<MobileRouteProps, State> {
     } as any);
   }
 
-  public nextStep = () => {
-    const { registrationOption, step } = this.state;
+  public nextStep = async () => {
+    const { registerByInvitationEmailSubmitEmail } = this.props.core.db;
+    const { registrationOption, step, email, registrationStatus, quiz, essay } = this.state;
     switch (step) {
       case 'info':
         this.setState({ step: 'choose-reg-option' });
         break;
-      case 'choose-reg-option':
-        this.setState({ step: 'reg-mail-1' });
+      case 'choose-reg-option': {
+        this.setState({ step:
+          registrationOption == 'code' ? 'reg-code' : 'reg-mail-1' });
         break;
-      case 'reg-mail-1':
+      }
+      case 'reg-mail-1': {
+        try {
+          const res = await registerByInvitationEmailSubmitEmail(email);
+          const newState = {
+            registrationStatus: res.registration_application,
+            quiz,
+            essay,
+            step: step as Step,
+          };
+          if (res.quizzes) { newState.quiz = res.quizzes; }
+          if (res.essay) { newState.essay = res.essay; }
+
+          const { has_quizzed, email_verified_at, submitted_at } = res.registration_application.attributes;
+          if (!has_quizzed) {
+            // user has not finish quiz, redirect user to take quiz
+            newState.step = 'reg-mail-2';
+          } else if (!email_verified_at) {
+            // user has finished quiz, but has not verify email
+            // redirect user to verify email
+            newState.step = 'reg-mail-3';
+          } else if (!submitted_at) {
+            // user has finished quiz and verified email, but has not submit essay
+            // redirect user to submit essay
+            newState.step = 'reg-mail-4';
+          } else {
+            // everything is done! redirect user to check application progress page
+            newState.step = 'reg-mail-progress';
+          }
+          this.setState(newState);
+        } catch (e) {
+          console.log(e);
+        }
+        break;
+      }
         // TODO: serverl branches here
-        this.setState({ step: 'reg-mail-2' });
-        break;
       case 'reg-mail-2':
         // TODO: submit quiz
         this.setState({ step: 'reg-mail-3' });
@@ -109,8 +150,12 @@ export class Register extends React.Component<MobileRouteProps, State> {
         break;
       case 'reg-mail-progress':
         break;
-      case 'reg-code':
+      case 'reg-code': {
+        // TODO: submit invitation code (waiting for api)
+        alert('邀请码注册api还没好,之后注册肯定会失败哈');
+        this.setState({ step: 'create-account' });
         break;
+      }
       case 'create-account':
         break;
     }
@@ -139,7 +184,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
 
   private getMenuButtonIsInvalid() {
     const { registrationOption, step, email, quizAnswer, regMailToken, essayAnswer, regCode } = this.state;
-    if (step == 'reg-mail-1' && !email) { return true; }
+    if (step == 'reg-mail-1' && !email) {
+      // TODO: check if email valid
+      return true;
+    }
     if (step == 'reg-mail-2') {
       if (!email) { return true; }
       if (Object.keys(quizAnswer).length != quiz.length) { return true; }

@@ -533,12 +533,30 @@ export class DB {
         422: '用户名/密码/邮箱格式错误',
       },
     });
-
     if (!res) { return false; }
     this.user.login(res.name, res.id, res.token);
     saveStorage('auth', {token: res.token, username: res.name, userId: res.id});
     backTo ? this.history.push(backTo) : this.history.push('/');
     return true;
+  }
+
+  public registerByInvitationEmailSubmitEmail = (email:string) :
+    Promise<{
+      registration_application:ResData.RegistrationApplication;
+      quizzes?:ResData.QuizQuestion[];
+      essay?:ResData.Essay; }> => {
+    return this._post('/register/by_invitation_email/submit_email', {
+      body: {
+        email,
+      },
+      errorMsg: {
+        414: '用户已经登陆',
+        422: '邮箱格式错误',
+        499: '邮箱被拉黑',
+        409: '这个邮箱已注册，请直接登陆',
+        498: '访问过于频繁',
+      },
+    });
   }
   public async login (email:string, password:string, backTo?:string) {
     const res = await this._post('/login', {
