@@ -579,6 +579,22 @@ export class DB {
       },
     });
   }
+  public registerByInvitationEmailResendEmailVerification =
+    (email:string) :
+    Promise<{ email:string }> => {
+    return this._get('/register/by_invitation_email/resend_email_verification', {
+      query: {
+        email,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        410: '已成功发信，暂时不能重复发信/已经验证过邮箱，不需要重复验证',
+        411: '未完成其他需要的情况(如未答题，不能发验证邮件)',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
   public async login (email:string, password:string, backTo?:string) {
     const res = await this._post('/login', {
       query: {

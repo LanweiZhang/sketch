@@ -71,7 +71,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       username: '',
       password: '',
     },
-    step: 'reg-mail-1',
+    step: 'info',
     showPopup:false,
   };
 
@@ -169,13 +169,15 @@ export class Register extends React.Component<MobileRouteProps, State> {
         break;
       }
       case 'reg-mail-3':
+        // TODO: verify token -> waiting for API bug fix
         this.setState({ step: 'reg-mail-4' });
-        console.log(222);
         break;
       case 'reg-mail-4':
-        console.log(1);
+        alert('API还没连完,就当作提交成功了吧~');
+        this.setState({ step: 'create-account'});
         break;
       case 'reg-mail-info':
+        this.setState({ step: 'reg-mail-1' });
         break;
       case 'reg-mail-progress':
         break;
@@ -273,7 +275,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return (
           <RegMail1
             email={email}
-            changeMailAddress={this.updateState('email')}/>);
+            changeMailAddress={this.updateState('email')}
+            redirectToRegMailInfo={() => this.setState({step:'reg-mail-info'})}/>);
       case 'reg-mail-2':
         return (
           <RegMail2
@@ -286,6 +289,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return (
           <RegMail3
             regMailToken={regMailToken}
+            resendEmail={this.props.core.db.registerByInvitationEmailResendEmailVerification}
             changeRegMailToken={this.updateState('regMailToken')}
             email={email}/>
         );

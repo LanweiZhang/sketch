@@ -57,6 +57,9 @@
       width: 90px;
       margin: var(--margin-2);
     }
+    #resend-token:hover {
+      font-weight: bold;
+    }
   }
   #reg-code-input.input-text {
     margin-top: var(--top-margin-6);

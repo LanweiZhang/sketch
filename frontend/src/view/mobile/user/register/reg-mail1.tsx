@@ -5,6 +5,7 @@ export function RegMail1 (props:{
   email:string;
   className?:string;
   changeMailAddress:(mail:string) => () => void;
+  redirectToRegMailInfo:() => void;
 }) {
   return (
     <Card className="reg">
@@ -17,7 +18,7 @@ export function RegMail1 (props:{
         <p>- 如果你已完成申请，可以在这里输入邮箱【查询进度】。正常查询不属于“重复提交”。</p>
         <p>-【站内活动】奖励的链接会直接发送到参与活动的邮箱，同样可以在这里查询和补发。</p>
         <p>- 继续下一步之前，请确保你已阅读以下文档:<br/>
-          <a>《通过邮箱申请注册邀请链接的详细步骤》</a>
+          <a onClick={props.redirectToRegMailInfo}>《通过邮箱申请注册邀请链接的详细步骤》</a>
         </p>
       </div>
 

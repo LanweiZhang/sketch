@@ -1,13 +1,26 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
 import { Accordion } from '../../../components/common/accordion';
+import { API } from '../../../../config/api';
 
 export function RegMail3 (props:{
   email:string;
   className?:string;
   regMailToken:string;
+  resendEmail:(email:string) => Promise<API.Get['/register/by_invitation_email/resend_email_verification']>;
   changeRegMailToken:(token:string) => () => void;
 }) {
+  const onClickResendButton = async () => {
+    // TODO: rate limit
+    try {
+      const { email } = await props.resendEmail(props.email);
+      // TODO: toast
+      alert(`已发送邮件到${email}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Card className="reg">
       {/* TODO: use h2 here, after h2 is defined in common.scss */}
@@ -24,7 +37,12 @@ export function RegMail3 (props:{
             value={props.regMailToken}
             onChange={(e) => props.changeRegMailToken(e.target.value)() }
             placeholder="请输入确认码"></input>
-          <span className="small-warning" id="resend-token">重新发送邮件确认码</span>
+          <span
+            className="small-warning"
+            id="resend-token"
+            onClick={onClickResendButton}>
+              重新发送邮件确认码
+          </span>
         </div>
         <p>为保证注册公平，避免机器恶意注册，页面含有防批量注册机制，五分钟只能提交一次确认码，请核实后再提交确认码，勿直接“返回”前页面重新提交。</p>
       </div>
