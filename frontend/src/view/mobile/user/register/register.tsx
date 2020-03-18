@@ -86,8 +86,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   public nextStep = async () => {
-    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz } = this.props.core.db;
-    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay } = this.state;
+    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay } = this.props.core.db;
+    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay, essayAnswer, regMailToken } = this.state;
     switch (step) {
       case 'info':
         this.setState({ step: 'choose-reg-option' });
@@ -148,7 +148,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
           };
           if (!res.registration_application.attributes.has_quizzed) {
             // TODO
-            alert('考试挂课,回去重考');
+            alert('考试挂科,回去重考');
             newState.quizAnswer = [];
             newState.step = 'reg-mail-1';
           } else {
@@ -163,19 +163,33 @@ export class Register extends React.Component<MobileRouteProps, State> {
           this.setState(newState);
         } catch (e) {
           alert(e.message);
-          alert('错误为550的话,是后端error,回到第一步,再次确认后会直接到第三步邮箱确认');
           console.log(e);
         }
         break;
       }
-      case 'reg-mail-3':
-        // TODO: verify token -> waiting for API bug fix
-        this.setState({ step: 'reg-mail-4' });
+      case 'reg-mail-3': {
+        try {
+          await registerByInvitationConfirmToken(email, regMailToken);
+          this.setState({ step: 'reg-mail-4' });
+        } catch (e) {
+          alert(e);
+          console.log(e);
+        }
         break;
-      case 'reg-mail-4':
-        alert('API还没连完,就当作提交成功了吧~');
-        this.setState({ step: 'create-account'});
+      }
+      case 'reg-mail-4': {
+        try {
+          const { registration_application } = await registerByInvitationSubmitEssay(email, essay.id, essayAnswer);
+          this.setState({
+            step: 'reg-mail-progress',
+            registrationStatus: registration_application,
+          });
+        } catch (e) {
+          alert(e);
+          console.log(e);
+        }
         break;
+      }
       case 'reg-mail-info':
         this.setState({ step: 'reg-mail-1' });
         break;
@@ -262,7 +276,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getPageContent() {
-    const { registrationOption, step, email, quiz, quizAnswer, essayAnswer, regMailToken, regCode } = this.state;
+    const { registrationOption, step, email, quiz, quizAnswer, essayAnswer, regMailToken, regCode, registrationStatus } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -303,7 +317,9 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-info':
         return <RegMailInfo />;
       case 'reg-mail-progress':
-        return <RegMailProgress email={email}/>;
+        return <RegMailProgress
+          email={email}
+          registrationStatus={registrationStatus}/>;
       case 'reg-code':
         return (
           <RegCode

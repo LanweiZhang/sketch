@@ -579,6 +579,24 @@ export class DB {
       },
     });
   }
+  public registerByInvitationConfirmToken =
+    (email:string, token:string) :
+    Promise<{ email:string; }> => {
+    return this._post('/register/by_invitation_email/submit_email_confirmation_token', {
+      body: {
+        email,
+        token,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        409: '已经成功确认邮箱',
+        411: '未完成前序步骤(未答题)',
+        422: '邮箱格式错误/token验证错误',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
   public registerByInvitationEmailResendEmailVerification =
     (email:string) :
     Promise<{ email:string }> => {
@@ -590,6 +608,25 @@ export class DB {
         404: '申请记录不存在',
         410: '已成功发信，暂时不能重复发信/已经验证过邮箱，不需要重复验证',
         411: '未完成其他需要的情况(如未答题，不能发验证邮件)',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
+  public registerByInvitationSubmitEssay =
+    (email:string, essay_id:number, body:string) :
+    Promise<{ registration_application:ResData.RegistrationApplication; }> => {
+    return this._post('/register/by_invitation_email/submit_essay', {
+      body: {
+        email,
+        essay_id,
+        body,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        409: '已经成功提交论文，等待审核中，不需要再提交论文',
+        411: '未完成其他需要的情况（如未答题，未验证邮箱）',
+        444: '回答的题目和数据库中应该回答的题不符合',
         498: '过于频繁访问',
         499: '邮箱已被拉黑',
       },

@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { registrationApplication } from './sampleData';
+import { ResData } from '../../../../config/api';
 
 export function RegMailProgress (props:{
   email:string;
+  registrationStatus:ResData.RegistrationApplication;
   className?:string;
 }) {
-  const { has_quizzed, email_verified_at, submitted_at, is_passed, last_invited_at } = registrationApplication.attributes;
+  const { has_quizzed, email_verified_at, submitted_at, is_passed, last_invited_at } = props.registrationStatus.attributes;
   return (
     <Card className="reg">
     <p className="sub-title">
-      申请档案编号{registrationApplication.id}  |  {props.email}
+      申请档案编号{props.registrationStatus.id}  |  {props.email}
     </p>
     <div id="progress-detail">
       <p>- { has_quizzed ? '已' : '未' }答题</p>
@@ -25,7 +26,7 @@ export function RegMailProgress (props:{
           `邀请邮件发送时间: ${last_invited_at}` :
           '当前排队人数众多，尚未来得及发送邮件。你的邀请已进入发送队列，请耐心等待服务器空闲时依序发送邮件。'}
         </p>
-        <a>重新发送邀请邮件</a>
+        { last_invited_at && <a>重新发送邀请邮件</a> }
       </div>
     )}
     </Card>);
