@@ -59,7 +59,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     // internal state
     registrationOption: 'code',
-    email: 'bb@gmail.com',
+    email: '',
     registrationStatus: ResData.allocRegistrationApplication(),
     quiz: [],
     quizAnswer:[],      // reg-mail2
@@ -152,11 +152,11 @@ export class Register extends React.Component<MobileRouteProps, State> {
             newState.quizAnswer = [];
             newState.step = 'reg-mail-1';
           } else {
-            if (!essay) {
+            if (!res.essay) {
               console.error('这是后端bug,没有返回essay');
             } else {
               // next step: confirm your email
-              newState.essay = essay;
+              newState.essay = res.essay;
               newState.step = 'reg-mail-3';
              }
           }
@@ -276,7 +276,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getPageContent() {
-    const { registrationOption, step, email, quiz, quizAnswer, essayAnswer, regMailToken, regCode, registrationStatus } = this.state;
+    const { registrationOption, step, email, quiz, quizAnswer, essay, essayAnswer, regMailToken, regCode, registrationStatus } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -311,6 +311,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return (
           <RegMail4
             email={email}
+            essay={essay}
             essayAnswer={essayAnswer}
             changeEssayAnswer={this.updateState('essayAnswer')}/>
         );
