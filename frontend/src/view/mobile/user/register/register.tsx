@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { API, ResData, ReqData } from '../../../../config/api';
+import { ResData } from '../../../../config/api';
 import { MobileRouteProps } from '../../router';
 import { Page } from '../../../components/common/page';
 import { NavBar } from '../../../components/common/navbar';
-import { List } from '../../../components/common/list';
-import { RoutePath } from '../../../../config/route-path';
-import { Menu, MenuItem } from '../../../components/common/menu';
 import { PreRegInfo } from './pre-reg-info';
 import '../../message/style.scss';  // TODO: extract common css
 import './style.scss';
@@ -13,7 +10,6 @@ import { RegOptions } from './reg-options';
 import { RegMail1 } from './reg-mail1';
 import { RegMail2 } from './reg-mail2';
 import { RegMail3 } from './reg-mail3';
-import { RegisterByInvitationEmail, registrationApplication } from './sampleData';
 import { RegMail4 } from './reg-mail4';
 import { Popup } from '../../../components/common/popup';
 import { RegMail4Confirm } from './reg-mail4-confirm';
@@ -208,23 +204,34 @@ export class Register extends React.Component<MobileRouteProps, State> {
   // 通过邮件注册的详细步骤
   private getMenuButton() {
     const { registrationOption, step, email } = this.state;
+    let text = '';
     switch (step) {
       case 'info':
       case 'choose-reg-option':
-        return <span>下一步</span>;
+        text = '下一步';
+        break;
       case 'reg-mail-1':
       case 'reg-mail-2':
-        return <span>提交</span>;
+        text = '提交';
+        break;
       case 'reg-mail-3':
       case 'reg-mail-info':
-        return <span>确认</span>;
+        text = '确认';
+        break;
       case 'reg-mail-4':
       case 'reg-code':
       case 'create-account':
-        return <span>提交</span>;
+        text = '提交';
+        break;
       case 'reg-mail-progress':
-        return '';
+        break;
     }
+    return (
+      NavBar.MenuText({
+        value: text,
+        onClick: this.nextStep,
+        disabled: this.getMenuButtonIsInvalid(),
+      }));
   }
 
   private getMenuButtonIsInvalid() {
@@ -339,9 +346,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
     return (<Page
         top={<NavBar
           goBack={this.props.core.route.back}
-          onMenuClick={this.nextStep}
-          menuButton={this.getMenuButton()}
-          buttonInvalid={this.getMenuButtonIsInvalid()}>
+          menu={this.getMenuButton()}>
           {this.getMenuTitle()}
         </NavBar>}>
         {/* <RegMail4
