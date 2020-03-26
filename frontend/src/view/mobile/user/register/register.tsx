@@ -74,8 +74,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   public async componentDidMount() {
   }
 
-  // QUESTION: 像这个情况,type该怎么写呢..
-  public updateState = (key:keyof State) => (value:any) => () => {
+  public updateState = <Key extends keyof State>(key:Key) => (value:State[Key]) => () => {
     this.setState({
       [key]: value,
     } as any);

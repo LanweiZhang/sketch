@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Card } from '../../../components/common/card';
 import { RegisterByInvitationEmail } from './sampleData';
 import { ResData } from '../../../../config/api';
+import { Account } from './register';
 
 interface Props {
   email:string;
@@ -30,8 +31,7 @@ export class CreateAccount extends React.Component<Props, State> {
     check3:false,
   };
 
-  // TODO:这个地方,type怎么写呢..
-  private setStateAndCheckReady(key:keyof State, value:any) {
+  private setStateAndCheckReady<Key extends keyof State> (key:keyof State, value:State[Key]) {
     this.setState({[key]:value} as any);
     // TODO: check ready
   }
