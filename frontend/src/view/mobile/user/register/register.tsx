@@ -342,26 +342,19 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   public render () {
-    return (<Page
+    return (
+      <Page
         top={<NavBar
           goBack={this.props.core.route.back}
           menu={this.getMenuButton()}>
-          {this.getMenuTitle()}
-        </NavBar>}>
-        {/* <RegMail4
-            email={this.state.email}
-            essayAnswer={this.state.essayAnswer}
-            changeEssayAnswer={this.updateState('essayAnswer')}/> */}
-
-            {this.getPageContent()}
-            {/* <RegCode
-            regCode={this.state.regCode}
-            changeRegCode={this.updateState('regCode')}/> */}
-            {this.state.showPopup && <Popup
-              className="reg"
-              onClose={() => {}}>
-              <RegMail4Confirm onClick={() => console.log(1)}/>
-            </Popup>}
+          {this.getMenuTitle()}</NavBar>}
+      >
+        {this.getPageContent()}
+        {this.state.showPopup && <Popup
+          className="reg"
+          onClose={() => {}}>
+          <RegMail4Confirm onClick={() => console.log(1)}/>
+        </Popup>}
       </Page>);
   }
 }

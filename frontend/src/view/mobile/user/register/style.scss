@@ -19,8 +19,8 @@
   a, .small-warning {
     color: var(--color-primary);
     font-size: var(--font-size-10);
-    margin-block-start: var(--top-margin-12);
-    margin-block-end: var(--top-margin-12);
+    margin-block-start: var(--margin-size-12);
+    margin-block-end: var(--margin-size-12);
   }
 
   #quiz {
@@ -29,18 +29,18 @@
     .quiz-question {
       p {
         color: var(--color-font);
-        margin-block-start: var(--top-margin-12);
-        margin-block-end: var(--top-margin-12);
+        margin-block-start: var(--margin-size-12);
+        margin-block-end: var(--margin-size-12);
       }
       .quiz-option {
-        margin: var(--top-margin-14) 0;
+        margin: var(--margin-size-14) 0;
       }
       margin-bottom: 26px;
     }
   }
 
   #reg-mail1-info {
-    margin-bottom: var(--top-margin-32);
+    margin-bottom: var(--margin-size-32);
   }
 
   .input-text {
@@ -62,17 +62,17 @@
     }
   }
   #reg-code-input.input-text {
-    margin-top: var(--top-margin-32);
+    margin-top: var(--margin-size-32);
   }
   .creat-account-input {
-    margin: var(--top-margin-24) 0;
+    margin: var(--margin-size-24) 0;
     p {
       font-size: var(--font-size-14);
       color: var(--color-font);
-      margin-bottom: var(--top-margin-8);
+      margin-bottom: var(--margin-size-8);
     }
     .input-text {
-      margin: var(--top-margin-8) 0;
+      margin: var(--margin-size-8) 0;
     }
     .note {
       font-size: var(--font-size-12);
@@ -85,10 +85,10 @@
     vertical-align: middle;
   }
   .checkboxes{
-    margin: var(--top-margin-24) 0 ;
+    margin: var(--margin-size-24) 0 ;
     .checkbox {
-      margin: var(--top-margin-8) 0;
       color: var(--color-font-light);
+      margin: var(--margin-size-8) 0;
     }
   }
   

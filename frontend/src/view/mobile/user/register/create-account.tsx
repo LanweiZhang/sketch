@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { RegisterByInvitationEmail } from './sampleData';
-import { ResData } from '../../../../config/api';
 import { Account } from './register';
+import { Checkbox } from '../../../components/common/input/checkbox';
 
 interface Props {
   email:string;
@@ -38,14 +37,12 @@ export class CreateAccount extends React.Component<Props, State> {
 
   private renderCheckBox(key:checkBoxes, label:string) {
     return (
-      <div className="checkbox">
-        <input type="radio"
-          value={key}
-          checked={this.state[key]}
-          onChange={() => this.setStateAndCheckReady(key, !this.state[key])}
-          />
-        <label>{label}</label>
-      </div>);
+      <Checkbox
+        className="checkbox"
+        value={key}
+        checked={this.state[key]}
+        onChange={() => this.setStateAndCheckReady(key, !this.state[key])}
+        label={label} />);
   }
 
   public headQuote = (

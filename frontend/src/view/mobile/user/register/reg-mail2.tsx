@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { RegisterByInvitationEmail } from './sampleData';
 import { ResData } from '../../../../config/api';
 import { QuizQuestionAnswer } from './register';
+import { Checkbox } from '../../../components/common/input/checkbox';
 
 interface Props {
   email:string;
@@ -31,9 +31,8 @@ export class RegMail2 extends React.Component<Props, State> {
     this.setState({checkboxes});
   }
 
-  private handleOptionChange = (quiz:ResData.QuizQuestion) => (e) => {
+  private handleOptionChange = (quiz:ResData.QuizQuestion, optionID:number ) => () => {
     const question = this.state.checkboxes[quiz.id];
-    const optionID = e.target.value;
     question[optionID] = !question[optionID];
     const checkboxes = {
       ...this.state.checkboxes,
@@ -82,15 +81,12 @@ export class RegMail2 extends React.Component<Props, State> {
       <div className="quiz-question" key={question.id}>
         <p>{ question.attributes.body }</p>
         { question.attributes.options.map((o) => (
-          <div className="quiz-option" key={'' + o.id}>
-            <input type="checkbox"
-              name={'' + o.id}
-              value={o.id}
-              checked={this.state.checkboxes[question.id][o.id]}
-              onChange={this.handleOptionChange(question)}
-              />
-            <label>{o.attributes.body}</label>
-          </div>
+          <Checkbox
+            className="quiz-option" key={'' + o.id}
+            checked={this.state.checkboxes[question.id][o.id]}
+            onChange={this.handleOptionChange(question, o.id)}
+            label={o.attributes.body}
+          />
         ))}
       </div>
     );

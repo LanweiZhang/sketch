@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Card } from '../../../components/common/card';
 
 export function RegMail4Confirm (props:{
   onClick:() => void;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { Accordion } from '../../../components/common/accordion';
 
 export function RegCode (props:{
   className?:string;

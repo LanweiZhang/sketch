@@ -1,6 +1,7 @@
 import React from 'react';
 import './checkbox.scss';
-
+// it's actually radio box..
+// TODO: support checkbox
 export function Checkbox (props:{
   name?:string;
   value?:string | number;
@@ -13,7 +14,9 @@ export function Checkbox (props:{
 }) {
 
   return (
-    <label className="input-checkbox-container"
+    <label
+      className={`input-checkbox-container${
+        props.className ? ' ' + props.className : ''}`}
       onClick={props.onChange}>
       { props.label && props.label }
       <input type="radio"

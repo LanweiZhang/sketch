@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
 import { RegistrationOption } from './register';
+import { Checkbox } from '../../../components/common/input/checkbox';
 
 export function RegOptions (props:{
   className?:string;
@@ -14,10 +15,11 @@ export function RegOptions (props:{
       {/* 邀请码 */}
       <div className="reg-option">
         <div className="sub-title">
-          <input type="radio" value="code"
+          <Checkbox
             checked={props.regOption == 'code'}
-            onChange={props.changeRegOption('code')} />
-          <span>通过邀请码注册</span>
+            onChange={props.changeRegOption('code')}
+            label="通过邀请码注册"
+          />
         </div>
         <p>获得邀请码的渠道:</p>
         <div className="option-info">
@@ -32,23 +34,36 @@ export function RegOptions (props:{
         </div>
       </div>
 
-      {/* 邀请码 */}
+      {/* 小作文 */}
       <div className="reg-option">
         <div className="sub-title">
-          <input type="radio" value="mail"
+          <Checkbox
             checked={props.regOption == 'mail'}
-            onChange={props.changeRegOption('mail')} />
-          通过含邀请链接的邮件注册及进度查询（测试中）
+            onChange={props.changeRegOption('mail')}
+            label="邮件注册及进度查询（测试中）"
+          />
         </div>
-        <p>获得邀请码的渠道:</p>
+        <p>注册流程:</p>
         <div className="option-info">
           <p>
-            <b>【活动邀请】参加网站活动获取注册邀请链接</b><br/>
-            通过废文网微博、微信公众号等渠道参与限时活动，将有机会直接获得专属注册链接。
+            <b>提交邮箱</b><br/>
+            不可以用QQ邮箱哦。
           </p>
           <p>
-            <b>【问卷邀请】通过填写问卷的方式获取注册邀请链接</b><br/>
-            提交邮箱、完成问卷，排队审核通过后将获得专属注册链接。
+            <b>完成问卷</b><br/>
+            问卷由11道单选题组成,答对7题即可。
+          </p>
+          <p>
+            <b>验证邮箱</b><br/>
+            完成问卷后,我们会给您发一封含有验证码的邮件,来核实您的邮箱。
+          </p>
+          <p>
+            <b>提交作文</b><br/>
+            根据题目,写一篇500字左右的小作文。
+          </p>
+          <p>
+            <b>进度查询</b><br/>
+            我们会记录同一个邮箱的申请进度,您不需要在同一天内完成问卷和作文。如果您申请了一半,下一次输入邮箱会继续之前的申请。如果当前邮箱已完成所有申请步骤,您会看到您的申请记录。请耐心等待管理员审核,不要重复申请。
           </p>
         </div>
       </div>
