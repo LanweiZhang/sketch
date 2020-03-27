@@ -63,6 +63,7 @@ import { MenuItem, Menu } from '../view/components/common/menu';
 import { NoticeType, notice } from '../view/components/common/notice';
 import { HomeworkPreview } from '../view/components/home/homework-preview';
 import { Picker, Item } from '../view/components/common/picker';
+import { Checkbox } from '../view/components/common/input/checkbox';
 
 const core = new Core();
 fakeDB(core.db);
@@ -356,34 +357,6 @@ storiesOf('Common Components', module)
       </div>
     </Loading>,
   )
-  .add('InputNumber', () => (React.createElement(class extends React.Component<{}, {
-    value:number,
-  }> {
-    public state = {
-      value:0,
-    };
-
-    public onChange = (value:number) => {
-      this.setState({
-        value,
-      });
-    }
-
-    public render() {
-      return <div>
-        <InputNumber
-          value={this.state.value}
-          onChange={this.onChange}
-          fractionDigits={number('fractionDigits', 0)}
-          disabled={boolean('disabled', false)}
-          placeholder={text('placeholder', 'placeholder')}
-          min={number('min', -10)}
-          max={number('max', 10)}
-        />
-        <button onClick={() => console.log(this.state.value)}>打印</button>
-      </div>;
-    }
-  })))
   .add('Menu', () => (
     <Menu>
       <MenuItem icon="far fa-thumbs-up icon" title="点赞提醒" badgeNum={1000} />
@@ -414,38 +387,6 @@ storiesOf('Common Components', module)
     }
   },
   )))
-  .add('InputText', () => (React.createElement(class extends React.Component<{}, { value:string }> {
-    public state = {
-      value: '',
-    };
-    public render() {
-      const placeholderCentered = boolean('placeholderCentered', true);
-      const withLabel = boolean('withLabel', true);
-      return <InputText
-        label={withLabel ? <i className="fa fa-search" /> : null}
-        value={this.state.value}
-        placeholder="placeholder"
-        placeholderCentered={placeholderCentered}
-        style={{
-          height: '30px',
-        }}
-        onChange={(value) => {
-          this.setState({
-            value,
-          });
-        }}
-        onConfirm={() =>
-          console.log('onConfirm')
-        }
-        onClick={() =>
-          console.log('onClick')
-        }
-        onKeyDown={() =>
-          console.log('onKeyDown')
-        }
-      />;
-    }
-  })))
   .add('Picker', () => (React.createElement(
     class extends React.Component<{}, {
       showPicker:boolean,
@@ -546,7 +487,99 @@ storiesOf('Common Components/Dropdown', module)
   })
 ;
 
-storiesOf('Common Components/TextEditor', module)
+storiesOf('Common Components/Input', module)
+  .add('InputText', () => (React.createElement(class extends React.Component<{}, { value:string }> {
+    public state = {
+      value: '',
+    };
+    public render() {
+      const placeholderCentered = boolean('placeholderCentered', true);
+      const withLabel = boolean('withLabel', true);
+      return <InputText
+        label={withLabel ? <i className="fa fa-search" /> : null}
+        value={this.state.value}
+        placeholder="placeholder"
+        placeholderCentered={placeholderCentered}
+        style={{
+          height: '30px',
+        }}
+        onChange={(value) => {
+          this.setState({
+            value,
+          });
+        }}
+        onConfirm={() =>
+          console.log('onConfirm')
+        }
+        onClick={() =>
+          console.log('onClick')
+        }
+        onKeyDown={() =>
+          console.log('onKeyDown')
+        }
+      />;
+    }
+  })))
+  .add('InputNumber', () => (React.createElement(class extends React.Component<{}, {
+    value:number,
+  }> {
+    public state = {
+      value:0,
+    };
+
+    public onChange = (value:number) => {
+      this.setState({
+        value,
+      });
+    }
+
+    public render() {
+      return <div>
+        <InputNumber
+          value={this.state.value}
+          onChange={this.onChange}
+          fractionDigits={number('fractionDigits', 0)}
+          disabled={boolean('disabled', false)}
+          placeholder={text('placeholder', 'placeholder')}
+          min={number('min', -10)}
+          max={number('max', 10)}
+        />
+        <button onClick={() => console.log(this.state.value)}>打印</button>
+      </div>;
+    }
+  })))
+  .add('checkbox', () => React.createElement(class extends React.Component<{}, {
+    checked1:boolean;
+    checked2:boolean;
+  }> {
+    public state = {
+      checked1:false,
+      checked2:false,
+    };
+
+    public render() {
+      return (
+        <div>
+          <p>checkbox only</p>
+          <Checkbox
+          checked={this.state.checked1}
+          onChange={() => this.setState({checked1: !this.state.checked1})}
+        ></Checkbox>
+          <br/>
+          <p>checkbox with label</p>
+          <Checkbox
+          checked={this.state.checked2}
+          onChange={() => {
+            this.setState({checked2: !this.state.checked2});
+          }}
+          label="this is a label"
+        ></Checkbox>
+        </div>
+      );
+    }
+  }));
+
+storiesOf('Common Components/Input/TextEditor', module)
 .add('style1', () => React.createElement(class extends React.Component<{}, {content:string, generatedBBCODE:string, test:any, extraData:any[], testId:number, useDefaultTest:boolean}> {
   private ref = React.createRef<TextEditor>();  // you have to use ref with this component
   public state = {
