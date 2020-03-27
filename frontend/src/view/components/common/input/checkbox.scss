@@ -26,8 +26,10 @@ $checkbox-innercircle-height: 6px;
     height: $checbox-height;
     width: $checbox-height;
     background-color: #eee;
-    border-radius: 50%;
   }
+  input[type="radio"] ~ .checkmark{
+    border-radius: 50%;
+  }  
   /* When the radio button is checked, add background color */
   input:checked ~ {
     .checkmark {
@@ -43,12 +45,25 @@ $checkbox-innercircle-height: 6px;
     content: "";
     position: absolute;
     display: none;
+  }
+  input[type="radio"] ~ .checkmark:after {
     top: ($checbox-height - $checkbox-innercircle-height) / 2;
     left: ($checbox-height - $checkbox-innercircle-height) / 2;
     width: $checkbox-innercircle-height;
     height: $checkbox-innercircle-height;
     border-radius: 50%;
     background: white;
+  }
+  input[type="checkbox"] ~ .checkmark:after {
+    left: 5px;
+    top: 3px;
+    width: 3px;
+    height: 6px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
   }
 }
 

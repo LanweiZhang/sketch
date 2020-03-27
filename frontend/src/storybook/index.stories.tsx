@@ -551,29 +551,38 @@ storiesOf('Common Components/Input', module)
   .add('checkbox', () => React.createElement(class extends React.Component<{}, {
     checked1:boolean;
     checked2:boolean;
+    checked3:boolean;
   }> {
     public state = {
       checked1:false,
       checked2:false,
+      checked3:false,
     };
 
     public render() {
       return (
-        <div>
+        <div style={{paddingLeft: '20px'}}>
           <p>checkbox only</p>
           <Checkbox
-          checked={this.state.checked1}
-          onChange={() => this.setState({checked1: !this.state.checked1})}
-        ></Checkbox>
+            checked={this.state.checked1}
+            onChange={() => this.setState({checked1: !this.state.checked1})}/>
           <br/>
           <p>checkbox with label</p>
           <Checkbox
-          checked={this.state.checked2}
-          onChange={() => {
-            this.setState({checked2: !this.state.checked2});
-          }}
-          label="this is a label"
-        ></Checkbox>
+            checked={this.state.checked2}
+            onChange={() => {
+              this.setState({checked2: !this.state.checked2});
+            }}
+            label="this is a label"/>
+          <br/>
+          <p>radio with label</p>
+          <Checkbox
+            checked={this.state.checked3}
+            onChange={() => {
+              this.setState({checked3: !this.state.checked3});
+            }}
+            label="this is a label"
+            type="radio"/>
         </div>
       );
     }
