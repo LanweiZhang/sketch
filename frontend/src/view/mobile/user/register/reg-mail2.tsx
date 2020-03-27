@@ -82,6 +82,7 @@ export class RegMail2 extends React.Component<Props, State> {
         <p>{ question.attributes.body }</p>
         { question.attributes.options.map((o) => (
           <Checkbox
+            type="radio"
             className="quiz-option" key={'' + o.id}
             checked={this.state.checkboxes[question.id][o.id]}
             onChange={this.handleOptionChange(question, o.id)}

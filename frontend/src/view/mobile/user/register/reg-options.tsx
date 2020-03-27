@@ -16,6 +16,7 @@ export function RegOptions (props:{
       <div className="reg-option">
         <div className="sub-title">
           <Checkbox
+            type="radio"
             checked={props.regOption == 'code'}
             onChange={props.changeRegOption('code')}
             label="通过邀请码注册"
@@ -38,6 +39,7 @@ export function RegOptions (props:{
       <div className="reg-option">
         <div className="sub-title">
           <Checkbox
+            type="radio"
             checked={props.regOption == 'mail'}
             onChange={props.changeRegOption('mail')}
             label="邮件注册及进度查询（测试中）"
