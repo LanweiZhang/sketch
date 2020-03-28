@@ -5,6 +5,7 @@ interface Props {
   length:number;
   mark?:number;
   onClick?:(mark:number) => void;
+  className?:string;
 }
 interface State {
   currentValue:number;
@@ -17,8 +18,8 @@ export class Mark extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      currentValue: -1,
-      value: -1,
+      currentValue: props.length,
+      value: props.length,
     };
   }
 
@@ -51,19 +52,22 @@ export class Mark extends React.Component<Props, State> {
       }
     };
     return (
-      <div className="mark">
-        {(new Array(length)).fill('').map((v, k) => (
-          <span
-            style={{cursor: mark ? 'auto' : 'pointer'}}
-            onClick={() => this.selectValue(k)}
-            key={k}
-          >
-            <i className={getClassName(k)}></i>
-          </span>
-        ))}
-        <span className="frame">{(new Array(length)).fill('').map((v, k) => (
-            <i key={k} className="far fa-heart"></i>
-        ))}</span>
+      <div className={`mark${ this.props.className ? ' ' + this.props.className : '' }`}>
+        {/* It's necessary to have two layers, otherwise we will have trouble with padding/margin for the inner absolute div */}
+        <div className="container">
+          {(new Array(length)).fill('').map((v, k) => (
+            <span
+              style={{cursor: mark ? 'auto' : 'pointer'}}
+              onClick={() => this.selectValue(k)}
+              key={k}
+            >
+              <i className={getClassName(k)}></i>
+            </span>
+          ))}
+          <span className="frame">{(new Array(length)).fill('').map((v, k) => (
+              <i key={k} className="far fa-heart"></i>
+          ))}</span>
+        </div>
       </div>
     );
   }
