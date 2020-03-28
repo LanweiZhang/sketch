@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './mark.scss';
 
 interface Props {
   length:number;
@@ -26,7 +27,9 @@ export class Mark extends React.Component<Props, State> {
     if (mark) {
       return;
     }
-
+    if (this.state.currentValue == value) {
+      value += 0.5;
+    }
     this.setState({
       currentValue: value,
       value,
@@ -35,53 +38,32 @@ export class Mark extends React.Component<Props, State> {
     });
   }
 
-  private setCurrentValue(value:number) {
-
-    const {mark} = this.props;
-    if (mark) {
-      return;
-    }
-
-    this.setState({
-      currentValue: value,
-    });
-  }
-
-  private resetCurrentValue() {
-
-    const {mark} = this.props;
-    if (mark) {
-      return;
-    }
-
-    this.setState((prevState) => ({
-      currentValue: prevState.value,
-    }));
-
-  }
-
   public render () {
     const {length, mark} = this.props;
     const { currentValue } = this.state;
+    const value = mark === undefined ? currentValue : mark - 1;
 
+    const getClassName = (k) => {
+      if (k == value - 0.5) {
+        return 'fa fa-heart half';
+      } else {
+        return k <= value ? 'fa fa-heart full' : 'fa fa-heart';
+      }
+    };
     return (
-      <div>
+      <div className="mark">
         {(new Array(length)).fill('').map((v, k) => (
           <span
             style={{cursor: mark ? 'auto' : 'pointer'}}
-            onMouseMove={(e) => this.setCurrentValue(k)}
-            onMouseLeave={() => this.resetCurrentValue()}
             onClick={() => this.selectValue(k)}
             key={k}
           >
-            <i className={
-                k <= (mark === undefined ? currentValue : mark - 1)
-                  ? 'fas fa-star'
-                  : 'far fa-star'
-            }>
-            </i>
+            <i className={getClassName(k)}></i>
           </span>
         ))}
+        <span className="frame">{(new Array(length)).fill('').map((v, k) => (
+            <i key={k} className="far fa-heart"></i>
+        ))}</span>
       </div>
     );
   }
