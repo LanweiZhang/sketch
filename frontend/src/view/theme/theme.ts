@@ -7,4 +7,5 @@ export enum Colors {
   default = '',
   primary = 'color-primary',
   clean = 'color-clean',
+  light = 'color-light',
 }

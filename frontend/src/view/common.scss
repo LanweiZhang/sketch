@@ -95,6 +95,12 @@ hr {
 }
 button {
   border: none;
+  font-family: var(--font-family-regular);
+  font-size: var(--font-size-14);
+}
+button:active, button:focus {
+  outline: none;
+  border-style: outset;
 }
 
 label {
