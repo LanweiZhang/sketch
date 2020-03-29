@@ -32,7 +32,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
     },
     mode: 'reading',
     showReward: false,
-    page: 'review',
+    page: 'default',
     reply_to_post: ResData.allocPost(),
     isLoading: true,
   };
@@ -170,6 +170,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
         this.props.core.db.addPostToThread(this.state.data.thread.id, {
           body: data.body,
           title: data.title,
+          use_markdown: false,
           use_indentation: data.indent,
           rating: data.rate,
           summary: data.suggest ? 'recommend' : undefined,
