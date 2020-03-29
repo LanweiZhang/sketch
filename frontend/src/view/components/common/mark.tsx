@@ -29,7 +29,7 @@ export class Mark extends React.Component<Props, State> {
       return;
     }
     if (this.state.currentValue == value) {
-      value += 0.5;
+      value -= 0.5;
     }
     this.setState({
       currentValue: value,
@@ -45,7 +45,7 @@ export class Mark extends React.Component<Props, State> {
     const value = mark === undefined ? currentValue : mark - 1;
 
     const getClassName = (k) => {
-      if (k == value - 0.5) {
+      if (k == value + 0.5) {
         return 'fa fa-heart half';
       } else {
         return k <= value ? 'fa fa-heart full' : 'fa fa-heart';

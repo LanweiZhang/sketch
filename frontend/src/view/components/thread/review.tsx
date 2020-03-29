@@ -26,21 +26,45 @@ interface State extends RewardData {
 
 export class Review extends React.Component<Props, State> {
     public state:State = {
+        body: '',
         title: '',
         brief: '',
-        rate: 0,
+        rate: 10,
         suggest: false,
-        body: '',
-        indent: false,
-        publishDisabled: false,
+        indent: true,
+        publishDisabled: true,
     };
     private textEditorRef = React.createRef<TextEditor>();
+
+    public publish = () => {
+        const ref = this.textEditorRef.current;
+        if (!ref) {
+            return;
+        } else {
+            const body = ref.getContent();
+            if (body.trim().length == 0) { return; }
+            this.props.publish({...this.state, body});
+        }
+        if (!this.textEditorRef.current) { return; }
+        const messageToSend = this.textEditorRef.current.getContent();
+        if (!messageToSend) { return; }
+    }
+
+    public getPushlishDisabled = () => {
+        const ref = this.textEditorRef.current;
+        const publishDisabled = !ref || ref.state.text.length == 0
+            || ref.state.text == '<p><br></p>';
+        // FIXME: empty state of text editor is p br p sometimes.
+        if (publishDisabled != this.state.publishDisabled) {
+            this.setState({publishDisabled});
+        }
+    }
     public render () {
-        const { indent , title, brief} = this.state;
+        const { indent , title, brief, suggest } = this.state;
         return <Page top={
             <NavBar goBack={this.props.goBack}
                 menu={NavBar.MenuText({
-                    onClick: () => this.props.publish(this.state),
+                    onClick: this.publish,
                     value: '发布',
                     disabled: this.state.publishDisabled,
                 })}
@@ -70,10 +94,14 @@ export class Review extends React.Component<Props, State> {
                 </div>
                 <div className="section">
                     <div className="section-title">评分</div>
-                    <Mark className="left-margin" length={5}/>
+                    <Mark className="left-margin" length={5}
+                        onClick={(v) => this.setState({rate: v * 2 })}/>
                     {/* TODO: use component checkbox */}
                     <span id="recommend-to-others">
-                        <input type="checkbox"/>
+                        <input
+                            type="checkbox"
+                            checked={suggest}
+                            onChange={(e) => this.setState({suggest:e.target.checked})}/>
                         <label>向他人推荐</label>
                     </span>
                 </div>
@@ -81,6 +109,7 @@ export class Review extends React.Component<Props, State> {
                     <div className="section-title">正文</div>
                     {/* TODO: cache unfinished review */}
                     <TextEditor
+                        onChange={this.getPushlishDisabled}
                         ref={this.textEditorRef}
                         placeholder="为文章写评吧"/>
                     <div className="left-margin section-item">
