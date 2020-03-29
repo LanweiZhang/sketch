@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { EventBus } from '../../../utils/events';
-import { Card } from './card';
 import './carousel.scss';
 
 interface Props {
@@ -10,6 +9,8 @@ interface Props {
   indicator?:boolean;
   windowResizeEvent:EventBus<void>;
   startIndex?:number;
+  showPrev?:boolean;
+  showNext?:boolean;
 }
 
 interface State {
@@ -145,7 +146,7 @@ export class Carousel extends React.Component<Props, State> {
   }
 
   public render () {
-    return <Card className="carousel">
+    return <div className="carousel">
       <div className="slide-wrap">
         <div className="slide-container"
           ref={(el) => el && (this.container = el)}
@@ -202,8 +203,8 @@ export class Carousel extends React.Component<Props, State> {
         </div>
       </div>
 
-      <a className="prev" onClick={() => this.prev()}>&#10094;</a>
-      <a className="next" onClick={() => this.next()}>&#10095;</a>
+      {this.props.showPrev && <a className="prev" onClick={() => this.prev()}>&#10094;</a>}
+      {this.props.showNext && <a className="next" onClick={() => this.next()}>&#10095;</a>}
 
       { this.props.indicator &&
         <div className="indicator">
@@ -222,6 +223,6 @@ export class Carousel extends React.Component<Props, State> {
         </div>
       }
 
-    </Card>;
+    </div>;
   }
 }

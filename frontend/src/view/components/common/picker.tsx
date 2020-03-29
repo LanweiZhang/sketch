@@ -21,12 +21,16 @@ class Cloumn extends React.Component<ColumnProp> {
 
   private onScroll = () => {
     clearTimeout(this.timer);
-    this.timer = setTimeout(this.scrollEnd as TimerHandler, 500);
+    this.timer = setTimeout(this.scrollEnd as TimerHandler, 400);
   }
 
   private scrollEnd = () => {
     if (this.ref.current) {
-      const index = Math.round(this.ref.current.scrollTop / this.props.itemHeight);
+      const index = this.ref.current.scrollTop / this.props.itemHeight;
+      if (!Number.isInteger(index)) {
+        this.ref.current.scrollTo(0, Math.round(index) * this.props.itemHeight);
+        return;
+      }
       if (index >= 0 && index < this.props.items.length) {
         this.props.onChange(this.props.items[index].value);
       } else {

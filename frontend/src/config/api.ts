@@ -17,7 +17,7 @@ export namespace ResData {
       not_sad?:boolean;
       is_approved?:boolean;
       reviewer_id?:Increments;
-      xianyu?:number;
+      fish?:number;
       created_at?:Timestamp;
     };
     author:User;
