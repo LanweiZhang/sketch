@@ -7,6 +7,7 @@ import { List } from '../../components/common/list';
 import { Toolbar } from './toolbar';
 import { RewardItem } from './reward-item';
 import { DBResponse } from '../../../core/db';
+import { notice } from '../../components/common/notice';
 
 interface State {
   rewardsReceived:DBResponse<'getUserRewardsReceived'>;
@@ -23,8 +24,14 @@ const filterOptions:{text:string, value:filterType}[] = [
 
 export class RewardNotice extends React.Component<MobileRouteProps, State> {
   public state:State = {
-    rewardsReceived: [],
-    rewardsSent: [],
+    rewardsReceived: {
+      rewards: [],
+      paginate: ResData.allocThreadPaginate(),
+    },
+    rewardsSent: {
+      rewards: [],
+      paginate: ResData.allocThreadPaginate(),
+    },
     filter: 'all',
   };
 
@@ -32,31 +39,31 @@ export class RewardNotice extends React.Component<MobileRouteProps, State> {
     const { getUserRewardsReceived, getUserRewardsSent } = this.props.core.db;
     const fetchRewardsReceived = getUserRewardsReceived()
       .catch((e) => {
-        // console.log(e);
+        notice.requestError(e);
         return this.state.rewardsReceived;
       });
     const fetchRewardsSent = getUserRewardsSent()
       .catch((e) => {
-        // console.log(e);
+        notice.requestError(e);
         return this.state.rewardsSent;
       });
     const [rewardsReceived, rewardsSent] = await Promise.all([fetchRewardsReceived, fetchRewardsSent]);
     this.setState({rewardsReceived, rewardsSent});
-    // console.log(rewardsReceived, rewardsSent);
   }
 
   public deleteReward = (rewardId:number) => async () => {
     try {
       await this.props.core.db.deleteReward(rewardId);
       let rewardsSent = this.state.rewardsSent;
-      rewardsSent.splice(rewardsSent.findIndex( (r) => r.id == rewardId), 1);
+      const rewards = rewardsSent.rewards;
+      rewards.splice(rewards.findIndex( (r) => r.id == rewardId), 1);
       this.setState({rewardsSent});
 
       // due to pagination, after we delete a reward, we have space for reward in page 2
       rewardsSent = await this.props.core.db.getUserRewardsSent();
       this.setState({rewardsSent});
     } catch (e) {
-      // console.log(e);
+      notice.requestError(e);
     }
   }
 
@@ -80,16 +87,17 @@ export class RewardNotice extends React.Component<MobileRouteProps, State> {
   }
 
   private getRewards() {
+    const { rewardsReceived, rewardsSent, filter } = this.state;
     let selectedRewards:ResData.Reward[] = [];
-    switch (this.state.filter) {
+    switch (filter) {
       case 'all':
-        selectedRewards = [...this.state.rewardsReceived, ...this.state.rewardsSent];
+        selectedRewards = [...rewardsReceived.rewards, ...rewardsSent.rewards];
         break;
       case 'received':
-        selectedRewards = this.state.rewardsReceived;
+        selectedRewards = rewardsReceived.rewards;
         break;
       case 'sent':
-        selectedRewards = this.state.rewardsSent;
+        selectedRewards = rewardsSent.rewards;
         break;
     }
 
