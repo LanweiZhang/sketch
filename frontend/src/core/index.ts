@@ -5,9 +5,10 @@ import { EventBus } from '../utils/events';
 import * as _ from 'lodash/core';
 import { TagHandler, ChannelHandler, BianyuanHandler } from './filter-handler';
 import { Route } from './route';
-import { saveStorage } from '../utils/storage';
+import { saveStorage, FontType } from '../utils/storage';
 import { Themes } from '../view/theme/theme';
 import { updateNoticeTheme } from '../view/components/common/notice';
+import { ResData } from '../config/api';
 import { FAQHandler } from './cache-handler';
 const debounce = require('lodash/debounce');
 
@@ -20,6 +21,13 @@ export type Cache = {
   FAQ:FAQHandler,
 };
 
+interface State {
+  chapterIndex:{
+    threadId:number;
+    chapters:ResData.Post[];
+  };
+}
+
 export class Core {
   public db:DB;
   public user:User;
@@ -29,6 +37,14 @@ export class Core {
   public route:Route;
   public filter:Filters;
   public cache:Cache;
+
+  // data used cross components
+  public state:State = {
+    chapterIndex: {
+      threadId: 0,
+      chapters: [],
+    },
+  };
 
   constructor () {
     (window as any).core = this;

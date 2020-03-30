@@ -2,7 +2,7 @@ import * as React from 'react';
 import './loading.scss';
 
 export function Loading (props:{
-  children:React.ReactNode;
+  children?:React.ReactNode;
 }) {
   return (
     <div className="square">

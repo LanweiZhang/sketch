@@ -60,6 +60,9 @@ class ForgotPasswordController extends Controller
         return response()->error("邮箱格式不正确", 422);
         }
 
+        /*
+        FIXME: comment this out for frontend testing
+        Please uncomment before move to production
         if(Cache::has('reset-password-request-limit-' . request()->ip())){
             return response()->error('当前ip('.request()->ip().')已于10分钟内提交过重置密码请求。', 498);
         }
@@ -67,6 +70,7 @@ class ForgotPasswordController extends Controller
         if(Cache::has('reset-password-limit-' . request()->ip())){
             return response()->error('当前ip('.request()->ip().')已于1小时内成功重置密码。', 498);
         }
+        */
 
         $user_check = User::where('email', $request->email)->first();
 

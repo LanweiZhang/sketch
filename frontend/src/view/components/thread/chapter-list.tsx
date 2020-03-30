@@ -3,6 +3,7 @@ import { ResData } from '../../../config/api';
 import './chapter-list.scss';
 import { Card } from '../common/card';
 import { List } from '../common/list';
+import { Loading } from '../common/loading';
 
 type ChapterOrder = 'created'|'latest';
 
@@ -35,19 +36,21 @@ export class ChapterList extends React.Component<Props, State> {
         </div>
       </div>
 
-      <List>
-        {list.map((chapter, i) => <List.Item
-            noBorder
-            key={chapter.id}
-            onClick={() => this.props.goChapter(chapter.id)}
-          >
-            <span className="chapter-title">
-              {chapter.attributes.title}
-            </span>
-          </List.Item>)
-        }
-        {!this.props.chapters.length && <List.Item>无章节</List.Item>}
-      </List>
+      {!list.length ? <Loading /> :
+        <List noBorder>
+          {list.map((chapter, i) => <List.Item
+              noBorder
+              key={chapter.id}
+              onClick={() => this.props.goChapter(chapter.id)}
+            >
+              <span className="chapter-title">
+                {chapter.attributes.title}
+              </span>
+            </List.Item>)
+          }
+          {!this.props.chapters.length && <List.Item>无章节</List.Item>}
+        </List>
+      }
     </Card>;
   }
 

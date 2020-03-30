@@ -58,10 +58,14 @@ trait RegistrationApplicationObjectTraits{
     }
 
     public function rate_limit_check($function_name, $email=null, $ip=null) {
+        /*
+        FIXME: comment this out for frontend testing
+        please uncomment before move to production
         $item = $email ?? $ip;
         if(Cache::has("Ratelimit-regapp-$function_name-$item")){
             return abort(498,'访问过于频繁。');
         }
         Cache::put("Ratelimit-regapp-$function_name-$item", true, 5);
+        */
     }
 }

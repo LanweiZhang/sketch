@@ -91,6 +91,8 @@ export namespace Database {
     abstract:string;
     previous_id:number;
     next_id:number;
+    warning:string;
+    annotation:string|null;
     reviewee_id:number;
     reviewee_type:string;
     rating:number;

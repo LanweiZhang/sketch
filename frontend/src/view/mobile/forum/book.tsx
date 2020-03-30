@@ -11,6 +11,8 @@ import { Review } from '../../components/thread/review';
 import { Reply } from '../../components/thread/reply';
 import { Reward } from '../../components/thread/reward';
 import { DBResponse } from '../../../core/db';
+import { RoutePath } from '../../../config/route-path';
+import { Loading } from '../../components/common/loading';
 
 interface State {
   data:DBResponse<'getThread'|'getThreadProfile'>;
@@ -18,6 +20,7 @@ interface State {
   showReward:boolean;
   page:'review'|'default'|'reply';
   reply_to_post:ResData.Post;
+  isLoading:boolean;
 }
 
 export class Book extends React.Component<MobileRouteProps, State> {
@@ -31,6 +34,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
     showReward: false,
     page: 'default',
     reply_to_post: ResData.allocPost(),
+    isLoading: true,
   };
 
   public async fetchData () {
@@ -45,7 +49,9 @@ export class Book extends React.Component<MobileRouteProps, State> {
           data = await this.props.core.db.getThreadProfile(+this.props.match.params.id, {});
           break;
       }
-      this.setState({data});
+      this.setState({data, isLoading: false});
+      this.props.core.state.chapterIndex.threadId = data.thread.id;
+      this.props.core.state.chapterIndex.chapters = data.thread.component_index_brief;
     } catch (e) {
       notice.requestError(e);
     }
@@ -76,10 +82,15 @@ export class Book extends React.Component<MobileRouteProps, State> {
     return (
       <Page noTopBorder
         top={
-          <NavBar goBack={this.props.core.route.back}>
+          <NavBar goBack={() => this.props.core.route.go(RoutePath.library)}>
             文章详情
           </NavBar>}
         >
+
+        {this.state.isLoading
+        ?
+        <Loading />
+        :
         <ThreadProfile
           thread={data.thread}
           changeMode={this.changeMode}
@@ -91,6 +102,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
           onReview={() => this.setState({page: 'review'})}
           onReply={() => this.setState({page: 'reply'})}
         />
+        }
 
         {this.renderBookMode()}
 
@@ -118,7 +130,16 @@ export class Book extends React.Component<MobileRouteProps, State> {
               salt={99 /* todo: */}
               fish={99 /* todo: */}
               ham={99 /* todo: */}
-              onReward={(type, value) => {}}
+              onReward={(type, value) => {
+                this.props.core.db.addReward({
+                  value,
+                  rewardable_type: 'Thread',
+                  rewardable_id: data.thread.id,
+                  attribute: type,
+                })
+                .then(() => notice.success('打赏成功'))
+                .catch(notice.requestError);
+              }}
             />}
           </>;
     }

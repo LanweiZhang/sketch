@@ -20,7 +20,7 @@ export class Status extends React.Component<MobileRouteProps, State> {
 
 public render () {
     return (
-      <Page bottom={<MainMenu />}>
+      <Page bottom={<MainMenu />} className="mobile-status">
         <textarea className="textarea font13 border-0" placeholder="今天你丧了吗…" ></textarea>
         <div className="border-1px"></div>
         <button className="publish-btn" >发布</button>

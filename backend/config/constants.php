@@ -29,7 +29,7 @@ return [
     'application_cooldown_days' => 7, // 申请结果在7天内公示
 
     'registration_quiz_total' => 11, //注册答题题目数量
-    'registration_quiz_correct' => 7, // 注册答题正确情况
+    'registration_quiz_correct' => 1, //FIXME:改成7,暂时调为1便于测试,注册答题正确情况
 
     'delay_count_model_interval' => 30, // 站内延迟统计数字的时间(分钟)，比如说阅读量每20分钟更新一次 TODO
     'delay_record_history_count_interval' => 500, //每多少条历史记录，向数据库更新一次 TODO

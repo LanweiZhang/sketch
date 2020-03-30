@@ -38,7 +38,7 @@ function MenuText (props:{
   onClick:() => void;
   value:string;
 }) {
-  return <div className={classnames('menu-text', {'disabled': props.disabled})}>
+  return <div className={classnames('menu-text', {'disabled': props.disabled})} onClick={props.onClick}>
     {props.value}
   </div>;
 }

@@ -409,6 +409,14 @@ export class DB {
     });
   }
 
+  // 获取回帖
+  public getPost (threadId:number, postId:number) : Promise<{
+    thread:ResData.Thread;
+    post:ResData.Post;
+  }> {
+    return this._get(`/thread/${threadId}/post/${postId}`);
+  }
+
   // 修改回帖类型
   public turnToPost (postId:number, convertTo:ReqData.Post.Type) : Promise<ResData.Post> {
     return this._patch(`/post/${postId}/turnToPost`, {
@@ -467,6 +475,24 @@ export class DB {
       return this._post(`/thread/${threadId}/post`, {
         body: post,
       });
+  }
+
+  public addReward (body:{
+    rewardable_id:number;
+    rewardable_type:'Post'|'Thread';
+    value:number;
+    attribute:'shengfan'|'xianyu'|'sangdian'|'jifen'|'fish'|'salt'|'ham';
+  }) {
+    return this._post(`/reward`, {
+      body,
+      errorMsg: {
+        401: '未登录',
+        404: '被打赏模型不存在',
+        410: '今日已经打赏过，一日一内容只能打上一次',
+        412: '余额不足，无法透支打赏超过自身具有虚拟物',
+        422: '输入格式不符合要求',
+      },
+    });
   }
 
   // 收藏

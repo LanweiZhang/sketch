@@ -7,11 +7,13 @@ import { ReqData, ResData } from '../../../config/api';
 import { MobileRouteProps } from '../router';
 import { ThreadPreview } from '../../components/thread/thread-preview';
 import { DBResponse } from '../../../core/db';
+import { Loading } from '../../components/common/loading';
 
 interface State {
   data:DBResponse<'getBooks'>;
   onPage:number;
   ordered:ReqData.Thread.ordered;
+  isLoading:boolean;
 }
 
 export class Library extends React.Component<MobileRouteProps, State> {
@@ -22,6 +24,7 @@ export class Library extends React.Component<MobileRouteProps, State> {
     },
     onPage: 1,
     ordered: ReqData.Thread.ordered.default,
+    isLoading: true,
   };
 
   public componentDidMount() {
@@ -37,13 +40,13 @@ export class Library extends React.Component<MobileRouteProps, State> {
       withBianyuan: bianyuan.isSelected(1),
       ordered: this.state.ordered,
     })
-    .then((data) => this.setState({data}))
+    .then((data) => this.setState({data, isLoading: false}))
     .catch(console.error);
   }
 
   public render () {
     return <Page top={<NavBar
-      goBack={() => this.props.core.route.back()}
+      goBack={() => this.props.core.route.go(RoutePath.home)}
       menu={NavBar.MenuIcon({
         onClick: () => this.props.core.route.go(RoutePath.search),
         icon: 'fa fa-search',
@@ -58,13 +61,18 @@ export class Library extends React.Component<MobileRouteProps, State> {
         }}
         applyFilter={() => this.fetchData()}
       />
-      {this.state.data.threads.map((thread) => <ThreadPreview
+      {this.state.isLoading
+      ?
+      <Loading />
+      :
+      this.state.data.threads.map((thread) => <ThreadPreview
         key={thread.id}
         data={thread}
         onTagClick={(channelId, tagId) => {}}
         onClick={(id) => this.props.core.route.book(id)}
         onUserClick={(id) => this.props.core.route.user(id)}
-      />)}
+      />)
+      }
     </Page>;
   }
 }

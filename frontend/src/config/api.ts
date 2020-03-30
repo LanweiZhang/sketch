@@ -197,6 +197,8 @@ export namespace ResData {
         redirect_count: 0,
         author_attitude: 0,
         summary: '',
+        annotation: null,
+        warning: '',
       },
       reviewee: allocThread(),
     };

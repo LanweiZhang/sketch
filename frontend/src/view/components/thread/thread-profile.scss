@@ -46,17 +46,9 @@
             }
         }
     }
-    > .title {
+    > .book-title {
         margin-top: var(--margin-size-16);
         margin-bottom: var(--margin-size-8);
-        text-decoration-color: var(--color-primary);
-        text-decoration: line;
-        font-size: var(--font-size-16);
-        line-height: calc((var(--font-size-16)) - 4px);
-        font-weight: 500;
-        width: fit-content;
-
-        border-bottom: var(--color-primary) solid 3px;
     }
 
     .body, .last-component {

@@ -1,4 +1,5 @@
 import { History } from 'history';
+import { RoutePath } from '../config/route-path';
 
 export class Route {
     constructor (

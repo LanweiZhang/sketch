@@ -57,6 +57,8 @@ import { bbcode2html, html2bbcode, test } from '../utils/text-formater';
 import { bbcodTestCases } from '../test/bbcode/bbcode';
 import { loadTestData, formatTestData } from '../test/bbcode/additionalTest';
 import { App } from '../view';
+import { Reward } from '../view/components/thread/reward';
+import { InputNumber } from '../view/components/common/input/number';
 import { MenuItem, Menu } from '../view/components/common/menu';
 import { NoticeType, notice } from '../view/components/common/notice';
 import { HomeworkPreview } from '../view/components/home/homework-preview';
@@ -354,6 +356,34 @@ storiesOf('Common Components', module)
       </div>
     </Loading>,
   )
+  .add('InputNumber', () => (React.createElement(class extends React.Component<{}, {
+    value:number,
+  }> {
+    public state = {
+      value:0,
+    };
+
+    public onChange = (value:number) => {
+      this.setState({
+        value,
+      });
+    }
+
+    public render() {
+      return <div>
+        <InputNumber
+          value={this.state.value}
+          onChange={this.onChange}
+          fractionDigits={number('fractionDigits', 0)}
+          disabled={boolean('disabled', false)}
+          placeholder={text('placeholder', 'placeholder')}
+          min={number('min', -10)}
+          max={number('max', 10)}
+        />
+        <button onClick={() => console.log(this.state.value)}>打印</button>
+      </div>;
+    }
+  })))
   .add('Menu', () => (
     <Menu>
       <MenuItem icon="far fa-thumbs-up icon" title="点赞提醒" badgeNum={1000} />
@@ -874,7 +904,32 @@ storiesOf('Thread Components', module)
       onUserClick={action('onUserClick')}
     />
   </Card>)
-;
+  .add('Reward', () => (React.createElement(class extends React.Component<{}, {showReward:boolean}> {
+    public state= {
+      showReward: false,
+    };
+
+    public changeShow = (showReward:boolean) => {
+      this.setState({
+        showReward,
+      });
+    }
+
+    public render() {
+      return <div>
+        <button onClick={() => this.changeShow(true)}>打赏</button>
+        {
+          this.state.showReward && <Reward
+            onClose={() => this.changeShow(false)}
+            salt={0}
+            fish={59}
+            ham={5849}
+            onReward={(type, num) => console.log(type, num)}
+          />
+        }
+      </div>;
+    }
+  })));
 
 storiesOf('Message Components', module)
   .add('chatBubble', () =>

@@ -10,6 +10,8 @@
   padding: 0 26px;
   cursor: pointer;
   box-sizing: border-box;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   i {
     margin-right: 4px;

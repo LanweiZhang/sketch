@@ -19,6 +19,7 @@ export function indexEq (objects:TaggedId[], id:number) : number {
   while (l < h) {
     const m = interpolate(objects, l, h, id);
     const x = objects[m].id;
+    console.log('l, h', l, h, m, x);
     if (x === id) {
       return m;
     } else if (x < id) {
