@@ -91,7 +91,10 @@ class RewardController extends Controller
         ->where('receiver_id',$user->id)
         ->orderBy('created_at','desc')
         ->paginate(config('preference.rewards_per_page'));
-        return response()->success(RewardResource::collection($rewards));
+        return response()->success([
+            'rewards' => RewardResource::collection($rewards),
+            'paginate' => new PaginateResource($rewards),
+        ]);
 
     }
 
@@ -103,6 +106,9 @@ class RewardController extends Controller
         ->where('user_id',$user->id)
         ->orderBy('created_at','desc')
         ->paginate(config('preference.rewards_per_page'));
-        return response()->success(RewardResource::collection($rewards));
+        return response()->success([
+            'rewards' => RewardResource::collection($rewards),
+            'paginate' => new PaginateResource($rewards),
+        ]);
     }
 }

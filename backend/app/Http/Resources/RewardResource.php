@@ -16,6 +16,8 @@ class RewardResource extends JsonResource
     {
         $author = null;
         $receiver = null;
+        $rewardable = $this->getRewardableResource(
+            $this->rewardable_type, $this->whenLoaded('rewardable'));
         if($this->showUser()){
             $author = new UserBriefResource($this->whenLoaded('author'));
             $receiver = new UserBriefResource($this->whenLoaded('receiver'));
@@ -34,7 +36,23 @@ class RewardResource extends JsonResource
             ],
             'author' => $author,
             'receiver' => $receiver,
+            'rewardable' => $rewardable,
         ];
+    }
+
+    private function getRewardableResource($rewardable_type, $rewardable){
+        switch ($rewardable_type) {
+            case 'post':
+                return new PostBriefResource($rewardable);
+            case 'quote':
+                return new QuoteResource($rewardable);
+            case 'status':
+                // TODO: statusBriefResource?
+                return new StatusResource($rewardable);
+            case 'thread':
+                return new ThreadBriefResource($rewardable);
+            }
+        return null;
     }
     private function isOwnReward(){
         return auth('api')->id()===$this->user_id;

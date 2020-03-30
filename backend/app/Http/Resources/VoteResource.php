@@ -17,6 +17,8 @@ class VoteResource extends JsonResource
     {
         $author = null;
         $receiver = null;
+        $votable = $this->getVotableResource(
+            $this->votable_type, $this->whenLoaded('votable'));
         if ($this->showUser()){
             $author = new UserBriefResource($this->whenLoaded('author'));
             $receiver = new UserBriefResource($this->whenLoaded('receiver'));
@@ -32,9 +34,24 @@ class VoteResource extends JsonResource
             ],
             'author' => $author,
             'receiver' => $receiver,
+            'votable' => $votable,
         ];
     }
 
+    private function getVotableResource($votable_type, $votable){
+        switch ($votable_type) {
+            case 'post':
+                return new PostBriefResource($votable);
+            case 'quote':
+                return new QuoteResource($votable);
+            case 'status':
+                // TODO: statusBriefResource?
+                return new StatusResource($votable);
+            case 'thread':
+                return new ThreadBriefResource($votable);
+            }
+        return null;
+    }
     private function isUpvote($attitude_type){
         return $attitude_type === 'upvote';
     }
