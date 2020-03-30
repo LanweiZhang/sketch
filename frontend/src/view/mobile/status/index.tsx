@@ -2,8 +2,6 @@ import * as React from 'react';
 import { MobileRouteProps } from '../router';
 import { List } from '../../components/common/list';
 import  './status.scss';
-// 等后续用api直接替换
-import data from './data';
 import { Page } from '../../components/common/page';
 import { MainMenu } from '../main-menu';
 import { SearchBar } from '../search/search-bar';
@@ -14,11 +12,11 @@ import { DBResponse } from '../../../core/db';
 import { ResData } from '../../../config/api';
 import { notice } from '../../components/common/notice';
 import { Loading } from '../../components/common/loading';
+import { bbcode2html } from '../../../utils/text-formater';
 
 interface State {
   allStatuses:DBResponse<'getStatuses'>;
   followStatuses:DBResponse<'getFollowStatuses'>;
-  list:any;
   isAll:boolean;
   publishDisabled:boolean;
   isLoading:boolean;
@@ -35,7 +33,6 @@ export class Status extends React.Component<MobileRouteProps, State> {
       paginate: ResData.allocThreadPaginate(),
     },
     isAll: true,
-    list: data,
     publishDisabled: true,
     isLoading: true,
 };
@@ -60,13 +57,27 @@ public async fetchData(isLoading=true) {
   }
 }
 
-public getPushlishDisabled = () => {
+private getPushlishDisabled = () => {
   const ref = this.textEditorRef.current;
   const publishDisabled = !ref || ref.state.text.length == 0
       || ref.state.text == '<p><br></p>';
   // FIXME: empty state of text editor is p br p sometimes.
   if (publishDisabled != this.state.publishDisabled) {
       this.setState({publishDisabled});
+  }
+}
+
+public publishStatue = async () => {
+  const ref = this.textEditorRef.current;
+  if (!ref) { return; }
+  const content = ref.getContent();
+  try {
+    const { status } = await this.props.core.db.postStatue(content);
+    const allStatuses = this.state.allStatuses;
+    allStatuses.statuses = [ status, ...allStatuses.statuses ];
+    this.setState({allStatuses});
+  } catch (e) {
+    notice.requestError(e);
   }
 }
 
@@ -95,7 +106,12 @@ public render () {
             ref={this.textEditorRef}
             placeholder="今天你丧了吗…"/>
           <div className="publish-btn">
-            <Button size="small" disabled={publishDisabled} color={Colors.light} inline={true} onClick={() => console.log(1)}>发布</Button>
+            <Button
+              size="small"
+              disabled={publishDisabled}
+              color={Colors.light}
+              inline={true}
+              onClick={this.publishStatue}>发布</Button>
           </div>
         </div>
         <div className="content">
@@ -129,31 +145,17 @@ public render () {
   // 根据获取的动态信息渲染列表
   public renderList () {
     const statuses = this.getFilteredStatuses();
-    return statuses.map((statue) => {
+    const renderItem = (statue) => {
+      const htmlContent = bbcode2html(statue.attributes.body);
       return (
         <List.Item key={ statue.id } className="status-item">
-            <div className="status-author">
-              <span>{ statue.author.attributes.name }</span>
-              <span>{ statue.attributes.created_at }</span>
-            </div>
-            <div className="status-content">
-              { statue.attributes.body }
-            </div>
-          </List.Item>
-      );
-    });
+          <div className="status-author">
+            <span>{ statue.author.attributes.name }</span>
+            <span>{ statue.attributes.created_at }</span>
+          </div>
+          <div className="status-content" dangerouslySetInnerHTML={{__html:htmlContent}} />
+        </List.Item>);
+    }
+    return statuses.map((statue) => renderItem(statue));
   }
-
-  public async handleClick (isAll:boolean) {
-    // TODO 确定api如何交互后修改
-    // await this.getTidingsList().then(res => {
-    //   this.setState((preState) => ({
-    //     list: res
-    //   }))
-    // })
-  }
-
-  // 获取消息列表
-  public getTidingsList () {}
-
 }
