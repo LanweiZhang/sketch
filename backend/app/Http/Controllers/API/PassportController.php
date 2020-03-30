@@ -18,6 +18,7 @@ use App\Models\HistoricalPasswordReset;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use App\Sosadfun\Traits\SwitchableMailerTraits;
+use \App\Models\InvitationToken;
 
 class PassportController extends Controller
 {
@@ -64,37 +65,6 @@ class PassportController extends Controller
         return $user;
     }
 
-    protected function create_by_invitation_token(array $data, $invitation_token, $application)
-    {
-        $new_user_base = array_key_exists($invitation_token->token_level, config('constants.new_user_base')) ? config('constants.new_user_base')[$invitation_token->token_level]:'';
-
-        return DB::transaction( function() use($data, $invitation_token, $new_user_base, $application){
-            $user = User::create([
-                'email' => $data['email'],
-                'name' => $data['name'],
-                'password' => bcrypt($data['password']),
-                'activated' => false,
-                'level' => $new_user_base? $new_user_base['level']:0,
-            ]);
-            $info = UserInfo::create([
-                'user_id' => $user->id,
-                'invitation_token' => $invitation_token->token,
-                'activation_token' => str_random(45),
-                'invitor_id' => $invitation_token->is_public?0:$invitation_token->user_id,
-                'salt' => $new_user_base? $new_user_base['salt']:0,
-                'fish' => $new_user_base? $new_user_base['fish']:0,
-                'ham' => $new_user_base? $new_user_base['ham']:0,
-                'creation_ip' => request()->ip(),
-            ]);
-
-            if($application){
-                $application->update(['user_id'=>$user->id]);
-            }
-
-            $invitation_token->inactive_once();
-            return $user;
-        });
-    }
 
     protected function create_by_invitation_email(array $data, $application)
     {
@@ -132,17 +102,84 @@ class PassportController extends Controller
         return response()->success($success);
     }
 
+    // ============ register by invitation token =======================
+    protected function create_by_invitation_token(array $data, $invitation_token, $application)
+    {
+        $new_user_base = array_key_exists($invitation_token->token_level, config('constants.new_user_base')) ? config('constants.new_user_base')[$invitation_token->token_level]:'';
+
+        return DB::transaction( function() use($data, $invitation_token, $new_user_base, $application){
+            $user = User::create([
+                'email' => $data['email'],
+                'name' => $data['name'],
+                'password' => bcrypt($data['password']),
+                'activated' => false,
+                'level' => $new_user_base? $new_user_base['level']:0,
+            ]);
+            $info = UserInfo::create([
+                'user_id' => $user->id,
+                'invitation_token' => $invitation_token->token,
+                'activation_token' => str_random(45),
+                'invitor_id' => $invitation_token->is_public?0:$invitation_token->user_id,
+                'salt' => $new_user_base? $new_user_base['salt']:0,
+                'fish' => $new_user_base? $new_user_base['fish']:0,
+                'ham' => $new_user_base? $new_user_base['ham']:0,
+                'creation_ip' => request()->ip(),
+            ]);
+
+            if($application){
+                $application->update(['user_id'=>$user->id]);
+            }
+
+            $invitation_token->inactive_once();
+            return $user;
+        });
+    }
+
+    public function register_by_invitation_token_submit_token(Request $request)
+    {
+        // TODO: recaptcha
+        $this->validate($request, [
+            'invitation_token' => 'required|string|min:6|max:191'
+        ]);
+
+        $token = $request->invitation_token;
+
+        /* TODO: 这段搬到前端后删掉,后端只用返回token是否valid
+        if(!preg_match('/^'.config('constants.invitation_token_prefix').'/', $token)){
+            return back()->with('danger', '邀请码应以'.config('constants.invitation_token_prefix').'开头，请注意大小写');
+        }
+        */
+
+        $invitation_token = $this->findInvitationToken($token);
+
+        if(!$invitation_token) { abort(404, '邀请码不存在'); }
+
+        if(($invitation_token->invitation_times < 1)||($invitation_token->invite_until <  Carbon::now())){
+            abort(404, '邀请码已失效');
+        }
+        return response()->success('token verified');
+    }
+
+    private function findInvitationToken($token){
+        // TODO: probably only cache public invitation token?
+        return Cache::remember('findInvitationToken.'.$token, 1, function() use($token) {
+            return InvitationToken::where('token',$token)->first();
+        });
+    }
+
+    // ==========================================================================
+
     public function register_by_invitation(Request $request)
     {
         $user = [];
 
         if(ConstantObjects::black_list_emails()->where('email',request('email'))->first()){
-            abort(499);
+            abort(499, '黑名单');
         }
 
         if($request->invitation_type==='token'){
 
-            $invitation_token = \App\Models\InvitationToken::where('token', request('invitation_token'))->first();
+            $invitation_token = InvitationToken::where('token', request('invitation_token'))->first();
 
             $application = \App\Models\RegistrationApplication::where('email', request('email'))->first();
 
@@ -184,7 +221,6 @@ class PassportController extends Controller
         $success['id'] = $user->id;
         return response()->success($success);
     }
-
 
 
     public function login(){
