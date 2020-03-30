@@ -24,6 +24,7 @@ interface State extends RewardData {
     publishDisabled:boolean;
 }
 
+// TODO: 不能直接写评,要先建立清单
 export class Review extends React.Component<Props, State> {
     public state:State = {
         body: '',
