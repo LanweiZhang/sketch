@@ -241,6 +241,17 @@ export class DB {
     });
   }
 
+  // status
+  public getStatuses = () : Promise<{
+    statuses:ResData.Status[],
+    paginate:ResData.ThreadPaginate,
+  }> => this._get(`/status`)
+
+  public getFollowStatuses = () : Promise<{
+    statuses:ResData.Status[],
+    paginate:ResData.ThreadPaginate,
+  }> => this._get(`/follow_status`)
+
   // 发送私信
   public sendMessage (toUserId:number, content:string) : Promise<{
     message:ResData.Message,

@@ -36,34 +36,6 @@
     }
   }
 
-
-
-  .border-0 {
-    border: 0 !important;
-  }
-  .border-1px {
-    height: 1px;
-    background: #dbdbdb;
-    -webkit-transform: scaleY(0.5);
-    -webkit-transform-origin: 0 0;
-    overflow: hidden;
-    width: calc(100% - 10px);
-    margin-left: 5px;
-  }
-  .font13 {
-    font-size: 13px;
-    color: rgb(77, 77, 77);
-  };
-  
-  .font12 {
-    font-size: 12px;
-    margin: 2px 2px 5px 0px;
-    color: #afafaf;
-  };
-  .content {
-    background: #f4f5f9;
-  }
-  
   .list {
     border: 0;
     box-shadow: none !important;

@@ -10,20 +10,55 @@ import { SearchBar } from '../search/search-bar';
 import { TextEditor } from '../../components/common/textEditor';
 import { Button } from '../../components/common/button';
 import { Colors } from '../../theme/theme';
+import { DBResponse } from '../../../core/db';
+import { ResData } from '../../../config/api';
+import { notice } from '../../components/common/notice';
+import { Loading } from '../../components/common/loading';
 
 interface State {
+  allStatuses:DBResponse<'getStatuses'>;
+  followStatuses:DBResponse<'getFollowStatuses'>;
   list:any;
   isAll:boolean;
   publishDisabled:boolean;
+  isLoading:boolean;
 }
-
+// TODO: pagination, next page, cache
 export class Status extends React.Component<MobileRouteProps, State> {
   public state:State = {
+    allStatuses: {
+      statuses: [],
+      paginate: ResData.allocThreadPaginate(),
+    },
+    followStatuses: {
+      statuses: [],
+      paginate: ResData.allocThreadPaginate(),
+    },
     isAll: true,
     list: data,
     publishDisabled: true,
+    isLoading: true,
 };
 private textEditorRef = React.createRef<TextEditor>();
+
+public async componentDidMount() {
+  await this.fetchData();
+}
+
+public async fetchData(isLoading=true) {
+  this.setState({isLoading});
+  try {
+    if (this.state.isAll) {
+      const allStatuses = await this.props.core.db.getStatuses();
+      this.setState({allStatuses, isLoading:false});
+    } else {
+      const followStatuses = await this.props.core.db.getFollowStatuses();
+      this.setState({followStatuses, isLoading:false});
+    }
+  } catch (e) {
+    notice.requestError(e);
+  }
+}
 
 public getPushlishDisabled = () => {
   const ref = this.textEditorRef.current;
@@ -36,10 +71,16 @@ public getPushlishDisabled = () => {
 }
 
 public setFilter = (isAll:boolean) => () => {
+  const { allStatuses, followStatuses } = this.state;
+
   if (isAll == this.state.isAll) {
     return;
   } else {
-    this.setState({isAll});
+    const statuses = isAll ? allStatuses.statuses : followStatuses.statuses;
+    const hasLoadedBefore = statuses.length > 0;
+    this.setState({isAll}, async () => {
+      await this.fetchData(!hasLoadedBefore);
+    });
   }
 }
 
@@ -68,23 +109,35 @@ public render () {
                 关注
             </button>
           </div>
-          <List> {this.renderList()} </List>
+          { this.state.isLoading ? <Loading /> :
+              <List> {this.renderList()} </List>
+          }
         </div>
       </Page>
     );
   }
 
+  private getFilteredStatuses() {
+    const { isAll, allStatuses, followStatuses } = this.state;
+    if (isAll) {
+      return allStatuses.statuses;
+    } else {
+      return followStatuses.statuses;
+    }
+  }
+
   // 根据获取的动态信息渲染列表
   public renderList () {
-    return data.map((msg, i) => {
+    const statuses = this.getFilteredStatuses();
+    return statuses.map((statue) => {
       return (
-        <List.Item key={ msg.id } className="status-item">
+        <List.Item key={ statue.id } className="status-item">
             <div className="status-author">
-              <span>{msg.author}</span>
-              <span>{msg.time}</span>
+              <span>{ statue.author.attributes.name }</span>
+              <span>{ statue.attributes.created_at }</span>
             </div>
             <div className="status-content">
-              {msg.message}
+              { statue.attributes.body }
             </div>
           </List.Item>
       );
