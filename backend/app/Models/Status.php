@@ -99,7 +99,7 @@ class Status extends Model
         return \App\Models\Reward::with('author')
         ->withType('status')
         ->withId($this->id)
-        ->orderBy('created_at','desc')
+        ->latest()
         ->take(10)
         ->get();
     }

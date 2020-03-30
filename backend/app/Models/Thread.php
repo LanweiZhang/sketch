@@ -455,7 +455,8 @@ class Thread extends Model
         ->withTypes($this->index_component_type())
         ->brief()
         ->get();
-        return $posts->sortBy('simpleInfo.order_by');
+        $posts->sortBy('simpleInfo.order_by');
+        return $posts;
     }
 
     public function index_component_type()
