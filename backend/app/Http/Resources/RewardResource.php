@@ -16,10 +16,11 @@ class RewardResource extends JsonResource
     {
         $author = null;
         $receiver = null;
+        // TODO double check if "whenloaded" is properly working when not loaded.
         $rewardable = $this->getRewardableResource(
             $this->rewardable_type, $this->whenLoaded('rewardable'));
-        if($this->showUser()){
-            $author = new UserBriefResource($this->whenLoaded('author'));
+        $author = new UserBriefResource($this->whenLoaded('author'));
+        if($this->showReceiver()){
             $receiver = new UserBriefResource($this->whenLoaded('receiver'));
         }
 
@@ -55,13 +56,15 @@ class RewardResource extends JsonResource
         return null;
     }
     private function isOwnReward(){
-        return auth('api')->id()===$this->user_id;
+        return auth('api')->check()&&auth('api')->id()===$this->user_id;
     }
     private function isRewardForMe(){
-        return auth('api')->id()===$this->receiver_id;
+        return auth('api')->check()&&auth('api')->id()===$this->receiver_id;
     }
-
-    private function showUser(){
-        return $this->isOwnReward()||$this->isRewardForMe()||(auth('api')->check()&&auth('api')->user()->isAdmin());
+    private function isAdmin(){
+        return auth('api')->check()&&auth('api')->user()->isAdmin();
+    }
+    private function showReceiver(){
+        return $this->isRewardForMe()||$this->isAdmin();
     }
 }

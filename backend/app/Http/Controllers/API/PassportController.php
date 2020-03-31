@@ -161,8 +161,8 @@ class PassportController extends Controller
     }
 
     private function findInvitationToken($token){
-        // TODO: probably only cache public invitation token?
-        return Cache::remember('findInvitationToken.'.$token, 1, function() use($token) {
+        // TODO: probably only cache public invitation token? Well we have to consider that if a private invitation token got released online and suddenly a thousands user submitted the token to register...in that case it will become a burden for server and needs cache.
+        return Cache::remember('findInvitationToken.'.$token, 5, function() use($token) {
             return InvitationToken::where('token',$token)->first();
         });
     }
@@ -185,7 +185,10 @@ class PassportController extends Controller
 
             if(!$invitation_token){abort(404,'邀请码不存在');}
 
-            if(($invitation_token->invitation_times < 1)||($invitation_token->invite_until <  Carbon::now())){abort(444);}
+            if(($invitation_token->invitation_times < 1)||($invitation_token->invite_until <  Carbon::now())){
+                Cache::forget('findInvitationToken.'.$token);
+                abort(444);
+            }
 
             $validator = $this->validator($request->all());
             if ($validator->fails()) {
