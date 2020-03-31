@@ -540,6 +540,18 @@ export class DB {
     return true;
   }
 
+  public registerVerifyInvitationToken = (invitation_token:string) :
+    Promise<string> => {
+    return this._post('/register/by_invitation_token/submit_token', {
+      body: {
+        invitation_token,
+      },
+      errorMsg: {
+        404: '邀请码不存在或已过期',
+        429: '五分钟内只能尝试注册一次',
+      },
+    });
+  }
   public registerByInvitationEmailSubmitEmail = (email:string) :
     Promise<{
       registration_application:ResData.RegistrationApplication;

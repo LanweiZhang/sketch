@@ -17,6 +17,8 @@ import { RegMailInfo } from './reg-mail-info';
 import { RegMailProgress } from './reg-mail-progress';
 import { RegCode } from './reg-code';
 import { CreateAccount } from './create-account';
+import { Constant } from '../../../../config/constant';
+import { notice } from '../../../components/common/notice';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
@@ -81,8 +83,10 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   public nextStep = async () => {
-    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay } = this.props.core.db;
-    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay, essayAnswer, regMailToken } = this.state;
+    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay, registerVerifyInvitationToken } = this.props.core.db;
+
+    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay, essayAnswer, regMailToken, regCode } = this.state;
+
     switch (step) {
       case 'info':
         this.setState({ step: 'choose-reg-option' });
@@ -191,9 +195,18 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'reg-mail-progress':
         break;
       case 'reg-code': {
-        // TODO: submit invitation code (waiting for api)
-        alert('邀请码注册api还没好,之后注册肯定会失败哈');
-        this.setState({ step: 'create-account' });
+        // verify token
+        if (regCode.substr(0, Constant.invitation_token_prefix.length) != Constant.invitation_token_prefix) {
+          notice.warning(`邀请码应以${Constant.invitation_token_prefix}开头，请注意大小写和空格`);
+        } else {
+          try {
+            await registerVerifyInvitationToken(regCode);
+            this.setState({ step: 'create-account' });
+          } catch (e) {
+            notice.requestError(e);
+            notice.info('五分钟内只能提交一次邀请码，您已失败一次，请于五分钟后重试。');
+          }
+        }
         break;
       }
       case 'create-account':

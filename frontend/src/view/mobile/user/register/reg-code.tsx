@@ -7,10 +7,12 @@ export function RegCode (props:{
   changeRegCode:(code:string) => () => void;
 }) {
   return (
+
     <Card className="reg">
       <div className="input-text" id="reg-code-input">
         <input type="text"
-          maxLength={100}
+          maxLength={191}
+          minLength={6}
           value={props.regCode}
           onChange={(e) => props.changeRegCode(e.target.value)()}
           placeholder="请输入邀请码"></input>

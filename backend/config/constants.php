@@ -1,5 +1,6 @@
 <?php
 
+// also see frontend/src/config/constants
 return [
     'longcomment_length' => 200, //“长评”必须达到该字数
     'update_min' => 1000, //章节更新必须达到这个水平才能进入排名榜

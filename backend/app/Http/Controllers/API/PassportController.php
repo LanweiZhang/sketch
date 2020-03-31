@@ -143,13 +143,6 @@ class PassportController extends Controller
         ]);
 
         $token = $request->invitation_token;
-
-        /* TODO: 这段搬到前端后删掉,后端只用返回token是否valid
-        if(!preg_match('/^'.config('constants.invitation_token_prefix').'/', $token)){
-            return back()->with('danger', '邀请码应以'.config('constants.invitation_token_prefix').'开头，请注意大小写');
-        }
-        */
-
         $invitation_token = $this->findInvitationToken($token);
 
         if(!$invitation_token) { abort(404, '邀请码不存在'); }
