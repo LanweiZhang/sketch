@@ -422,6 +422,7 @@ export namespace ResData {
     };
     author?:User;
     receiver?:User;
+    votable?:null | ResData.Thread | ResData.Post | ResData.Status | ResData.Quote;
   }
 
   export interface Reward {
@@ -437,6 +438,7 @@ export namespace ResData {
     };
     author?:User;   //available at reward_received
     receiver?:User; //available at reward_sent
+    rewardable?:null | ResData.Thread | ResData.Post | ResData.Status | ResData.Quote;
   }
 
   export interface Collection {

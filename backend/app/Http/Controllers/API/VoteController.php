@@ -102,7 +102,10 @@ class VoteController extends Controller
         ->withAttitude('upvote')
         ->orderBy('created_at','desc')
         ->paginate(config('preference.votes_per_page'));
-        return response()->success(VoteResource::collection($votes));
+        return response()->success([
+            'votes' => VoteResource::collection($votes),
+            'paginate' => new PaginateResource($votes),
+        ]);
 
     }
 
@@ -114,6 +117,9 @@ class VoteController extends Controller
         ->where('user_id',$user->id)
         ->orderBy('created_at','desc')
         ->paginate(config('preference.votes_per_page'));
-        return response()->success(VoteResource::collection($votes));
+        return response()->success([
+            'votes' => VoteResource::collection($votes),
+            'paginate' => new PaginateResource($votes),
+        ]);
     }
 }

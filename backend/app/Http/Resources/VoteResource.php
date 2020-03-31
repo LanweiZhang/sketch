@@ -17,8 +17,12 @@ class VoteResource extends JsonResource
     {
         $author = null;
         $receiver = null;
-        if ($this->showUser()){
+        $votable = $this->getVotableResource(
+            $this->votable_type, $this->whenLoaded('votable'));
+        if ($this->showAuthor()){
             $author = new UserBriefResource($this->whenLoaded('author'));
+        }
+        if ($this->showReceiver()){
             $receiver = new UserBriefResource($this->whenLoaded('receiver'));
         }
         return [
@@ -32,19 +36,46 @@ class VoteResource extends JsonResource
             ],
             'author' => $author,
             'receiver' => $receiver,
+            'votable' => $votable,
         ];
     }
 
-    private function isUpvote($attitude_type){
-        return $attitude_type === 'upvote';
+    private function getVotableResource($votable_type, $votable){
+        switch ($votable_type) {
+            case 'post':
+                return new PostBriefResource($votable);
+            case 'quote':
+                return new QuoteResource($votable);
+            case 'status':
+                // TODO: statusBriefResource?
+                return new StatusResource($votable);
+            case 'thread':
+                return new ThreadBriefResource($votable);
+            }
+        return null;
+    }
+    private function isUpvote(){
+        return $this->attitude_type === 'upvote';
     }
 
-    private function isOwnVote($user_id){
-        return auth('api')->id()===$user_id;
+    private function isVoteForMe(){
+        return auth('api')->check()&&auth('api')->id()===$this->user_id;
     }
 
-    private function showUser(){
-        return $this->isUpvote($this->attitude_type)||$this->isOwnVote($this->user_id)||(auth('api')->check()&&auth('api')->user()->isAdmin());
+    private function isOwnVote(){
+        return auth('api')->check()&&auth('api')->id()===$this->receiver_id;
+    }
+
+    private function isAdmin(){
+        return auth('api')->check()&&auth('api')->user()->isAdmin();
+    }
+
+    private function showAuthor(){
+        return $this->isUpvote()||$this->isOwnVote()||$this->isAdmin();
+    }
+
+    private function showReceiver(){
+        return $this->isVoteForMe()||$this->isAdmin();
     }
 
 }

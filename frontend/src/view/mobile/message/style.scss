@@ -23,6 +23,11 @@
 
 .message-list {
   margin-top: var(--margin-size-8);
+  background: transparent;
+  .list-item {
+    background: white;
+  }
+  
   .left{
     width: 65%;
   }

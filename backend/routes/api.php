@@ -33,11 +33,15 @@ Route::group(['middleware' => ['throttle:60,1,all']], function () {
     Route::patch('email/reset_via_password', 'API\PassportController@reset_email_via_password');//修改个人邮箱
     Route::get('email/reset_via_password/{token}', 'API\PassportController@reset_email_via_token');//确认个人邮箱为本人
 
+    // register by invitation token
+    // check if token is valid
+    Route::post('register/by_invitation_token/submit_token', 'API\PassportController@register_by_invitation_token_submit_token');
+    // ->middleware('throttle:1,5,checkin'); // FIXME:uncomment throttle (1 times per 5 min), it's temporarily disabled for testing
+
     // 输入邮箱申请测试答题
     Route::post('register/by_invitation_email/submit_email', 'API\RegAppController@submit_email'); // 输入邮箱尝试注册
     Route::post('register/by_invitation_email/submit_quiz', 'API\RegAppController@submit_quiz'); // 尝试答题
     Route::post('register/by_invitation_email/submit_email_confirmation_token', 'API\RegAppController@submit_email_confirmation_token'); // 填写确认邮箱的token
-
     Route::get('register/by_invitation_email/resend_email_verification', 'API\RegAppController@resend_email_verification'); // 重新发送邮箱确认邮件
     Route::post('register/by_invitation_email/submit_essay', 'API\RegAppController@submit_essay'); // 提交小论文
     Route::get('register/by_invitation_email/resend_invitation_email', 'API\RegAppController@resend_invitation_email'); // 重发邀请邮件

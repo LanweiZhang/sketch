@@ -24,11 +24,9 @@ class QiandaoController extends Controller
         $user = auth('api')->user();
         $info = $user->info;
         // a new day starts at 22:00
-        if(Cache::has('checkin-user-'.$user->id) ||
-            $info->qiandao_at > Carbon::today()->subHours(2)->toDateTimeString()) {
+        if($info->qiandao_at > Carbon::today()->subHours(2)->toDateTimeString()) {
             abort(409, '已领取奖励，请勿重复签到');
         }
-        Cache::put('checkin-user-'.$user->id, true, 5);
         $info = $user->info;
         $checkin_result = $this->checkin($user);
         return response()->success(new CheckinResource($checkin_result));

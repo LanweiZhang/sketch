@@ -318,17 +318,20 @@ export class DB {
     });
   }
 
-  // FIXME
   //reward system
   // get rewards received by a user
   public getUserRewardsReceived = (userId:number = this.user.id) :
-    Promise<ResData.Reward[]> =>
-      this._get(`/user/${userId}/reward_received`)
+    Promise<{
+      rewards:ResData.Reward[],
+      paginate:ResData.ThreadPaginate,
+    }> => this._get(`/user/${userId}/reward_received`)
 
   // get rewards sent by a user
   public getUserRewardsSent = (userId:number = this.user.id) :
-    Promise<ResData.Reward[]> =>
-      this._get(`/user/${userId}/reward_sent`)
+    Promise<{
+      rewards:ResData.Reward[],
+      paginate:ResData.ThreadPaginate,
+    }> => this._get(`/user/${userId}/reward_sent`)
 
   public deleteReward = (rewardId:number) :
     Promise<string> => this._delete(`/reward/${rewardId}`)
@@ -365,12 +368,16 @@ export class DB {
 
   // get votes received by a user
   public getUserVotesReceived = (userId:number = this.user.id) :
-    Promise<ResData.Vote[]>  =>
-      this._get(`/user/${userId}/vote_received`)
+    Promise<{
+      votes:ResData.Vote[],
+      paginate:ResData.ThreadPaginate,
+    }> => this._get(`/user/${userId}/vote_received`)
 
   public getUserVotesSent = (userId:number = this.user.id) :
-    Promise<ResData.Vote[]> =>
-      this._get(`/user/${userId}/vote_sent`)
+    Promise<{
+      votes:ResData.Vote[],
+      paginate:ResData.ThreadPaginate,
+    }> => this._get(`/user/${userId}/vote_sent`)
 
   // 删除评票
   public deleteVote (voteId:number) : Promise<string> {
