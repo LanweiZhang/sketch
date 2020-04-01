@@ -41,95 +41,97 @@ export class Carousel extends React.Component<Props, State> {
     this.props.windowResizeEvent.sub(() => this.forceUpdate());
   }
 
-  public shouldComponentUpdate (nextProps) {
-  this.slideCount = nextProps.slides.length;
-  this.startIndex = nextProps.startIndex === undefined ? 0 : nextProps.startIndex;
-  this.current = this.startIndex % this.slideCount;
-  return true;
+  public componentWillReceiveProps (nextProps:Props) {
+    this.slideCount = nextProps.slides.length;
+    if (this.props.startIndex !== nextProps.startIndex) {
+      this.startIndex = nextProps.startIndex === undefined ? 0 : nextProps.startIndex;
+      this.current = this.startIndex % this.slideCount;
+    }
+    return true;
   }
 
   public getSlideOffset (index?:number) {
-  const i = index === undefined ? this.current : index;
-  const width = this.container.offsetWidth;
-  return -i * width;
+    const i = index === undefined ? this.current : index;
+    const width = this.container.offsetWidth;
+    return -i * width;
   }
 
   public translate (offset:number) {
-  this.slider.style.transform = `translate3d(${offset}px, 0, 0)`;
+    this.slider.style.transform = `translate3d(${offset}px, 0, 0)`;
   }
 
   public toggleTransition (enable:boolean) {
-  if (enable) {
-    this.slider.style.transition = `all ${this.duration}ms ${this.easing}`;
-  } else {
-    this.slider.style.transition = `all 0ms ${this.easing}`;
+    if (enable) {
+      this.slider.style.transition = `all ${this.duration}ms ${this.easing}`;
+    } else {
+      this.slider.style.transition = `all 0ms ${this.easing}`;
     }
   }
 
   public slideTo (to:number) {
-  const from = this.lastOffset;
-  const dir = Math.sign(to - from);
-  const speed = 20;
+    const from = this.lastOffset;
+    const dir = Math.sign(to - from);
+    const speed = 20;
 
-  this.toggleTransition(true);
+    this.toggleTransition(true);
 
-  const step = (dt) => {
-    const move = dir * speed;
-    this.lastOffset += move;
-    this.translate(this.lastOffset);
-    if (move * (this.lastOffset - to) > 0) {
-    this.lastOffset = to;
-    this.translate(this.lastOffset);
-    this.forceUpdate();
-    } else {
+    const step = (dt) => {
+      const move = dir * speed;
+      this.lastOffset += move;
+      this.translate(this.lastOffset);
+      if (move * (this.lastOffset - to) > 0) {
+        this.lastOffset = to;
+        this.translate(this.lastOffset);
+        this.forceUpdate();
+      } else {
+        requestAnimationFrame(step);
+      }
+    };
     requestAnimationFrame(step);
-    }
-  };
-  requestAnimationFrame(step);
   }
 
   public handleDragStart = (x:number) => {
-  this.startX = this.endX = x;
+    this.startX = this.endX = x;
   }
 
   public handleDrag = (x:number) => {
-  this.endX = x;
-  this.toggleTransition(false);
+    this.endX = x;
+    this.toggleTransition(false);
 
-  const dx = this.endX - this.startX;
-  this.translate(dx + this.lastOffset);
+    const dx = this.endX - this.startX;
+    this.translate(dx + this.lastOffset);
   }
 
   public handleDragEnd = () => {
-  this.toggleTransition(true);
-  const dx = this.endX - this.startX;
-  this.lastOffset += dx;
-  const distance = Math.abs(dx);
-  if (distance > 0) {
-    if (distance > this.threshold) {
-    if (dx > 0) {
-      this.prev();
-    } else {
-      this.next();
+    this.toggleTransition(true);
+    const dx = this.endX - this.startX;
+    this.lastOffset += dx;
+    const distance = Math.abs(dx);
+    if (distance > 0) {
+      if (distance > this.threshold) {
+        if (dx > 0) {
+          this.prev();
+        } else {
+          this.next();
+        }
+      } else {
+        const currentSlideOffset = this.getSlideOffset();
+        this.slideTo(currentSlideOffset);
+      }
     }
-    } else {
-    const currentSlideOffset = this.getSlideOffset();
-    this.slideTo(currentSlideOffset);
-    }
-  }
   }
 
   public prev () {
-  if (this.current === 0) {
-    const currentSlideOffset = this.getSlideOffset();
+    if (this.current === 0) {
+      const currentSlideOffset = this.getSlideOffset();
+      if (this.props.getIndex) { this.props.getIndex(this.current); }
+      this.slideTo(currentSlideOffset);
+      return;
+    }
+    this.current -= 1;
     if (this.props.getIndex) { this.props.getIndex(this.current); }
-    this.slideTo(currentSlideOffset);
-    return;
-  }
-  this.current -= 1;
-  if (this.props.getIndex) { this.props.getIndex(this.current); }
-  const prevSlideOffset = this.getSlideOffset(this.current);
-  this.slideTo(prevSlideOffset);
+    const prevSlideOffset = this.getSlideOffset(this.current);
+    this.slideTo(prevSlideOffset);
   }
 
   public next () {
@@ -211,7 +213,10 @@ export class Carousel extends React.Component<Props, State> {
           { this.props.slides.map((el, i) =>
             <span key={i}
               className={`dot ${this.current === i && 'active'}`}
-              onClick={() => this.slideTo(this.getSlideOffset(i))}>
+              onClick={() => {
+                this.current = i;
+                this.slideTo(this.getSlideOffset(i));
+              }}>
             </span>)
           }
         </div>
