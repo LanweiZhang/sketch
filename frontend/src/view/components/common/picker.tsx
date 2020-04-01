@@ -21,7 +21,7 @@ class Cloumn extends React.Component<ColumnProp> {
 
   private onScroll = () => {
     clearTimeout(this.timer);
-    this.timer = setTimeout(this.scrollEnd as TimerHandler, 400);
+    this.timer = setTimeout(this.scrollEnd as TimerHandler, 350);
   }
 
   private scrollEnd = () => {
