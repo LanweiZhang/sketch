@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Card } from '../../../components/common/card';
 import { Accordion } from '../../../components/common/accordion';
 import { DBResponse } from '../../../../core/db';
+import { notice } from '../../../components/common/notice';
 
 export function RegMail3 (props:{
   email:string;
@@ -14,10 +15,9 @@ export function RegMail3 (props:{
     // TODO: rate limit
     try {
       const { email } = await props.resendEmail(props.email);
-      // TODO: toast
-      alert(`已发送邮件到${email}`);
+      notice.success(`已发送邮件到${email}`);
     } catch (e) {
-      console.log(e);
+      notice.requestError(e);
     }
   };
 

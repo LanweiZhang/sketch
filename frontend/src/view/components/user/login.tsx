@@ -63,9 +63,9 @@ export class Login extends React.Component<Props, State> {
           } else if (!validEmail(this.state.email)) {
             this.setState({errMsg: '邮箱格式不符'});
           } else {
-            try{
+            try {
               await this.props.login(this.state.email, this.state.password);
-            } catch (e){
+            } catch (e) {
               this.setState({errMsg: '用户名或密码错误。'});
             }
           }

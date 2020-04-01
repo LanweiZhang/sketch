@@ -644,6 +644,35 @@ export class DB {
       },
     });
   }
+  public registerByInvitation =(
+    invitation_type:ReqData.Registration.invitationType,
+    invitation_token:string,
+    name:string,
+    email:string,
+    password:string,
+  ) : Promise<{
+    token:string;
+    name:string;
+    id:number;
+  }> => {
+    const body = {
+      name,
+      email,
+      password,
+      invitation_token,
+      invitation_type,
+    };
+    return this._post('/register_by_invitation', {
+      body,
+      errorMsg: {
+        422: '缺少必要的信息，不能定位申请记录',
+        499: '已进入黑名单',
+        404: '不能找到邀请码/申请资料',
+        409: '这个邮箱已经注册，请直接登陆',
+        444: '邀请链接已失效',
+      },
+    });
+  }
   public async login (email:string, password:string, backTo?:string) {
     const res = await this._post('/login', {
       query: {

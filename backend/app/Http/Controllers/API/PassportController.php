@@ -154,7 +154,6 @@ class PassportController extends Controller
     }
 
     private function findInvitationToken($token){
-        // TODO: probably only cache public invitation token? Well we have to consider that if a private invitation token got released online and suddenly a thousands user submitted the token to register...in that case it will become a burden for server and needs cache.
         return Cache::remember('findInvitationToken.'.$token, 5, function() use($token) {
             return InvitationToken::where('token',$token)->first();
         });

@@ -665,4 +665,11 @@ export namespace ReqData {
       random = 'random',
     }
   }
+
+  export namespace Registration {
+    export enum invitationType {
+      token = 'token',
+      email = 'email',
+    }
+  }
 }

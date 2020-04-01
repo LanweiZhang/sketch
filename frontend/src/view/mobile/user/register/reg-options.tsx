@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { RegistrationOption } from './register';
 import { Checkbox } from '../../../components/common/input/checkbox';
+import { ReqData } from '../../../../config/api';
 
 export function RegOptions (props:{
   className?:string;
-  regOption:RegistrationOption;
-  changeRegOption:(o:RegistrationOption) => () => void;
+  regOption:ReqData.Registration.invitationType;
+  changeRegOption:(o:ReqData.Registration.invitationType) => () => void;
 }) {
+  const invitationType = ReqData.Registration.invitationType;
   return (
     <Card className="reg">
       {/* TODO: use h2 here, after h2 is defined in common.scss */}
@@ -17,8 +18,8 @@ export function RegOptions (props:{
         <div className="sub-title">
           <Checkbox
             type="radio"
-            checked={props.regOption == 'code'}
-            onChange={props.changeRegOption('code')}
+            checked={props.regOption == invitationType.token}
+            onChange={props.changeRegOption(invitationType.token)}
             label="通过邀请码注册"
           />
         </div>
@@ -40,8 +41,8 @@ export function RegOptions (props:{
         <div className="sub-title">
           <Checkbox
             type="radio"
-            checked={props.regOption == 'mail'}
-            onChange={props.changeRegOption('mail')}
+            checked={props.regOption == invitationType.email}
+            onChange={props.changeRegOption(invitationType.email)}
             label="邮件注册及进度查询（测试中）"
           />
         </div>

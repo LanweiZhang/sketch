@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ResData } from '../../../../config/api';
+import { ResData, ReqData } from '../../../../config/api';
 import { MobileRouteProps } from '../../router';
 import { Page } from '../../../components/common/page';
 import { NavBar } from '../../../components/common/navbar';
@@ -19,16 +19,18 @@ import { RegCode } from './reg-code';
 import { CreateAccount } from './create-account';
 import { Constant } from '../../../../config/constant';
 import { notice } from '../../../components/common/notice';
+import { saveStorage } from '../../../../utils/storage';
 
 const regMailTokenLength = 10;
 const essayMinLength = 500;
 export type Account = {
   username:string;
   password:string;
+  email:string;
 };
 export type QuizQuestionAnswer = {id:number, answer:string};
 interface State {
-  registrationOption:RegistrationOption;
+  registrationOption:ReqData.Registration.invitationType;
   email:string;
   registrationStatus:ResData.RegistrationApplication;
   quiz:ResData.QuizQuestion[];
@@ -42,8 +44,6 @@ interface State {
   showPopup:boolean;
 }
 
-export type RegistrationOption = 'code' | 'mail';
-
 // we put all registration pages in one component,
 // and use internal component state to navigate between steps, instead of providing urls for different steps
 // thus we can make sure user cannot skip any steps
@@ -56,7 +56,7 @@ export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     // internal state
-    registrationOption: 'code',
+    registrationOption: ReqData.Registration.invitationType.token,
     email: '',
     registrationStatus: ResData.allocRegistrationApplication(),
     quiz: [],
@@ -66,6 +66,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
     essay: ResData.allocEssay(),
     essayAnswer: '',
     account:{
+      email: '',
       username: '',
       password: '',
     },
@@ -83,17 +84,17 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   public nextStep = async () => {
-    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay, registerVerifyInvitationToken } = this.props.core.db;
+    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay, registerVerifyInvitationToken, registerByInvitation } = this.props.core.db;
 
-    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay, essayAnswer, regMailToken, regCode } = this.state;
-
+    const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay, essayAnswer, regMailToken, regCode, account } = this.state;
+    const { invitationType } = ReqData.Registration;
     switch (step) {
       case 'info':
         this.setState({ step: 'choose-reg-option' });
         break;
       case 'choose-reg-option': {
         this.setState({ step:
-          registrationOption == 'code' ? 'reg-code' : 'reg-mail-1' });
+          registrationOption == invitationType.token ? 'reg-code' : 'reg-mail-1' });
         break;
       }
       case 'reg-mail-1': {
@@ -127,15 +128,12 @@ export class Register extends React.Component<MobileRouteProps, State> {
           }
           this.setState(newState);
         } catch (e) {
-          // TODO: toast
-          alert(e.message);
-          console.log(e);
+          notice.requestError(e);
         }
         break;
       }
       case 'reg-mail-2': {
         // submit quiz
-        console.log(quizAnswer);
         // format quiz answer
         try {
           const res = await registerByInvitationEmailSubmitQuiz(email, quizAnswer);
@@ -146,7 +144,6 @@ export class Register extends React.Component<MobileRouteProps, State> {
             step: step as Step,
           };
           if (!res.registration_application.attributes.has_quizzed) {
-            // TODO
             alert('考试挂科,回去重考');
             newState.quizAnswer = [];
             newState.step = 'reg-mail-1';
@@ -161,8 +158,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
           }
           this.setState(newState);
         } catch (e) {
-          alert(e.message);
-          console.log(e);
+          notice.requestError(e)
         }
         break;
       }
@@ -171,8 +167,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
           await registerByInvitationConfirmToken(email, regMailToken);
           this.setState({ step: 'reg-mail-4' });
         } catch (e) {
-          alert(e);
-          console.log(e);
+          notice.requestError(e);
         }
         break;
       }
@@ -184,8 +179,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
             registrationStatus: registration_application,
           });
         } catch (e) {
-          alert(e);
-          console.log(e);
+          notice.requestError(e);
         }
         break;
       }
@@ -209,8 +203,25 @@ export class Register extends React.Component<MobileRouteProps, State> {
         }
         break;
       }
-      case 'create-account':
+      case 'create-account': {
+        try {
+          if (registrationOption == invitationType.token) {
+            const { user, history } = this.props.core;
+            const { token, name, id } = await registerByInvitation  (registrationOption, regCode, account.username, account.email, account.password);
+            user.login(name, id, token);
+            saveStorage('auth', {
+              token: token, username: name, userId: id,
+            });
+            history.goBack();
+          } else {
+            // TODO:
+            alert('小作文申请注册还在等api~');
+          }
+        } catch (e) {
+          notice.requestError(e);
+        }
         break;
+      }
     }
   }
   // 通过邮件注册的详细步骤
@@ -247,7 +258,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getMenuButtonIsInvalid() {
-    const { registrationOption, step, email, quiz, quizAnswer, regMailToken, essayAnswer, regCode } = this.state;
+    const { step, email, quiz, quizAnswer, regMailToken, essayAnswer, regCode, account } = this.state;
     if (step == 'reg-mail-1' && !email) {
       // TODO: check if email valid
       return true;
@@ -266,14 +277,13 @@ export class Register extends React.Component<MobileRouteProps, State> {
     if (step == 'reg-mail-progress') { return true; }
     if (step == 'reg-code' && !regCode) { return true; }
     if (step == 'create-account') {
-      // TODO: a lot checks
-      return true;
+      return !account.username;
     }
     return false;
   }
 
   private getMenuTitle() {
-    const { registrationOption, step } = this.state;
+    const { step } = this.state;
     switch (step) {
       case 'info':
       case 'choose-reg-option':
@@ -295,7 +305,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   private getPageContent() {
-    const { registrationOption, step, email, quiz, quizAnswer, essay, essayAnswer, regMailToken, regCode, registrationStatus } = this.state;
+    const { registrationOption, step, email, quiz, essay, essayAnswer, regMailToken, regCode, registrationStatus, account } = this.state;
     switch (step) {
       case 'info':
         return <PreRegInfo />;
@@ -348,6 +358,8 @@ export class Register extends React.Component<MobileRouteProps, State> {
       case 'create-account':
         return (
           <CreateAccount
+            account={account}
+            registrationOption={registrationOption}
             email={email}
             changeAccount={this.updateState('account')}/>
         );

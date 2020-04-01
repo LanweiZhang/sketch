@@ -14,9 +14,6 @@ interface State {
   checkboxes:CheckBoxState;
 }
 
-// TODO: customize radio button
-// https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
-
 // TODO: refactor out quiz component, so 升级题 can reuse
 
 export class RegMail2 extends React.Component<Props, State> {
