@@ -1,7 +1,8 @@
 .quotes {
     position: relative;
     margin-bottom: 16px;
-    background-color: bisque;
+    background-image: url("../../../../assets/quote.png");
+    background-size: 100% 100%;
     box-shadow: 0px 1px 4px 0px rgba(221, 223, 230, 0.5);
     .content {
         min-height: 159px;
