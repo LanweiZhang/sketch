@@ -15,9 +15,10 @@ export class LoginRoute extends React.Component<MobileRouteProps, State> {
   public render () {
     const content = this.renderContent();
 
-    return <Page top={<NavBar goBack={this.props.core.route.back}>Login</NavBar>} >
+    return <Page>
       { content }
-    </Page>;
+      </Page>
+
   }
 
   public renderContent () {
@@ -26,15 +27,19 @@ export class LoginRoute extends React.Component<MobileRouteProps, State> {
     switch (window.location.pathname) {
       case '/login':
         this.location = 'login';
-        return <Login login={async (email, pwd) =>
+        return <Login core = {this.props.core} login={async (email, pwd) =>
             this.props.core.db.login(email, pwd, fromUrl) }></Login>;
       case '/register':
         this.location = 'register';
-        return <Register register={async (name, email, pwd) =>
-          this.props.core.db.register(name, pwd, email, fromUrl)}></Register>;
+        return <Page top={<NavBar goBack={this.props.core.route.back}>Login</NavBar>} >
+          <Register register={async (name, email, pwd) =>
+          this.props.core.db.register(name, pwd, email, fromUrl)}></Register>
+          </Page>;
       case '/reset_password':
         this.location = 'reset password';
-        return <PasswordReset resetPassword={(email) => this.props.core.db.resetPassword(email)}></PasswordReset>;
+        return  <Page top={<NavBar goBack={this.props.core.route.back}>Login</NavBar>} >
+          <PasswordReset resetPassword={(email) => this.props.core.db.resetPassword(email)}></PasswordReset>;
+          </Page>;
       default:
         return <div>wrong pathname {window.location.pathname}</div>;
     }

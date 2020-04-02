@@ -13,6 +13,7 @@ export enum RoutePath {
   user = '/user',
   login = '/login',
   register = '/register',
+  reset_password = '/reset_password',
 
   // collection
   collection = '/collection',
