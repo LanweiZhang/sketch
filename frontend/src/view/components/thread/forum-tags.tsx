@@ -11,14 +11,15 @@ export class ForumTags extends React.Component<{
   // state
 }> {
   public render () {
-  return <Page top={<NavBar
+  return (
+    <Page top={<NavBar
       goBack={() => this.props.core.route.back()}
       menu={NavBar.MenuIcon({
         onClick: () => this.props.onConfirm(),
         icon: 'fa fa-search',
-      })}
-    > 标签列表 </NavBar>}>
-
-    </Page>;
+      })}>
+        标签列表
+      </NavBar>}>
+    </Page>);
   }
 }

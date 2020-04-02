@@ -30,6 +30,7 @@ import { RewardNotice } from './message/reward-notice';
 // my
 import { FAQMenu } from './faq/faq-menu';
 import { FAQContent } from './faq/faq-content';
+import { Register } from './user/register/register';
 
 interface Props {
   core:Core;
@@ -64,7 +65,7 @@ export const MobileRoutes = {
   // user
   [RoutePath.user]: User,
   [RoutePath.login]: LoginRoute,
-  [RoutePath.register]: LoginRoute,
+  [RoutePath.register]: Register,
 
   // collection
   [RoutePath.collection]: Collection,

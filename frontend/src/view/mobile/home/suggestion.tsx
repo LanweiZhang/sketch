@@ -11,14 +11,15 @@ interface State {
 
 export class Suggestion extends React.Component<MobileRouteProps, State> {
   public render () {
-    return <Page top={<NavBar
-      goBack={() => this.props.core.route.back()}
-      menu={NavBar.MenuIcon({
-        onClick: () => this.props.core.route.go(RoutePath.search),
-        icon: 'fa fa-search',
-      })}
-    >推荐</NavBar>}>
-
-    </Page>;
+    return (
+      <Page top={<NavBar
+        goBack={() => this.props.core.route.back()}
+        menu={NavBar.MenuIcon({
+          onClick: () => this.props.core.route.go(RoutePath.search),
+          icon: 'fa fa-search',
+        })}>
+          推荐
+        </NavBar>}>
+      </Page>);
   }
 }

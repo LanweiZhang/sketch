@@ -533,12 +533,145 @@ export class DB {
         422: '用户名/密码/邮箱格式错误',
       },
     });
-
     if (!res) { return false; }
     this.user.login(res.name, res.id, res.token);
     saveStorage('auth', {token: res.token, username: res.name, userId: res.id});
     backTo ? this.history.push(backTo) : this.history.push('/');
     return true;
+  }
+
+  public registerVerifyInvitationToken = (invitation_token:string) :
+    Promise<string> => {
+    return this._post('/register/by_invitation_token/submit_token', {
+      body: {
+        invitation_token,
+      },
+      errorMsg: {
+        404: '邀请码不存在或已过期',
+        429: '五分钟内只能尝试注册一次',
+      },
+    });
+  }
+  public registerByInvitationEmailSubmitEmail = (email:string) :
+    Promise<{
+      registration_application:ResData.RegistrationApplication;
+      quizzes?:ResData.QuizQuestion[];
+      essay?:ResData.Essay; }> => {
+    return this._post('/register/by_invitation_email/submit_email', {
+      body: {
+        email,
+      },
+      errorMsg: {
+        414: '用户已经登陆',
+        422: '邮箱格式错误',
+        499: '邮箱被拉黑',
+        409: '这个邮箱已注册，请直接登陆',
+        498: '访问过于频繁',
+      },
+    });
+  }
+  public registerByInvitationEmailSubmitQuiz =
+    (email:string, quizzes:{id:number, answer:string}[]) :
+    Promise<{
+      registration_application:ResData.RegistrationApplication;
+      essay?:ResData.Essay;
+    }> => {
+    return this._post('/register/by_invitation_email/submit_quiz', {
+      body: {
+        email,
+        quizzes,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        409: '已经成功回答题，不需要再答题',
+        422: '请求数据格式有误',
+        444: '回答的题目和数据库中应该回答的题不符合',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
+  public registerByInvitationConfirmToken =
+    (email:string, token:string) :
+    Promise<{ email:string; }> => {
+    return this._post('/register/by_invitation_email/submit_email_confirmation_token', {
+      body: {
+        email,
+        token,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        409: '已经成功确认邮箱',
+        411: '未完成前序步骤(未答题)',
+        422: '邮箱格式错误/token验证错误',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
+  public registerByInvitationEmailResendEmailVerification =
+    (email:string) :
+    Promise<{ email:string }> => {
+    return this._get('/register/by_invitation_email/resend_email_verification', {
+      query: {
+        email,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        410: '已成功发信，暂时不能重复发信/已经验证过邮箱，不需要重复验证',
+        411: '未完成其他需要的情况(如未答题，不能发验证邮件)',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
+  public registerByInvitationSubmitEssay =
+    (email:string, essay_id:number, body:string) :
+    Promise<{ registration_application:ResData.RegistrationApplication; }> => {
+    return this._post('/register/by_invitation_email/submit_essay', {
+      body: {
+        email,
+        essay_id,
+        body,
+      },
+      errorMsg: {
+        404: '申请记录不存在',
+        409: '已经成功提交论文，等待审核中，不需要再提交论文',
+        411: '未完成其他需要的情况（如未答题，未验证邮箱）',
+        444: '回答的题目和数据库中应该回答的题不符合',
+        498: '过于频繁访问',
+        499: '邮箱已被拉黑',
+      },
+    });
+  }
+  public registerByInvitation =(
+    invitation_type:ReqData.Registration.invitationType,
+    invitation_token:string,
+    name:string,
+    email:string,
+    password:string,
+  ) : Promise<{
+    token:string;
+    name:string;
+    id:number;
+  }> => {
+    const body = {
+      name,
+      email,
+      password,
+      invitation_token,
+      invitation_type,
+    };
+    return this._post('/register_by_invitation', {
+      body,
+      errorMsg: {
+        422: '缺少必要的信息，不能定位申请记录',
+        499: '已进入黑名单',
+        404: '不能找到邀请码/申请资料',
+        409: '这个邮箱已经注册，请直接登陆',
+        444: '邀请链接已失效',
+      },
+    });
   }
   public async login (email:string, password:string, backTo?:string) {
     const res = await this._post('/login', {
