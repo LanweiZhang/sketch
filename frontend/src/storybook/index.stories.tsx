@@ -63,6 +63,8 @@ import { MenuItem, Menu } from '../view/components/common/menu';
 import { NoticeType, notice } from '../view/components/common/notice';
 import { HomeworkPreview } from '../view/components/home/homework-preview';
 import { Picker, Item } from '../view/components/common/picker';
+import { ReadingSettings } from '../view/components/thread/reading-settings';
+import { loadStorage } from '../utils/storage';
 import { Checkbox } from '../view/components/common/input/checkbox';
 
 const core = new Core();
@@ -967,6 +969,32 @@ storiesOf('Thread Components', module)
             fish={59}
             ham={5849}
             onReward={(type, num) => console.log(type, num)}
+          />
+        }
+      </div>;
+    }
+  })))
+  .add('ReadingSettings', () => (React.createElement(class extends React.Component<{}, {show:boolean}> {
+    public state= {
+      show: false,
+    };
+
+    public changeShow = (show:boolean) => {
+      this.setState({
+        show,
+      });
+    }
+
+    public render() {
+      return <div>
+        <button onClick={() => this.changeShow(true)}>打开设置</button>
+        {
+          this.state.show && <ReadingSettings
+            onClose={() => this.changeShow(false)}
+            onConfirm={(theme) => {
+              console.log(theme, loadStorage('readingSettings'));
+              this.changeShow(false);
+            }}
           />
         }
       </div>;
