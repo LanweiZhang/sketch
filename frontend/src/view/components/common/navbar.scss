@@ -21,16 +21,19 @@
   }
 
   .menu-icon, .menu-text {
+    color: var(--color-primary);
     cursor: pointer;
     padding: 0 8px;
   }
 
   .menu-text {
+    margin-top: 2px;
     font-size: var(--font-size-14);
     line-height: var(--font-size-14);
   }
 
   .menu-text.disabled {
     color: var(--color-font-disabled);
+    pointer-events: none
   }
 }

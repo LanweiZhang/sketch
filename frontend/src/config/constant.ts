@@ -96,4 +96,7 @@ export namespace Constant {
       ],
     },
   ];
+
+  // BASED ON backend/config/constants
+  export const invitation_token_prefix = 'SOSAD_';
 }

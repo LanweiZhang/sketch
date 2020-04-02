@@ -2,6 +2,7 @@ import * as React from 'react';
 import { validEmail, validPwd } from '../../../utils/validates';
 import { NoticeBar } from '../common/notice-bar';
 import { Card } from '../common/card';
+import './register.scss';
 
 interface Props {
   register:(name:string, email:string, pwd:string) => Promise<boolean>;
@@ -27,10 +28,10 @@ export class Register extends React.Component<Props, State> {
     errMsg: '',
   };
 
-  public inputStyle = 'input is-normal';
+  public inputStyle = 'input is-normal inputbox-reg';
 
   public render () {
-    return <Card>
+    return <Card className="register">
       <div className="card-header" style={{boxShadow: 'none'}}>
         <h1 className="title">注册</h1>
       </div>
@@ -95,7 +96,7 @@ export class Register extends React.Component<Props, State> {
           我已阅读并同意注册协议 更多内容
         </div>
 
-        <a className="button is-normal is-fullwidth" onClick={async (ev) => {
+        <a className="button is-normal color-primary is-fullwidth register-button" onClick={async (ev) => {
           if (this.state.email === '') {
             this.setState({errMsg: '邮箱 不能为空。'});
           } else if (this.state.pwd === '') {

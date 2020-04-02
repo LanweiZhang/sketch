@@ -16,8 +16,11 @@ class RewardResource extends JsonResource
     {
         $author = null;
         $receiver = null;
-        if($this->showUser()){
-            $author = new UserBriefResource($this->whenLoaded('author'));
+        // TODO double check if "whenloaded" is properly working when not loaded.
+        $rewardable = $this->getRewardableResource(
+            $this->rewardable_type, $this->whenLoaded('rewardable'));
+        $author = new UserBriefResource($this->whenLoaded('author'));
+        if($this->showReceiver()){
             $receiver = new UserBriefResource($this->whenLoaded('receiver'));
         }
 
@@ -34,16 +37,34 @@ class RewardResource extends JsonResource
             ],
             'author' => $author,
             'receiver' => $receiver,
+            'rewardable' => $rewardable,
         ];
     }
+
+    private function getRewardableResource($rewardable_type, $rewardable){
+        switch ($rewardable_type) {
+            case 'post':
+                return new PostBriefResource($rewardable);
+            case 'quote':
+                return new QuoteResource($rewardable);
+            case 'status':
+                // TODO: statusBriefResource?
+                return new StatusResource($rewardable);
+            case 'thread':
+                return new ThreadBriefResource($rewardable);
+            }
+        return null;
+    }
     private function isOwnReward(){
-        return auth('api')->id()===$this->user_id;
+        return auth('api')->check()&&auth('api')->id()===$this->user_id;
     }
     private function isRewardForMe(){
-        return auth('api')->id()===$this->receiver_id;
+        return auth('api')->check()&&auth('api')->id()===$this->receiver_id;
     }
-
-    private function showUser(){
-        return $this->isOwnReward()||$this->isRewardForMe()||(auth('api')->check()&&auth('api')->user()->isAdmin());
+    private function isAdmin(){
+        return auth('api')->check()&&auth('api')->user()->isAdmin();
+    }
+    private function showReceiver(){
+        return $this->isRewardForMe()||$this->isAdmin();
     }
 }

@@ -8,6 +8,7 @@ import { DBResponse } from '../../../core/db';
 import { ResData } from '../../../config/api';
 import { VoteItem } from './vote-item';
 import { Toolbar } from './toolbar';
+import { notice } from '../../components/common/notice';
 
 interface State {
   votesReceived:DBResponse<'getUserVotesReceived'>;
@@ -26,8 +27,14 @@ const filterOptions:{text:string, value:filterType}[] = [
 
 export class Votes extends React.Component<MobileRouteProps, State> {
   public state:State = {
-    votesReceived: [],
-    votesSent: [],
+    votesReceived: {
+      votes: [],
+      paginate: ResData.allocThreadPaginate(),
+    },
+    votesSent: {
+      votes: [],
+      paginate: ResData.allocThreadPaginate(),
+    },
     filter: 'all',
   };
 
@@ -35,24 +42,24 @@ export class Votes extends React.Component<MobileRouteProps, State> {
     const { getUserVotesReceived, getUserVotesSent } = this.props.core.db;
     const fetchVotesReceived = getUserVotesReceived()
       .catch((e) => {
-        // console.log(e);
+        notice.requestError(e);
         return this.state.votesReceived;
       });
     const fetchVotesSent = getUserVotesSent()
       .catch((e) => {
-        // console.log(e);
+        notice.requestError(e);
         return this.state.votesSent;
       });
     const [votesReceived, votesSent] = await Promise.all([fetchVotesReceived, fetchVotesSent]);
     this.setState({votesReceived, votesSent});
-    // console.log(votesReceived, votesSent);
   }
 
   public deleteVote = (voteId:number) => async () => {
     try {
       await this.props.core.db.deleteVote(voteId);
       let votesSent = this.state.votesSent;
-      votesSent.splice(votesSent.findIndex( (r) => r.id == voteId), 1);
+      const votes = this.state.votesSent.votes;
+      votes.splice(votes.findIndex( (r) => r.id == voteId), 1);
       this.setState({votesSent});
 
       // due to pagination, after we delete a vote, we have space for vote in page 2
@@ -83,16 +90,17 @@ export class Votes extends React.Component<MobileRouteProps, State> {
   }
 
   private getVotes() {
+    const { votesReceived, votesSent, filter } = this.state;
     let selectedVotes:ResData.Vote[] = [];
-    switch (this.state.filter) {
+    switch (filter) {
       case 'all':
-        selectedVotes = [...this.state.votesReceived, ...this.state.votesSent];
+        selectedVotes = [...votesReceived.votes, ...votesSent.votes];
         break;
       case 'received':
-        selectedVotes = this.state.votesReceived;
+        selectedVotes = votesReceived.votes;
         break;
       case 'sent':
-        selectedVotes = this.state.votesSent;
+        selectedVotes = votesSent.votes;
         break;
     }
 

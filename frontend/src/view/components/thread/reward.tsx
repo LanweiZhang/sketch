@@ -40,8 +40,8 @@ export class Reward extends React.Component<Props, State> {
     });
   }
 
-  public validate = () => (this.state.selected &&
-    this.rewards.findIndex((v) => v[0] === this.state.selected) >= 0)
+  public validate = () => (this.state.selected && this.props[this.state.selected] !== 0
+    && this.rewards.findIndex((v) => v[0] === this.state.selected) >= 0)
 
   public onConfirm = () => {
     if (this.validate()) {
@@ -73,7 +73,7 @@ export class Reward extends React.Component<Props, State> {
         }
       </div>
       <InputNumber className="count" placeholder={`填写数量（1 - ${maxValue}）`}
-        disabled={this.state.selected === undefined}
+        disabled={this.state.selected === undefined || maxValue === 0}
         value={this.state.value} onChange={this.onInput}
         min={1} max={maxValue} fractionDigits={0}
       />

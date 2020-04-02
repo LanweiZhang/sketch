@@ -6,13 +6,12 @@ import { Colors } from '../../theme/theme';
 export class Button extends React.Component<{
   // props
   onClick:() => void;
-
   icon?:string;
   disabled?:boolean;
   ghost?:boolean;
   color?:Colors;
   size?:'small',
-  type?:'ellipse',
+  type?:'ellipse' | 'high',
 }, {}> {
   public ghostStyle:React.CSSProperties = {
     backgroundColor: 'rgba(0, 0, 0, 0)',

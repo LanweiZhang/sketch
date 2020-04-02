@@ -12,7 +12,6 @@
   box-sizing: border-box;
   text-overflow: ellipsis;
   white-space: nowrap;
-
   i {
     margin-right: 4px;
   }
@@ -21,6 +20,11 @@
 .button.ellipse {
   border-radius: var(--radius-bigger);
   height: 30px;
+}
+
+.button.high {
+  border-radius: var(--radius-biggest);
+  height: 38px;
 }
 
 .button.disabled {

@@ -7,6 +7,7 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const merge = require("webpack-merge");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FontAwesomeMinifyPlugin = require("font-awesome-minify-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 function commonConfig (devMode) {
   return {
@@ -106,6 +107,10 @@ function commonConfig (devMode) {
           removeComments: true,
         },
       }),
+
+      new CopyWebpackPlugin([
+        {from:'assets', to:'dist/assets'}
+      ])
     ],
   };
 }

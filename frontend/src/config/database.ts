@@ -234,5 +234,5 @@ export namespace Database {
     keep_updated?:boolean;
     is_updated?:boolean;
   }
-  
+
 }
