@@ -3,27 +3,15 @@
     margin-bottom: 16px;
     background-image: url("../../../../assets/quote.png");
     background-size: 100% 100%;
-    box-shadow: 0px 1px 4px 0px rgba(221, 223, 230, 0.5);
     .content {
         min-height: 159px;
         text-align: center;
         display: flex;
-        .quotation-mark {
-            width: 36px;
-            height: 60px;
-            font-size: 60px;
-            font-weight: 500;
-            margin: 15px 8px;
-            color: rgba(153, 153, 153, 0.15);
-        }
-        .right-quotation-mark {
-            align-self: flex-end;
-        }
         .body {
             flex: 1;
             font-size: var(--font-size-20);
             align-self: center;
-            margin: 0 30px;
+            margin: 15px 15%;
         }
         .author {
             margin: 25px 0;

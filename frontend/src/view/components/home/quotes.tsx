@@ -29,12 +29,10 @@ export class Quotes extends React.Component<Props, State> {
         windowResizeEvent={this.props.core.windowResizeEvent}
         slides={this.props.quotes.map((quote) =>
           <div key={quote.id} className="content">
-            <div className="quotation-mark">“</div>
             <div className="body">
               <div>{quote.attributes.body}</div>
               <div className="author">—— {quote.attributes.is_anonymous ? quote.attributes.majia : quote.author.attributes.name}</div>
             </div>
-            <div className="quotation-mark right-quotation-mark">”</div>
           </div>)}
         getIndex={this.setIndex}
         indicator
