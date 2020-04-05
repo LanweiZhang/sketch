@@ -5,11 +5,11 @@ import { User } from './user';
 import { Status } from './status';
 import { LoginRoute } from './user/login';
 import { HomeMain } from './home/main';
-import { Chapter } from './forum/chapter';
+import { Chapter } from './thread/chapter';
 import { CreateQuote } from './home/createquote';
 
 import { RoutePath } from '../../config/route-path';
-import { Forum } from './forum';
+import { ThreadHome } from './thread/home';
 import { SearchPage } from './search/search-page';
 import { Suggestion } from './home/suggestion';
 import { Library } from './home/library';
@@ -22,15 +22,15 @@ import { PersonalMessage } from './message/personal-msg';
 import { Dialogue } from './message/dialogue';
 import { PublicNotice } from './message/public-notice';
 import { Votes } from './message/votes';
-import { Book } from './forum/book';
-import { Reply } from '../components/thread/reply';
-import { Review } from '../components/thread/review';
+import { Book } from './thread/book';
 import { RewardNotice } from './message/reward-notice';
 
 // my
 import { FAQMenu } from './faq/faq-menu';
 import { FAQContent } from './faq/faq-content';
 import { Register } from './user/register/register';
+import { Thread } from './thread/thread';
+import { Channel } from './thread/channel';
 
 interface Props {
   core:Core;
@@ -51,16 +51,14 @@ export const MobileRoutes = {
   [RoutePath.createQuote]: CreateQuote,
   [RoutePath.suggestion]: Suggestion,
   [RoutePath.library]: Library,
-  // '/homebook': HomeBook,
-  // '/homethread': HomeThread,
-  // '/threads': HomeThread,
-  // '/books': Books,
   [RoutePath.chapter]: Chapter,
   [RoutePath.book]: Book,
   // '/thread/:id': Thread,
 
   // forum
-  [RoutePath.forum]: Forum,
+  [RoutePath.threadHome]: ThreadHome,
+  [RoutePath.thread]: Thread,
+  [RoutePath.channel]: Channel,
 
   // user
   [RoutePath.user]: User,

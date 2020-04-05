@@ -14,7 +14,9 @@ type FetchOptions = {
 };
 
 type RemovePromise<T extends Promise<any>> = T extends Promise<infer R> ? R : any;
+type ArgumentTypes<F extends Function> = F extends (...args:infer A) => any ? A : never;
 export type DBResponse<T extends keyof DB> = RemovePromise<ReturnType<DB[T]>>;
+export type DBRequest<T extends keyof DB> = ArgumentTypes<DB[T]>;
 
 export class DB {
   private user:User;
@@ -156,6 +158,20 @@ export class DB {
     }
 
     return this._get('/book', { query });
+  }
+
+  // 论坛首页
+  public getThreadHome () : Promise<{
+    simple_threads:ResData.Thread[],
+    threads:ResData.Thread[],
+    pagination:ResData.ThreadPaginate,
+  }> {
+    return this._get('/thread_index');
+  }
+
+  // 频道页面
+  public getChannelThreads (channelId:number) : Promise<{}> {
+    return this._get(`/channel/${channelId}`);
   }
 
   // 关注用户
@@ -709,9 +725,15 @@ export class DB {
     return this._get('/config/allTags');
   }
 
-  // 全部channel
-  public getAllChannels () : Promise<{channels:ResData.Channel[]}> {
-    return this._get('/config/allChannels');
+  // 获取全部channel
+  public async getAllChannels () : Promise<{[channelId:number]:ResData.Channel}> {
+    const data =  await this._get('/config/allChannels');
+    const result:{[channelId:number]:ResData.Channel} = {};
+    for (let i = 0; i < data.channels.length; i ++) {
+      const channel = data.channels[i];
+      result[channel.id] = channel;
+    }
+    return result;
   }
 
   // help faq system

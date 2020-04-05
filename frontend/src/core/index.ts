@@ -3,22 +3,23 @@ import { User } from './user';
 import { History, UnregisterCallback, createBrowserHistory } from 'history';
 import { EventBus } from '../utils/events';
 import * as _ from 'lodash/core';
-import { TagHandler, ChannelHandler, BianyuanHandler } from './filter-handler';
+import { TagFilter, ChannelFilter, BianyuanFilter } from './filter-handler';
 import { Route } from './route';
 import { saveStorage, FontType } from '../utils/storage';
 import { Themes } from '../view/theme/theme';
 import { updateNoticeTheme } from '../view/components/common/notice';
 import { ResData } from '../config/api';
-import { FAQHandler } from './cache-handler';
+import { FAQCache, ChannelsCache } from './cache-handler';
 const debounce = require('lodash/debounce');
 
 export type Filters = {
-  tag:TagHandler,
-  channel:ChannelHandler,
-  bianyuan:BianyuanHandler,
+  tag:TagFilter,
+  channel:ChannelFilter,
+  bianyuan:BianyuanFilter,
 };
 export type Cache = {
-  FAQ:FAQHandler,
+  FAQ:FAQCache,
+  channels:ChannelsCache,
 };
 
 interface State {
@@ -47,21 +48,20 @@ export class Core {
   };
 
   constructor () {
-    (window as any).core = this;
     this.history = createBrowserHistory();
     this.unlistenHistory = this.history.listen((location, action) => {
-      console.log(action, location.pathname, location.state);
     });
 
     this.user = new User(this.history);
     this.db = new DB(this.user, this.history);
     this.filter = {
-      tag: new TagHandler(this.db),
-      channel: new ChannelHandler(this.db),
-      bianyuan: new BianyuanHandler(this.db),
+      tag: new TagFilter(this.db),
+      channel: new ChannelFilter(this.db),
+      bianyuan: new BianyuanFilter(this.db),
     };
     this.cache = {
-      FAQ: new FAQHandler(this.db),
+      FAQ: new FAQCache(this.db),
+      channels: new ChannelsCache(this.db),
     };
     this.route = new Route(this.history);
     this.windowResizeEvent = new EventBus();

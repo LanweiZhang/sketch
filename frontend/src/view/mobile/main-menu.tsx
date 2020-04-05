@@ -14,7 +14,7 @@ type MenuItem = {
 export function MainMenu () {
   const items:MenuItem[] = [
     {to: RoutePath.home, label: '首页', icon: 'fas fa-home', defaultColor:'black', selectedColor:'red'},
-    {to: RoutePath.forum, label: '论坛', icon: 'fas fa-comments', defaultColor:'black', selectedColor:'red'},
+    {to: RoutePath.threadHome, label: '论坛', icon: 'fas fa-comments', defaultColor:'black', selectedColor:'red'},
     {to: RoutePath.status, label: '动态', icon: 'far fa-compass', defaultColor:'black', selectedColor:'red'},
     {to: RoutePath.collection, label: '收藏', icon: 'far fa-star', defaultColor:'black', selectedColor:'red'},
     {to: RoutePath.user, label: '我的', icon: 'far fa-user', defaultColor:'black', selectedColor:'red'},

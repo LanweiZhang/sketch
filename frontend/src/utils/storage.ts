@@ -23,14 +23,15 @@ export interface Storage {
     userId:number,
   };
   theme:Themes;
-  tag:FilterDataType<ResData.Tag>;
-  channel:FilterDataType<ResData.Channel>;
-  bianyuan:FilterDataType<{id:number, name:string}>;
+  tagFilter:FilterDataType<ResData.Tag>;
+  channelFilter:FilterDataType<ResData.Channel>;
+  bianyuanFilter:FilterDataType<{id:number, name:string}>;
   readingSettings:{
     fontSize:number;
     fontType:FontType;
   };
   faq:CacheData<DBResponse<'getFAQs'>>;
+  allChannels:CacheData<DBResponse<'getAllChannels'>>;
 }
 
 export function allocStorage () : Storage {
@@ -41,17 +42,17 @@ export function allocStorage () : Storage {
       userId:-1,
     },
     theme: Themes.light,
-    tag: {
+    tagFilter: {
       updated_at: 0,
       list: [],
       selectedList: [],
     },
-    channel: {
+    channelFilter: {
       updated_at: 0,
       list: [],
       selectedList: [],
     },
-    bianyuan: {
+    bianyuanFilter: {
       updated_at: 0,
       list: [],
       selectedList: [],
@@ -64,6 +65,7 @@ export function allocStorage () : Storage {
       updated_at: 0,
       data: [],
     },
+    allChannels: { updated_at: 0, data: {} },
   };
 }
 

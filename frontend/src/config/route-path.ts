@@ -5,9 +5,11 @@ export enum RoutePath {
   library = '/library',
 
   // forum
-  forum = '/thread_index',
+  threadHome = '/threadHome',
   book = '/book/:id',
   chapter = '/book/:bid/chapter/:cid',
+  thread = '/thread/:id',
+  channel = '/channel/:id',
 
   // user
   user = '/user',

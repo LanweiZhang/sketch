@@ -1,40 +1,43 @@
 import { History } from 'history';
-import { RoutePath } from '../config/route-path';
 
 export class Route {
-    constructor (
-        private _history:History,
-    ) { }
+  constructor (
+    private _history:History,
+  ) { }
 
-    public go (path:string) {
-        this._history.push(path);
-        this._history.goForward();
-    }
+  public go (path:string) {
+    this._history.push(path);
+    this._history.goForward();
+  }
 
-    public back = () => {
-        if (this._history.length <= 2) {
-            this.go('/');
-        } else {
-            this._history.goBack();
-        }
+  public back = () => {
+    if (this._history.length <= 2) {
+      this.go('/');
+    } else {
+      this._history.goBack();
     }
+  }
 
-    public channelTag (channelId:number, tagId:number) {
-        this.go(`/threads/?channels=[${channelId}]&tags=[${tagId}]`);
-    }
-    public thread (threadId:number) {
-        this.go(`/thread/${threadId}`);
-    }
+  public channelTag (channelId:number, tagId:number) {
+    this.go(`/threads/?channels=[${channelId}]&tags=[${tagId}]`);
+  }
+  public thread (threadId:number) {
+    this.go(`/thread/${threadId}`);
+  }
 
-    public user (userId:number) {
-        this.go(`/user/${userId}`);
-    }
+  public user (userId:number) {
+    this.go(`/user/${userId}`);
+  }
 
-    public book (threadId:number) {
-        this.go(`/book/${threadId}`);
-    }
+  public book (threadId:number) {
+    this.go(`/book/${threadId}`);
+  }
 
-    public chapter (threadId:number, chapterId:number) {
-        this.go(`/book/${threadId}/chapter/${chapterId}`);
-    }
+  public chapter (threadId:number, chapterId:number) {
+    this.go(`/book/${threadId}/chapter/${chapterId}`);
+  }
+
+  public channel (channelId:number) {
+    this.go(`/channel/${channelId}`);
+  }
 }

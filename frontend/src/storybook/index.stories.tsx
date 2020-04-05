@@ -30,7 +30,6 @@ import { Slider } from '../view/components/common/slider';
 import { Tab } from '../view/components/common/tab';
 import { Tag } from '../view/components/common/tag';
 import { TagList } from '../view/components/common/tag-list';
-import { FloatButton } from '../view/components/common/float-button';
 import { Core } from '../core/index';
 import { Carousel } from '../view/components/common/carousel';
 import { NoticeBar } from '../view/components/common/notice-bar';
@@ -732,19 +731,6 @@ storiesOf('Common Components/Navigation Bar', module)
   }))
 ;
 
-storiesOf('Common Components/Float Button', module)
-  .add('plus', () => <FloatButton.Plus
-    onClick={action('onClick')}
-  />)
-  .add('page', () => <div style={{ height: '1000px', position: 'relative', overflowY: 'auto' }}><FloatButton.Page
-    currentPage={number('currentPage', 1)}
-    totalPage={number('totalPage', 3)}
-    onClick={action('onClick')}
-  /></div>)
-  .add('customize', () => <FloatButton>
-    <div className="button">customize</div>
-  </FloatButton>)
-;
 storiesOf('Home Components/HomePage', module)
   .add('ChannelPreview', () => React.createElement(class extends React.Component {
     public render () {

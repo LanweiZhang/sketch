@@ -9,7 +9,7 @@ import { loadStorage, saveStorage, Storage, CacheData, allocStorage } from '../u
 // }
 
 // TODO: use version nummber to force frontend clear all cache even before expiredTime
-class CacheHandler<T> {
+class Cache<T> {
   protected db:DB;
   protected data:CacheData<T> | null = null;
   private expireTime:number;
@@ -24,7 +24,7 @@ class CacheHandler<T> {
     expireTime:number = 1000 * 3600 * 24,
   ) {
     this.db = db;
-    this.loadData = loadData;
+    this.loadData = loadData.bind(db);
     this.key = key;
     this.expireTime = expireTime;
   }
@@ -75,12 +75,18 @@ class CacheHandler<T> {
   }
 }
 
-export class FAQHandler extends CacheHandler<DBResponse<'getFAQs'>> {
+export class FAQCache extends Cache<DBResponse<'getFAQs'>> {
   constructor (db:DB) {
     super(
       db,
       db.getFAQs,
       'faq',
     );
+  }
+}
+
+export class ChannelsCache extends Cache<DBResponse<'getAllChannels'>> {
+  constructor (db:DB) {
+    super (db, db.getAllChannels, 'allChannels');
   }
 }

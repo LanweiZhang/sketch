@@ -4,7 +4,7 @@ import { ResData } from '../config/api';
 
 const EXPIRE_TIME_MS = 1000 * 3600 * 24;
 
-class FilterHandler<T> {
+class Filter<T> {
   protected _db:DB;
   protected _selectedList:number[] = [];
   protected _list:T[] = [];
@@ -63,14 +63,14 @@ class FilterHandler<T> {
   }
 }
 
-export class TagHandler extends FilterHandler<ResData.Tag> {
+export class TagFilter extends Filter<ResData.Tag> {
   private _types:{[type:string]:ResData.Tag[]} = {};
 
   constructor (db:DB) {
     super(
       db,
       async () => {
-        const data = loadStorage('tag');
+        const data = loadStorage('tagFilter');
         if (data.updated_at - Date.now() > EXPIRE_TIME_MS || !data.list.length) {
           const res = await db.getAllTags();
           const updatedData:FilterDataType<ResData.Tag> = {
@@ -78,13 +78,13 @@ export class TagHandler extends FilterHandler<ResData.Tag> {
             list: res.tags,
             selectedList: data.selectedList,
           };
-          saveStorage('tag', updatedData);
+          saveStorage('tagFilter', updatedData);
           return updatedData;
         }
         return data;
       },
       (data) => {
-        saveStorage('tag', data);
+        saveStorage('tagFilter', data);
       },
     );
   }
@@ -108,40 +108,40 @@ export class TagHandler extends FilterHandler<ResData.Tag> {
   }
 }
 
-export class ChannelHandler extends FilterHandler<ResData.Channel> {
+export class ChannelFilter extends Filter<ResData.Channel> {
   constructor (db:DB) {
     super (
       db,
       async () => {
-        const data = loadStorage('channel');
+        const data = loadStorage('channelFilter');
         if (data.updated_at - Date.now() > EXPIRE_TIME_MS) {
           const res = await db.getAllChannels();
           const updatedData = {
             updated_at: Date.now(),
-            list: res.channels,
+            list: Object.values(res),
             selectedList: data.selectedList,
           };
-          saveStorage('channel', updatedData);
+          saveStorage('channelFilter', updatedData);
           return updatedData;
         }
         return data;
       },
       (data) => {
-        saveStorage('channel', data);
+        saveStorage('channelFilter', data);
       },
     );
   }
 }
 
-export class BianyuanHandler extends FilterHandler<{id:number, name:string}> {
+export class BianyuanFilter extends Filter<{id:number, name:string}> {
   constructor (db:DB) {
     super (
       db,
       async () => {
-        return loadStorage('bianyuan');
+        return loadStorage('bianyuanFilter');
       },
       (data) => {
-        saveStorage('bianyuan', data);
+        saveStorage('bianyuanFilter', data);
       },
     );
   }
