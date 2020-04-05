@@ -65,6 +65,7 @@ import { Picker, Item } from '../view/components/common/picker';
 import { ReadingSettings } from '../view/components/thread/reading-settings';
 import { loadStorage } from '../utils/storage';
 import { Checkbox } from '../view/components/common/input/checkbox';
+import { EmptyState } from '../view/components/common/empty-state';
 
 const core = new Core();
 fakeDB(core.db);
@@ -449,7 +450,12 @@ storiesOf('Common Components', module)
         );
       }
     },
-  )));
+  )))
+  .add('EmptyState', () => (<div>
+    <EmptyState/>
+    <EmptyState size="middle" tip="这是一个中 TIP"/>
+    <EmptyState size="large" tip="这是一个大 TIP"/>
+  </div>));
 
 storiesOf('Common Components/Notice Bar', module)
   .add('short message', () => <NoticeBar
