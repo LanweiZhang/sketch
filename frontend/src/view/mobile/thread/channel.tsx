@@ -22,6 +22,7 @@ export class Channel extends React.Component < Props, State > {
     switch (this.state.page) {
       case 'createPost':
         return <PublishThread
+          type={'thread'}
           onCancel={() => this.setState({page: 'default'})}
           onSubmit={(spec) => this.props.core.db.publishThread(spec)
             .then((thread) => {

@@ -8,6 +8,7 @@ type RequestData = DBRequest<'publishThread'>[0];
 interface Props {
   onCancel:() => void;
   onSubmit:(data:RequestData) => void;
+  type:'thread'|'book';
 }
 
 interface State extends RequestData {
