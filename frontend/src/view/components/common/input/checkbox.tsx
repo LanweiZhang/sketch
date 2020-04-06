@@ -1,8 +1,8 @@
 import React from 'react';
 import './checkbox.scss';
-// it's actually radio box..
 // based on https://www.w3schools.com/howto/howto_css_custom_checkbox.asp
 type checkboxType = 'radio' | 'checkbox';
+type checkboxColor = 'grey' | 'white';
 export function Checkbox (props:{
   name?:string;
   value?:string | number;
@@ -11,6 +11,7 @@ export function Checkbox (props:{
   disabled?:boolean;
   label?:string;
   type?:checkboxType;
+  checkboxColor?:checkboxColor;
   style?:React.CSSProperties;
   className?:string;
 }) {
@@ -30,7 +31,8 @@ export function Checkbox (props:{
           e.stopPropagation();
         }}
       />
-      <span className="checkmark"></span>
+      <span className={`checkmark${
+        props.checkboxColor ? ' ' + props.checkboxColor : ' grey'}`}/>
     </label>
   );
 }

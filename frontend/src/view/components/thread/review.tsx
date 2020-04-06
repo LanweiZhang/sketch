@@ -4,6 +4,7 @@ import { NavBar } from '../common/navbar';
 import { Mark } from '../common/mark';
 import './review.scss';
 import { TextEditor } from '../common/textEditor';
+import { Checkbox } from '../common/input/checkbox';
 
 export type RewardData = {
     title:string;
@@ -97,14 +98,13 @@ export class Review extends React.Component<Props, State> {
                     <div className="section-title">评分</div>
                     <Mark className="left-margin" length={5}
                         onClick={(v) => this.setState({rate: v * 2 })}/>
-                    {/* TODO: use component checkbox */}
-                    <span id="recommend-to-others">
-                        <input
-                            type="checkbox"
-                            checked={suggest}
-                            onChange={(e) => this.setState({suggest:e.target.checked})}/>
-                        <label>向他人推荐</label>
-                    </span>
+                    <Checkbox
+                        className="recommend-to-others"
+                        checkboxColor="white"
+                        checked={suggest}
+                        onChange={() => this.setState({suggest:!suggest})}
+                        label="向他人推荐" />
+
                 </div>
                 <div className="section">
                     <div className="section-title">正文</div>
@@ -114,11 +114,11 @@ export class Review extends React.Component<Props, State> {
                         ref={this.textEditorRef}
                         placeholder="为文章写评吧"/>
                     <div className="left-margin section-item">
-                        <input
-                            type="checkbox"
+                        <Checkbox
+                            checkboxColor="white"
                             checked={indent}
-                            onChange={() => this.setState({indent: !indent})} />
-                        <label>段首缩进（每段前两个空格）</label>
+                            onChange={() => this.setState({indent: !indent})}
+                            label="段首缩进（每段前两个空格）" />
                     </div>
                 </div>
             </div>

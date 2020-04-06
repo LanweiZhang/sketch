@@ -52,9 +52,9 @@ export class Mark extends React.Component<Props, State> {
       }
     };
     return (
-      <div className={`mark${ this.props.className ? ' ' + this.props.className : '' }`}>
+      <div className={`comps-common-mark${ this.props.className ? ' ' + this.props.className : '' }`}>
         {/* It's necessary to have two layers, otherwise we will have trouble with padding/margin for the inner absolute div */}
-        <div className="container">
+        <div className="comps-common-mark-container">
           {(new Array(length)).fill('').map((v, k) => (
             <span
               style={{cursor: mark ? 'auto' : 'pointer'}}

@@ -11,13 +11,14 @@
       font-weight: bold;
       margin: var(--margin-3);
     }
-    .mark {
+    .comps-common-mark {
       display: inline-block;
     }
     label {
       font-size: var(--font-size-14);
     }
-    #recommend-to-others {
+    .recommend-to-others {
+      display: inline-block;
       margin-left: var(--margin-size-32);
     }
 
