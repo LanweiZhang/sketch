@@ -241,6 +241,34 @@ export class DB {
     });
   }
 
+  // status
+  public getStatuses = () : Promise<{
+    statuses:ResData.Status[],
+    paginate:ResData.ThreadPaginate,
+  }> => this._get(`/status`)
+
+  public getFollowStatuses = () : Promise<{
+    statuses:ResData.Status[],
+    paginate:ResData.ThreadPaginate,
+  }> => this._get(`/follow_status`)
+
+  public postStatue = (body:string) : Promise<{
+    status:ResData.Status,
+  }> => {
+    return this._post('/status', {
+      body: {
+        body,
+      },
+      errorMsg: {
+        401: '未登录',
+        412: '禁言中，或等级不足',
+        410: '不能重复发布过多动态',
+        409: '请求已登记，请耐心等待缓存更新，无需重复提交相同数据',
+        422: '输入格式有误',
+      },
+    });
+  }
+
   // 发送私信
   public sendMessage (toUserId:number, content:string) : Promise<{
     message:ResData.Message,

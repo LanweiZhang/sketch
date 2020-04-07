@@ -10,7 +10,7 @@
   --color-font-light: #666666;
   --color-placeholder: #999999;
   --color-font-disabled: #999999;
-
+  --color-divider: #4D333333;
   --color-border: #dbdbdb;
 }
 
@@ -37,6 +37,9 @@
   .button.color-pure, .tag.color-pure {
     background-color: white;
     color: var(--color-font);
+  }
+  .button.color-light {
+    background-color: #f4f5f9;
   }
 
   .book-title {

@@ -149,6 +149,12 @@ export namespace ResData {
     id:number;
     attributes:Database.Status;
     author:User;
+    attachable:ResData.Post | ResData.Thread | ResData.Status | null;
+    parent?:ResData.Status;
+    last_reply:null | Status;
+    replies?:ResData.Status[];
+    recent_rewards:ResData.Reward[];
+    recent_upvotes:ResData.Vote[];
   }
 
   export interface Tag {
