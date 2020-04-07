@@ -8,15 +8,15 @@ import { SearchBar } from '../search/search-bar';
 import { TextEditor } from '../../components/common/textEditor';
 import { Button } from '../../components/common/button';
 import { Colors } from '../../theme/theme';
-import { DBResponse } from '../../../core/db';
-import { ResData } from '../../../config/api';
+import { APIResponse } from '../../../core/api';
+import { DB } from '../../../config/db-type';
 import { notice } from '../../components/common/notice';
 import { Loading } from '../../components/common/loading';
 import { bbcode2html } from '../../../utils/text-formater';
 
 interface State {
-  allStatuses:DBResponse<'getStatuses'>;
-  followStatuses:DBResponse<'getFollowStatuses'>;
+  allStatuses:APIResponse<'getStatuses'>;
+  followStatuses:APIResponse<'getFollowStatuses'>;
   isAll:boolean;
   publishDisabled:boolean;
   isLoading:boolean;
@@ -26,11 +26,11 @@ export class Status extends React.Component<MobileRouteProps, State> {
   public state:State = {
     allStatuses: {
       statuses: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     followStatuses: {
       statuses: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     isAll: true,
     publishDisabled: true,
@@ -46,10 +46,10 @@ public async fetchData(isLoading=true) {
   this.setState({isLoading});
   try {
     if (this.state.isAll) {
-      const allStatuses = await this.props.core.db.getStatuses();
+      const allStatuses = await this.props.core.api.getStatuses();
       this.setState({allStatuses, isLoading:false});
     } else {
-      const followStatuses = await this.props.core.db.getFollowStatuses();
+      const followStatuses = await this.props.core.api.getFollowStatuses();
       this.setState({followStatuses, isLoading:false});
     }
   } catch (e) {
@@ -72,7 +72,7 @@ public publishStatue = async () => {
   if (!ref) { return; }
   const content = ref.getContent();
   try {
-    const { status } = await this.props.core.db.postStatue(content);
+    const { status } = await this.props.core.api.postStatue(content);
     const allStatuses = this.state.allStatuses;
     allStatuses.statuses = [ status, ...allStatuses.statuses ];
     this.setState({allStatuses});

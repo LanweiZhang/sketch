@@ -118,12 +118,12 @@ export namespace DB {
     id:number;
     attributes:DBTable.Status;
     author:User;
-    attachable:ResData.Post | ResData.Thread | ResData.Status | null;
-    parent?:ResData.Status;
+    attachable:Post | Thread | Status | null;
+    parent?:Status;
     last_reply:null | Status;
-    replies?:ResData.Status[];
-    recent_rewards:ResData.Reward[];
-    recent_upvotes:ResData.Vote[];
+    replies?:Status[];
+    recent_rewards:Reward[];
+    recent_upvotes:Vote[];
   }
 
   export interface Tag {

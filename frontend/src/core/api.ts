@@ -244,17 +244,17 @@ export class API {
 
   // status
   public getStatuses = () : Promise<{
-    statuses:ResData.Status[],
-    paginate:ResData.ThreadPaginate,
+    statuses:DB.Status[],
+    paginate:DB.ThreadPaginate,
   }> => this._get(`/status`)
 
   public getFollowStatuses = () : Promise<{
-    statuses:ResData.Status[],
-    paginate:ResData.ThreadPaginate,
+    statuses:DB.Status[],
+    paginate:DB.ThreadPaginate,
   }> => this._get(`/follow_status`)
 
   public postStatue = (body:string) : Promise<{
-    status:ResData.Status,
+    status:DB.Status,
   }> => {
     return this._post('/status', {
       body: {
