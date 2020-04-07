@@ -1,7 +1,7 @@
 $checbox-height: 16px;
 $checkbox-innercircle-height: 6px;
 
-.input-checkbox-container:hover input ~ .checkmark {
+.input-checkbox-container:hover input ~ .checkmark{
   background-color: #ccc;
 }
 .input-checkbox-container {
@@ -25,7 +25,14 @@ $checkbox-innercircle-height: 6px;
     left: 0;
     height: $checbox-height;
     width: $checbox-height;
+  }
+  .checkmark.grey {
     background-color: #eee;
+  }
+  .checkmark.white {
+    background-color: white;
+    border: 1px solid;
+    border-color: var(--color-border);
   }
   input[type="radio"] ~ .checkmark{
     border-radius: 50%;

@@ -68,6 +68,7 @@ export class TextEditor extends React.Component<{
   theme?:textEditorTheme;
   style?:React.CSSProperties;
   placeholder?:string;
+  onChange?:() => void;
 }, {
   text:string;
 }> {
@@ -77,7 +78,6 @@ export class TextEditor extends React.Component<{
     this.state = { text }; // You can also pass a Quill Delta here
     this.handleChange = this.handleChange.bind(this);
   }
-
   private reactQuillRef:any = React.createRef<ReactQuill>();
   private quillRef:any = null;
 
@@ -152,6 +152,7 @@ export class TextEditor extends React.Component<{
 
   private handleChange(value) {
     this.setState({ text: value });
+    if (this.props.onChange) { this.props.onChange(); }
   }
 
   public render() {

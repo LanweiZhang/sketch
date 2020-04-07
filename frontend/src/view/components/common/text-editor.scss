@@ -1,9 +1,22 @@
-
 .ql-snow {
+  background-color: white;
   .ql-editor {
     height:150px;
   }
+  .ql-toolbar.ql-snow {
+    border: none;
+  }
+  .ql-container.ql-snow {
+    border: none;
+  }
 }
+.ql-toolbar.ql-snow {
+  border: none;
+}
+.ql-container.ql-snow {
+  border: none;
+}
+
 
 .ql-bubble {
   background-color: var(--color-bg-base);
