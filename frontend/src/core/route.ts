@@ -37,7 +37,7 @@ export class Route {
     this.go(`/book/${threadId}/chapter/${chapterId}`);
   }
 
-  public channel (channelId:number) {
-    this.go(`/channel/${channelId}`);
+  public channel (channelId:number, tagId = 0) {
+    this.go(`/channel/${channelId}/tag/${tagId}`);
   }
 }

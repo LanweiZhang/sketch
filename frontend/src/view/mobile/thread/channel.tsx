@@ -22,17 +22,21 @@ interface Props extends MobileRouteProps {
 
 interface State {
   page:'default'|'createPost';
+  channelId:number;
   isLoading:boolean;
   data:APIResponse<'getChannel'>;
+  threads:DB.Thread[];
   ordered:RequestFilter.thread.ordered;
   showOrderSelector:boolean;
   onSelectTag:number;
+  withBianyuan:boolean;
 }
 
 export class Channel extends React.Component <Props, State> {
   public state:State = {
     page: 'default',
     isLoading: true,
+    channelId: +this.props.match.params.id,
     data: {
       channel: DB.allocChannelBrief(),
       threads: [],
@@ -41,19 +45,65 @@ export class Channel extends React.Component <Props, State> {
       simplethreads: [],
       paginate: DB.allocThreadPaginate(),
     },
+    threads: [],
     ordered: RequestFilter.thread.ordered.default,
     showOrderSelector: false,
-    onSelectTag: 0,
+    onSelectTag: +(this.props.match.params.tagId || 0),
+    withBianyuan: false,
   };
 
-  public async fetchData () {
-    const data = await this.props.core.api.getChannel(+this.props.match.params.id, {
-      isPublic: RequestFilter.thread.isPublic.include_private,
-      ordered: this.state.ordered,
-    });
-    await this.props.core.api.getChannelReview(+this.props.match.params.id, {
-    });
-    this.setState({isLoading: false, data});
+  public async fetchData (query:Partial<State> = {}) {
+    try {
+      const channelId = this.state.channelId;
+      const ordered = query.ordered || this.state.ordered;
+      const withBianyuan = query.withBianyuan || this.state.withBianyuan;
+      const onSelectTag = query.onSelectTag === undefined ? this.state.onSelectTag : query.onSelectTag;
+      if (onSelectTag !== this.state.onSelectTag) {
+        this.props.core.route.channel(channelId, onSelectTag);
+      }
+      let data = this.state.data;
+      let threads = this.state.threads;
+      if (!channelId) {
+        const primary_tags = [{id: 7, tag_name: '站务管理'}, {id: 8, tag_name: '违规举报'}, {id: 9, tag_name: '投诉仲裁'}];
+        const res = await this.props.core.api.getThreadList({
+          channels: primary_tags.map((channel) => channel.id),
+          withBianyuan,
+          ordered,
+        });
+        threads = res.thread;
+        data.paginate = res.paginate;
+        data.primary_tags = primary_tags;
+        data.channel.channel_name = '废文公务';
+      } else if (onSelectTag === 0) {
+        const res = await this.props.core.api.getChannel(channelId, {
+          isPublic: RequestFilter.thread.isPublic.include_private,
+          ordered,
+          withBianyuan,
+        });
+        data = res;
+        threads = res.threads;
+      } else {
+        const res = await this.props.core.api.getThreadList({
+          channels: [channelId],
+          tags: [onSelectTag],
+          withBianyuan,
+          ordered,
+        });
+        threads = res.thread;
+        data.paginate = res.paginate;
+      }
+      this.setState({
+        isLoading: false,
+        ordered,
+        withBianyuan,
+        onSelectTag,
+        data,
+        threads,
+      });
+    } catch (e) {
+      notice.requestError(e);
+      this.setState({isLoading: false});
+    }
   }
 
   public async componentDidMount () {
@@ -92,14 +142,14 @@ export class Channel extends React.Component <Props, State> {
         <div className="top-tags">
           <Slider>
             <div className={classnames({'selected': this.state.onSelectTag === 0})}
-              onClick={() => this.setState({onSelectTag: 0}, this.fetchData)}>
+              onClick={() => this.setState({isLoading: true}, () => this.fetchData({onSelectTag: 0}))}>
               全部
             </div>
             {this.state.data.primary_tags.map((tag) => {
               return <div
                 key={tag.id}
                 className={classnames({'selected': this.state.onSelectTag === tag.id})}
-                onClick={() => this.setState({onSelectTag: tag.id}, this.fetchData)}>
+                onClick={() => this.setState({isLoading: true}, () => this.fetchData({onSelectTag: tag.id}))}>
                 {tag.tag_name}
               </div>;
             })}
@@ -123,7 +173,7 @@ export class Channel extends React.Component <Props, State> {
           <div onClick={() => this.setState({showOrderSelector: true})}>排序 <i className="fa fa-angle-down"></i></div>
           <div>显示边限</div>
         </Card>
-        {this.state.data.threads.map((thread) =>
+        {this.state.threads.map((thread) =>
         <ThreadPreview
           key={thread.id}
           data={thread}
@@ -140,10 +190,12 @@ export class Channel extends React.Component <Props, State> {
             title: RequestFilterText.thread.ordered[key],
             onClick: () => this.setState(
               {
+                isLoading:true,
                 showOrderSelector: false,
-                ordered: key as RequestFilter.thread.ordered,
               },
-              this.fetchData),
+              () => this.fetchData({
+                ordered: key as RequestFilter.thread.ordered,
+              })),
           };
         })}
         onClose={() => this.setState({ showOrderSelector: false })}

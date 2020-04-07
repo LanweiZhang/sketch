@@ -589,14 +589,14 @@ export namespace DB {
   export interface ChannelPrimaryTag {
     id:number;
     tag_name:string;
-    tag_explanation:string;
-    tag_type:string;
-    is_bianyuan:boolean;
-    is_primary:boolean;
-    channel_id:number;
-    parent_id:number;
-    thread_count:number;
-    created_at:Timestamp;
-    deleted_at:Timestamp;
+    tag_explanation?:string;
+    tag_type?:string;
+    is_bianyuan?:boolean;
+    is_primary?:boolean;
+    channel_id?:number;
+    parent_id?:number;
+    thread_count?:number;
+    created_at?:Timestamp;
+    deleted_at?:Timestamp;
   }
 }

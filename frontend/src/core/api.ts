@@ -75,7 +75,7 @@ export class API {
 
     const response = await fetch(url, options);
     const result = await response.json();
-    if (!result.code || !result.data) {
+    if (!result.code) {
       console.error('response:', result);
       throw this._handleError(500, ErrorMsg.JSONParseError);
     }
@@ -478,7 +478,7 @@ export class API {
     channels?:number[],
     tags?:number[],
     excludeTag?:number[],
-    withBianyuan?:RequestFilter.thread.withBianyuan,
+    withBianyuan?:boolean,
     ordered?:RequestFilter.thread.ordered,
     withType?:'thread'|'book'|'list'|'column'|'request'|'homework',
     page?:number;
@@ -487,7 +487,11 @@ export class API {
     paginate:DB.ThreadPaginate,
   }> {
     return this._get('/thread', {
-      query,
+      query: {
+        withBianyuan: query && query.withBianyuan ? 'include_bianyuan' : '',
+        ...query,
+      },
+      errorCodes: [401],
     });
   }
 

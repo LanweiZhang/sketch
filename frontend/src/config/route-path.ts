@@ -9,7 +9,7 @@ export enum RoutePath {
   book = '/book/:id',
   chapter = '/book/:bid/chapter/:cid',
   thread = '/thread/:id',
-  channel = '/channel/:id',
+  channel = '/channel/:id/tag/:tagId',
 
   // user
   user = '/user',
