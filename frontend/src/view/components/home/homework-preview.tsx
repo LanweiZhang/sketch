@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { classnames } from '../../../utils/classname';
 import './homework-preview.scss';
 
 interface Props {
-  homeworks:ResData.BriefHomework[];
+  homeworks:DB.BriefHomework[];
   onMoreClick:() => void;
   onHomeworkClick:(id:number) => void;
 }

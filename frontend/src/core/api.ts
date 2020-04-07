@@ -1,9 +1,10 @@
 import { History } from 'history';
-import { ReqData, Increments, ResData } from '../config/api';
+import { Increments, DB } from '../config/db-type';
 import { parsePath, URLQuery } from '../utils/url';
 import { saveStorage } from '../utils/storage';
 import { ErrorMsg, ErrorCodeKeys } from '../config/error';
 import { User } from './user';
+import { RequestFilter } from '../config/request-filter';
 
 type JSONType = {[name:string]:any}|string;
 type FetchOptions = {
@@ -15,10 +16,10 @@ type FetchOptions = {
 
 type RemovePromise<T extends Promise<any>> = T extends Promise<infer R> ? R : any;
 type ArgumentTypes<F extends Function> = F extends (...args:infer A) => any ? A : never;
-export type DBResponse<T extends keyof DB> = RemovePromise<ReturnType<DB[T]>>;
-export type DBRequest<T extends keyof DB> = ArgumentTypes<DB[T]>;
+export type APIResponse<T extends keyof API> = RemovePromise<ReturnType<API[T]>>;
+export type APIRequest<T extends keyof API> = ArgumentTypes<API[T]>;
 
-export class DB {
+export class API {
   private user:User;
   private history:History;
   private host:string;
@@ -106,10 +107,10 @@ export class DB {
 
   // 主页
   public getPageHome () : Promise<{
-    quotes:ResData.Quote[],
-    recent_recommendations:ResData.Post[],
-    homeworks:ResData.BriefHomework[],
-    channel_threads:{channel_id:number, threads:ResData.Thread[]}[],
+    quotes:DB.Quote[],
+    recent_recommendations:DB.Post[],
+    homeworks:DB.BriefHomework[],
+    channel_threads:{channel_id:number, threads:DB.Thread[]}[],
   }> {
     return this._get('/');
   }
@@ -119,12 +120,12 @@ export class DB {
     channel:number[],
     page?:number;
     withBianyuan?:boolean;
-    ordered?:ReqData.Thread.ordered;
+    ordered?:RequestFilter.thread.ordered;
     withTag?:number[][];
     excludeTag?:number[];
   }) : Promise<{
-    threads:ResData.Thread[],
-    paginate:ResData.ThreadPaginate,
+    threads:DB.Thread[],
+    paginate:DB.ThreadPaginate,
     // request_data:{with_bianyuan:'include_bianyuan'},
   }> {
     const query = {};
@@ -144,7 +145,7 @@ export class DB {
         query['withBianyuan'] = 'include_bianyuan';
       }
 
-      if (spec.ordered && spec.ordered !== ReqData.Thread.ordered.default) {
+      if (spec.ordered && spec.ordered !== RequestFilter.thread.ordered.default) {
         query['ordered'] = spec.ordered;
       }
 
@@ -162,9 +163,9 @@ export class DB {
 
   // 论坛首页
   public getThreadHome () : Promise<{
-    simple_threads:ResData.Thread[],
-    threads:ResData.Thread[],
-    pagination:ResData.ThreadPaginate,
+    simple_threads:DB.Thread[],
+    threads:DB.Thread[],
+    pagination:DB.ThreadPaginate,
   }> {
     return this._get('/thread_index');
   }
@@ -176,7 +177,7 @@ export class DB {
 
   // 关注用户
   public followUser (userId:number) : Promise<{
-    user:ResData.User;
+    user:DB.User;
   }> {
     return this._post(`/user/${userId}/follow`, {
       errorCodes: [401],
@@ -189,7 +190,7 @@ export class DB {
   }
 
   // 取关用户
-  public unFollowUser (userId:number) : Promise<ResData.User> {
+  public unFollowUser (userId:number) : Promise<DB.User> {
     return this._delete(`/user/${userId}/follow`, {
       errorCodes: [401],
       errorMsg: {
@@ -201,7 +202,7 @@ export class DB {
   }
 
   // 修改关注设置
-  public updateFollowStatus (userId:number, keep_updated:boolean) : Promise<ResData.User> {
+  public updateFollowStatus (userId:number, keep_updated:boolean) : Promise<DB.User> {
     return this._patch(`/user/${userId}/follow`, {
       body: {keep_updated},
       errorCodes: [401, 403, 404, 412],
@@ -210,9 +211,9 @@ export class DB {
 
   //显示关注列表
   public getFollowingIndex (userId:number) : Promise<{
-    user:ResData.User,
-    followings:ResData.User[],
-    paginate:ResData.ThreadPaginate,
+    user:DB.User,
+    followings:DB.User[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get(`/user/${userId}/following`, {
       errorCodes: [401],
@@ -221,9 +222,9 @@ export class DB {
 
   //显示关注列表-含关注状态
   public getFollowingStatuses (userId:number) : Promise<{
-    user:ResData.User,
-    followingStatuses:ResData.User[],
-    paginate:ResData.ThreadPaginate,
+    user:DB.User,
+    followingStatuses:DB.User[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get(`/user/${userId}/followingStatuses`, {
       errorCodes: [401],
@@ -232,9 +233,9 @@ export class DB {
 
   // 显示粉丝列表
   public getFollowers (userId:number) : Promise<{
-    user:ResData.User,
-    followers:ResData.User[],
-    paginate:ResData.ThreadPaginate,
+    user:DB.User,
+    followers:DB.User[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get(`/user/${userId}/follower`, {
       errorCodes: [401],
@@ -243,7 +244,7 @@ export class DB {
 
   // 发送私信
   public sendMessage (toUserId:number, content:string) : Promise<{
-    message:ResData.Message,
+    message:DB.Message,
   }> {
     return this._post('/message', {
       body: {
@@ -256,7 +257,7 @@ export class DB {
 
   // 群发私信
   public sendGroupMessage (toUsers:number[], content:string) : Promise<{
-    messages:ResData.Message[],
+    messages:DB.Message[],
   }> {
     return this._post('/groupmessage', {
       body: {
@@ -273,19 +274,19 @@ export class DB {
   // 展示信箱
   public getMessages = (
     query:{
-      withStyle:ReqData.Message.style;
+      withStyle:'sendbox'|'receivebox'|'dialogue';
       chatWith?:Increments;
-      ordered?:ReqData.Message.ordered;
-      read?:ReqData.Message.read;
+      ordered?:'oldest'|'latest';
+      read?:'read_only'|'unread_only';
     },
     id:number = this.user.id,
   ) => {
     return this._get(`/user/${id}/message`, {
       query,
     }) as Promise<{
-      style:ReqData.Message.style,
-      messages:ResData.Message[],
-      paginate:ResData.ThreadPaginate,
+      style:'sendbox'|'receivebox'|'dialogue',
+      messages:DB.Message[],
+      paginate:DB.ThreadPaginate,
     }>;
   }
 
@@ -294,12 +295,12 @@ export class DB {
     return this._get('/publicnotice', {
       errorCodes: [401],
     }) as Promise<{
-      public_notices:ResData.PublicNotice[],
+      public_notices:DB.PublicNotice[],
     }>;
   }
 
   // 发系统消息, 管理员
-  public sendPublicNotice (content:string) : Promise<{public_notice:ResData.PublicNotice}> {
+  public sendPublicNotice (content:string) : Promise<{public_notice:DB.PublicNotice}> {
     return this._post('/publicnotice', {
       body: {
         body: content,
@@ -313,21 +314,21 @@ export class DB {
     return this._get(`/user/${userId}/activity`, {
       errorCodes: [401, 403, 404],
     }) as Promise<{
-      activities:ResData.Activity[],
-      paginate:ResData.ThreadPaginate,
+      activities:DB.Activity[],
+      paginate:DB.ThreadPaginate,
     }>;
   }
 
   // 请求全部头衔列表
-  public getAllTitles () : Promise<{titles:ResData.Title[]}> {
+  public getAllTitles () : Promise<{titles:DB.Title[]}> {
     return this._get('/config/titles');
   }
 
   // 用户头衔列表
   public getUserTitles (userId:number) : Promise<{
-    user:ResData.User,
-    titles:ResData.Title[],
-    paginate:ResData.ThreadPaginate,
+    user:DB.User,
+    titles:DB.Title[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get(`/user/${userId}/title`, {
       errorCodes: [401],
@@ -338,22 +339,22 @@ export class DB {
   // get rewards received by a user
   public getUserRewardsReceived = (userId:number = this.user.id) :
     Promise<{
-      rewards:ResData.Reward[],
-      paginate:ResData.ThreadPaginate,
+      rewards:DB.Reward[],
+      paginate:DB.ThreadPaginate,
     }> => this._get(`/user/${userId}/reward_received`)
 
   // get rewards sent by a user
   public getUserRewardsSent = (userId:number = this.user.id) :
     Promise<{
-      rewards:ResData.Reward[],
-      paginate:ResData.ThreadPaginate,
+      rewards:DB.Reward[],
+      paginate:DB.ThreadPaginate,
     }> => this._get(`/user/${userId}/reward_sent`)
 
   public deleteReward = (rewardId:number) :
     Promise<string> => this._delete(`/reward/${rewardId}`)
 
   // Vote System
-  public vote (type:ReqData.Vote.type, id:number, attitude:ReqData.Vote.attitude) : Promise<ResData.Vote> {
+  public vote (type:DB.VoteType, id:number, attitude:DB.VoteAttribute) : Promise<DB.Vote> {
     return this._post('/vote', {
       body: {
         votable_type: type,
@@ -369,9 +370,9 @@ export class DB {
   }
 
   // 查看评票目录
-  public getVotes (type:ReqData.Vote.type, id:number, attitude?:ReqData.Vote.attitude) : Promise<{
-    votes:ResData.Vote[],
-    paginate:ResData.ThreadPaginate,
+  public getVotes (type:DB.VoteType, id:number, attitude?:DB.VoteAttribute) : Promise<{
+    votes:DB.Vote[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get('/vote', {
       query: {
@@ -385,14 +386,14 @@ export class DB {
   // get votes received by a user
   public getUserVotesReceived = (userId:number = this.user.id) :
     Promise<{
-      votes:ResData.Vote[],
-      paginate:ResData.ThreadPaginate,
+      votes:DB.Vote[],
+      paginate:DB.ThreadPaginate,
     }> => this._get(`/user/${userId}/vote_received`)
 
   public getUserVotesSent = (userId:number = this.user.id) :
     Promise<{
-      votes:ResData.Vote[],
-      paginate:ResData.ThreadPaginate,
+      votes:DB.Vote[],
+      paginate:DB.ThreadPaginate,
     }> => this._get(`/user/${userId}/vote_sent`)
 
   // 删除评票
@@ -405,13 +406,13 @@ export class DB {
     channels?:number[],
     tags?:number[],
     excludeTag?:number[],
-    withBianyuan?:ReqData.Thread.withBianyuan,
-    ordered?:ReqData.Thread.ordered,
-    withType?:ReqData.Thread.Type,
+    withBianyuan?:RequestFilter.thread.withBianyuan,
+    ordered?:RequestFilter.thread.ordered,
+    withType?:'thread'|'book'|'list'|'column'|'request'|'homework',
     page?:number;
   }) : Promise<{
-    thread:ResData.Thread[],
-    paginate:ResData.ThreadPaginate,
+    thread:DB.Thread[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get('/thread', {
       query,
@@ -421,11 +422,11 @@ export class DB {
   // 查看讨论帖
   public getThread (id:number, query?:{
     page?:number,
-    ordered?:ReqData.Thread.ordered,
+    ordered?:RequestFilter.thread.ordered,
   }) : Promise<{
-    thread:ResData.Thread,
-    posts:ResData.Post[],
-    paginate:ResData.ThreadPaginate,
+    thread:DB.Thread,
+    posts:DB.Post[],
+    paginate:DB.ThreadPaginate,
   }> {
     return this._get(`/thread/${id}`, {
       query,
@@ -434,14 +435,14 @@ export class DB {
 
   // 获取回帖
   public getPost (threadId:number, postId:number) : Promise<{
-    thread:ResData.Thread;
-    post:ResData.Post;
+    thread:DB.Thread;
+    post:DB.Post;
   }> {
     return this._get(`/thread/${threadId}/post/${postId}`);
   }
 
   // 修改回帖类型
-  public turnToPost (postId:number, convertTo:ReqData.Post.Type) : Promise<ResData.Post> {
+  public turnToPost (postId:number, convertTo:'post'|'comment'|'chapter'|'review') : Promise<DB.Post> {
     return this._patch(`/post/${postId}/turnToPost`, {
       body: {
         convert_to_type: convertTo,
@@ -452,10 +453,10 @@ export class DB {
   // 查看书籍或讨论的封面
   public getThreadProfile (threadId:number, query:{
     page?:number;
-    ordered?:ReqData.Post.ordered,
+    ordered?:'latest_created'|'most_replied'|'most_upvoted'|'latest_responded'|'random',
   }) : Promise<{
-    thread:ResData.Thread,
-    posts:ResData.Post[],
+    thread:DB.Thread,
+    posts:DB.Post[],
   }> {
     return this._get(`/thread/${threadId}/profile`, {
       query,
@@ -472,14 +473,14 @@ export class DB {
       use_indentation?:boolean;
       is_bianyuan?:boolean;
       is_not_public?:boolean;
-  }) : Promise<ResData.Thread> {
+  }) : Promise<DB.Thread> {
       return this._post( '/thread', req);
   }
 
   // 新建回帖/章节/书评
   public addPostToThread (threadId:number, post:{
       body:string;
-      type:ReqData.Post.Type,
+      type:'post'|'comment'|'chapter'|'review',
       title?:string;
       brief?:string;
       is_anonymous?:boolean;
@@ -494,7 +495,7 @@ export class DB {
       summary?:'recommend',
       use_markdown?:boolean;
       use_indentation?:boolean;
-  }) : Promise<ResData.Post> {
+  }) : Promise<DB.Post> {
       return this._post(`/thread/${threadId}/post`, {
         body: post,
       });
@@ -519,7 +520,7 @@ export class DB {
   }
 
   // 收藏
-  public collectThread (threadId:number, group_id?:number) : Promise<ResData.Collection> {
+  public collectThread (threadId:number, group_id?:number) : Promise<DB.Collection> {
     return this._post(`/thread/${threadId}/collect`, {
       errorMsg: {
         404: '找不到这本图书',
@@ -533,7 +534,7 @@ export class DB {
   }
 
   // 展示用户收藏夹
-  public getUserCollection () : Promise<{collection:ResData.Collection[]}> {
+  public getUserCollection () : Promise<{collection:DB.Collection[]}> {
     return this._get(`/user/${this.user.id}/collection`, {
       errorMsg: {
         403: '非本人无权限查看收藏',
@@ -570,9 +571,9 @@ export class DB {
   }
   public registerByInvitationEmailSubmitEmail = (email:string) :
     Promise<{
-      registration_application:ResData.RegistrationApplication;
-      quizzes?:ResData.QuizQuestion[];
-      essay?:ResData.Essay; }> => {
+      registration_application:DB.RegistrationApplication;
+      quizzes?:DB.QuizQuestion[];
+      essay?:DB.Essay; }> => {
     return this._post('/register/by_invitation_email/submit_email', {
       body: {
         email,
@@ -589,8 +590,8 @@ export class DB {
   public registerByInvitationEmailSubmitQuiz =
     (email:string, quizzes:{id:number, answer:string}[]) :
     Promise<{
-      registration_application:ResData.RegistrationApplication;
-      essay?:ResData.Essay;
+      registration_application:DB.RegistrationApplication;
+      essay?:DB.Essay;
     }> => {
     return this._post('/register/by_invitation_email/submit_quiz', {
       body: {
@@ -643,7 +644,7 @@ export class DB {
   }
   public registerByInvitationSubmitEssay =
     (email:string, essay_id:number, body:string) :
-    Promise<{ registration_application:ResData.RegistrationApplication; }> => {
+    Promise<{ registration_application:DB.RegistrationApplication; }> => {
     return this._post('/register/by_invitation_email/submit_essay', {
       body: {
         email,
@@ -660,8 +661,8 @@ export class DB {
       },
     });
   }
-  public registerByInvitation =(
-    invitation_type:ReqData.Registration.invitationType,
+  public registerByInvitation = (
+    invitation_type:'token'|'email',
     invitation_token:string,
     name:string,
     email:string,
@@ -721,14 +722,14 @@ export class DB {
   }
 
   // 全部tag
-  public getAllTags () : Promise<{tags:ResData.Tag[]}> {
+  public getAllTags () : Promise<{tags:DB.Tag[]}> {
     return this._get('/config/allTags');
   }
 
   // 获取全部channel
-  public async getAllChannels () : Promise<{[channelId:number]:ResData.Channel}> {
+  public async getAllChannels () : Promise<{[channelId:number]:DB.Channel}> {
     const data =  await this._get('/config/allChannels');
-    const result:{[channelId:number]:ResData.Channel} = {};
+    const result:{[channelId:number]:DB.Channel} = {};
     for (let i = 0; i < data.channels.length; i ++) {
       const channel = data.channels[i];
       result[channel.id] = channel;
@@ -737,7 +738,7 @@ export class DB {
   }
 
   // help faq system
-  public getFAQs = () : Promise<ResData.FAQ[]> => {
+  public getFAQs = () : Promise<DB.FAQ[]> => {
     return this._get('/helpfaq');
   }
   // others

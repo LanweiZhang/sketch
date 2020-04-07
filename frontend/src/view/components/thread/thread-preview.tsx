@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Tag } from '../common/tag';
 import './thread-preview.scss';
 import { Card } from '../common/card';
 
 // todo: mini version
 interface Props {
-  data:ResData.Thread;
+  data:DB.Thread;
   mini?:boolean; // 精简版/非精简版
   onTagClick:(channelId:number, tagId:number) => void;
   onClick:(id:number) => void;

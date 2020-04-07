@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Carousel } from '../common/carousel';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Core } from '../../../core/index';
 import './quotes.scss';
 
 interface Props {
-  quotes:ResData.Quote[];
+  quotes:DB.Quote[];
   core:Core;
 }
 

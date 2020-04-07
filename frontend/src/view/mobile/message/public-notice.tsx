@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { MobileRouteProps } from '../router';
 import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
 import { ExpandableMessage } from '../../components/message/expandable-message';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { List } from '../../components/common/list';
 
 interface State {
-  publicNoticeData:DBResponse<'getPublicNotice'>;
+  publicNoticeData:APIResponse<'getPublicNotice'>;
 }
 
 // TODO: unread
@@ -27,7 +27,7 @@ export class PublicNotice extends React.Component<MobileRouteProps, State> {
     if (this.props.location.state && this.props.location.state.publicNoticeData) {
       publicNoticeData = this.props.location.state.publicNoticeData;
     } else {
-      publicNoticeData = await this.props.core.db.getPublicNotice()
+      publicNoticeData = await this.props.core.api.getPublicNotice()
                                 .catch((e) => {
                                   // console.log(e);
                                   return this.state.publicNoticeData;
@@ -37,13 +37,13 @@ export class PublicNotice extends React.Component<MobileRouteProps, State> {
     this.setState({publicNoticeData});
   }
 
-  private isNoticeUnread (notice:ResData.PublicNotice) : boolean {
+  private isNoticeUnread (notice:DB.PublicNotice) : boolean {
     // TODO
     if (notice.id > 2) { return true; }
     return false;
   }
 
-  private renderNotice (notice:ResData.PublicNotice) {
+  private renderNotice (notice:DB.PublicNotice) {
     const title = notice.attributes.title ? notice.attributes.title : '通知';
     const authorName = notice.author ? notice.author.attributes.name : '管理员';
     const time = notice.attributes.created_at;

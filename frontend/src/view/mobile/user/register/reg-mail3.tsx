@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
 import { Accordion } from '../../../components/common/accordion';
-import { DBResponse } from '../../../../core/db';
+import { APIResponse } from '../../../../core/api';
 import { notice } from '../../../components/common/notice';
 
 export function RegMail3 (props:{
   email:string;
   className?:string;
   regMailToken:string;
-  resendEmail:(email:string) => Promise<DBResponse<'registerByInvitationEmailResendEmailVerification'>>;
+  resendEmail:(email:string) => Promise<APIResponse<'registerByInvitationEmailResendEmailVerification'>>;
   changeRegMailToken:(token:string) => () => void;
 }) {
   const onClickResendButton = async () => {

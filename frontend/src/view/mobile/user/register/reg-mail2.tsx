@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { ResData } from '../../../../config/api';
+import { DB } from '../../../../config/db-type';
 import { QuizQuestionAnswer } from './register';
 import { Checkbox } from '../../../components/common/input/checkbox';
 
 interface Props {
   email:string;
-  quiz:ResData.QuizQuestion[];
+  quiz:DB.QuizQuestion[];
   changeQuizAnswer:(qa:QuizQuestionAnswer[]) => () => void;
 }
 type CheckBoxState = {[key:number]:{[key:number]:boolean}};
@@ -28,7 +28,7 @@ export class RegMail2 extends React.Component<Props, State> {
     this.setState({checkboxes});
   }
 
-  private handleOptionChange = (quiz:ResData.QuizQuestion, optionID:number ) => () => {
+  private handleOptionChange = (quiz:DB.QuizQuestion, optionID:number ) => () => {
     const question = this.state.checkboxes[quiz.id];
     question[optionID] = !question[optionID];
     const checkboxes = {
@@ -65,7 +65,7 @@ export class RegMail2 extends React.Component<Props, State> {
     return quizAnswer;
   }
 
-  private allocQuizAnswer(quiz:ResData.QuizQuestion) {
+  private allocQuizAnswer(quiz:DB.QuizQuestion) {
     const question:{[key:number]:boolean} = {};
     quiz.attributes.options.forEach((o) => {
       question[o.id] = false;
@@ -73,7 +73,7 @@ export class RegMail2 extends React.Component<Props, State> {
     return question;
   }
 
-  private renderQuizQuestion(question:ResData.QuizQuestion) {
+  private renderQuizQuestion(question:DB.QuizQuestion) {
     return (
       <div className="quiz-question" key={question.id}>
         <p>{ question.attributes.body }</p>

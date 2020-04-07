@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Link } from 'react-router-dom';
 
 interface Props {
-  data:ResData.Post;
+  data:DB.Post;
 }
 interface State {
 }

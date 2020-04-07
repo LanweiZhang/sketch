@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ResData, ReqData } from '../../../../config/api';
+import { DB } from '../../../../config/db-type';
 import { MobileRouteProps } from '../../router';
 import { Page } from '../../../components/common/page';
 import { NavBar } from '../../../components/common/navbar';
@@ -30,19 +30,21 @@ export type Account = {
 };
 export type QuizQuestionAnswer = {id:number, answer:string};
 interface State {
-  registrationOption:ReqData.Registration.invitationType;
+  registrationOption:InvitationType;
   email:string;
-  registrationStatus:ResData.RegistrationApplication;
-  quiz:ResData.QuizQuestion[];
+  registrationStatus:DB.RegistrationApplication;
+  quiz:DB.QuizQuestion[];
   quizAnswer:QuizQuestionAnswer[];
   regMailToken:string;
   regCode:string;
-  essay:ResData.Essay;
+  essay:DB.Essay;
   essayAnswer:string;
   account:Account;
   step:Step;
   showPopup:boolean;
 }
+
+export type InvitationType = 'token'|'email';
 
 // we put all registration pages in one component,
 // and use internal component state to navigate between steps, instead of providing urls for different steps
@@ -56,14 +58,14 @@ export type Step = 'info' | 'choose-reg-option' | 'reg-mail-1' |
 export class Register extends React.Component<MobileRouteProps, State> {
   public state:State = {
     // internal state
-    registrationOption: ReqData.Registration.invitationType.token,
+    registrationOption: 'token',
     email: '',
-    registrationStatus: ResData.allocRegistrationApplication(),
+    registrationStatus: DB.allocRegistrationApplication(),
     quiz: [],
     quizAnswer:[],      // reg-mail2
     regMailToken: '',   // reg-mail3
     regCode: '',
-    essay: ResData.allocEssay(),
+    essay: DB.allocEssay(),
     essayAnswer: '',
     account:{
       email: '',
@@ -84,17 +86,16 @@ export class Register extends React.Component<MobileRouteProps, State> {
   }
 
   public nextStep = async () => {
-    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay, registerVerifyInvitationToken, registerByInvitation } = this.props.core.db;
+    const { registerByInvitationEmailSubmitEmail, registerByInvitationEmailSubmitQuiz, registerByInvitationConfirmToken, registerByInvitationSubmitEssay, registerVerifyInvitationToken, registerByInvitation } = this.props.core.api;
 
     const { registrationOption, step, email, registrationStatus, quiz, quizAnswer, essay, essayAnswer, regMailToken, regCode, account } = this.state;
-    const { invitationType } = ReqData.Registration;
     switch (step) {
       case 'info':
         this.setState({ step: 'choose-reg-option' });
         break;
       case 'choose-reg-option': {
         this.setState({ step:
-          registrationOption == invitationType.token ? 'reg-code' : 'reg-mail-1' });
+          registrationOption == 'token' ? 'reg-code' : 'reg-mail-1' });
         break;
       }
       case 'reg-mail-1': {
@@ -154,7 +155,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
               // next step: confirm your email
               newState.essay = res.essay;
               newState.step = 'reg-mail-3';
-             }
+            }
           }
           this.setState(newState);
         } catch (e) {
@@ -205,7 +206,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
       }
       case 'create-account': {
         try {
-          if (registrationOption == invitationType.token) {
+          if (registrationOption == 'token') {
             const { user, history } = this.props.core;
             const { token, name, id } = await registerByInvitation  (registrationOption, regCode, account.username, account.email, account.password);
             user.login(name, id, token);
@@ -332,7 +333,7 @@ export class Register extends React.Component<MobileRouteProps, State> {
         return (
           <RegMail3
             regMailToken={regMailToken}
-            resendEmail={this.props.core.db.registerByInvitationEmailResendEmailVerification}
+            resendEmail={this.props.core.api.registerByInvitationEmailResendEmailVerification}
             changeRegMailToken={this.updateState('regMailToken')}
             email={email}/>
         );

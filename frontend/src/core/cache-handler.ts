@@ -1,4 +1,4 @@
-import { DB, DBResponse } from './db';
+import { API, APIResponse } from './api';
 import { loadStorage, saveStorage, Storage, CacheData, allocStorage } from '../utils/storage';
 
 // TODO: CacheHandler is based on filterHandler, refactor the two files later
@@ -10,7 +10,7 @@ import { loadStorage, saveStorage, Storage, CacheData, allocStorage } from '../u
 
 // TODO: use version nummber to force frontend clear all cache even before expiredTime
 class Cache<T> {
-  protected db:DB;
+  protected db:API;
   protected data:CacheData<T> | null = null;
   private expireTime:number;
   private key:keyof Storage;
@@ -18,7 +18,7 @@ class Cache<T> {
   private loadData:() => Promise<T>;
 
   constructor (
-    db:DB,
+    db:API,
     loadData:() => Promise<T>,
     key:(keyof Storage),
     expireTime:number = 1000 * 3600 * 24,
@@ -75,8 +75,8 @@ class Cache<T> {
   }
 }
 
-export class FAQCache extends Cache<DBResponse<'getFAQs'>> {
-  constructor (db:DB) {
+export class FAQCache extends Cache<APIResponse<'getFAQs'>> {
+  constructor (db:API) {
     super(
       db,
       db.getFAQs,
@@ -85,8 +85,8 @@ export class FAQCache extends Cache<DBResponse<'getFAQs'>> {
   }
 }
 
-export class ChannelsCache extends Cache<DBResponse<'getAllChannels'>> {
-  constructor (db:DB) {
+export class ChannelsCache extends Cache<APIResponse<'getAllChannels'>> {
+  constructor (db:API) {
     super (db, db.getAllChannels, 'allChannels');
   }
 }

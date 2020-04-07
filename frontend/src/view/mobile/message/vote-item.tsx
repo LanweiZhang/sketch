@@ -1,13 +1,13 @@
 
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { List } from '../../components/common/list';
 import ClampLines from 'react-clamp-lines';
 import { Constant } from '../../../config/constant';
 
 export function VoteItem (props:{
   read:boolean;
-  vote:ResData.Vote;
+  vote:DB.Vote;
   userId:number;
   deleteVote:(voteId:number) => (e:React.MouseEvent) => void;
   className?:string;

@@ -3,12 +3,12 @@ import { Card } from '../../../components/common/card';
 import { Account } from './register';
 import { Checkbox } from '../../../components/common/input/checkbox';
 import { validEmail, validPwd, validUserName } from '../../../../utils/validates';
-import { ReqData } from '../../../../config/api';
+import { InvitationType } from './register';
 
 interface Props {
   email:string;
   account:Account;
-  registrationOption:ReqData.Registration.invitationType;
+  registrationOption:InvitationType;
   changeAccount:(account:Account) => () => void;
 }
 
@@ -120,7 +120,6 @@ export class CreateAccount extends React.Component<Props, State> {
   public render () {
     const { registrationOption } = this.props;
     const { password, username, passwordConfirm, declarationOfGoodFish, check1, check2, check3, email, passwordConfirmInvalid, passwordInvalid, emailInvalid, declarationOfGoodFishInvalid, usernameInvalid } = this.state;
-    const invitationType = ReqData.Registration.invitationType;
     return (
       <Card className="reg">
         { this.headQuote }
@@ -132,7 +131,7 @@ export class CreateAccount extends React.Component<Props, State> {
               minLength={2}
               maxLength={255}
               value={email}
-              disabled={registrationOption == invitationType.email}
+              disabled={registrationOption == 'email'}
               onChange={(e) => this.setStateAndCheckReady('email',   e.target.value) }
               placeholder="请输入邮箱"
               onBlur={this.validateEmail}></input>

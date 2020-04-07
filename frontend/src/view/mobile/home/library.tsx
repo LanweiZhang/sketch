@@ -3,16 +3,17 @@ import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
 import { RoutePath } from '../../../config/route-path';
 import { ForumMenu } from '../../components/thread/forum-menu';
-import { ReqData, ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { MobileRouteProps } from '../router';
 import { ThreadPreview } from '../../components/thread/thread-preview';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { Loading } from '../../components/common/loading';
+import { RequestFilter } from '../../../config/request-filter';
 
 interface State {
-  data:DBResponse<'getBooks'>;
+  data:APIResponse<'getBooks'>;
   onPage:number;
-  ordered:ReqData.Thread.ordered;
+  ordered:RequestFilter.thread.ordered;
   isLoading:boolean;
 }
 
@@ -20,10 +21,10 @@ export class Library extends React.Component<MobileRouteProps, State> {
   public state:State = {
     data: {
       threads: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     onPage: 1,
-    ordered: ReqData.Thread.ordered.default,
+    ordered: RequestFilter.thread.ordered.default,
     isLoading: true,
   };
 
@@ -33,7 +34,7 @@ export class Library extends React.Component<MobileRouteProps, State> {
 
   public fetchData () {
     const { tag, channel, bianyuan } = this.props.core.filter;
-    this.props.core.db.getBooks({
+    this.props.core.api.getBooks({
       page: this.state.onPage,
       channel: channel.getSelectedList(),
       withTag: [tag.getSelectedList()],
@@ -54,7 +55,7 @@ export class Library extends React.Component<MobileRouteProps, State> {
     >文库</NavBar>}>
       <ForumMenu
         core={this.props.core}
-        selectedSort={ReqData.Thread.ordered.default}
+        selectedSort={RequestFilter.thread.ordered.default}
         applySort={(ordered) => {
           this.setState({ordered});
           this.fetchData();

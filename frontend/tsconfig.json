@@ -31,7 +31,7 @@
   },
   "include": [
     "src/**/*",
-    "types"
+    "types", "bin/parse-selector-php.ts"
   ],
   "exclude": [
     "dist",

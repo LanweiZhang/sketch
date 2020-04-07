@@ -4,18 +4,18 @@ import { Page } from '../../components/common/page';
 import { MainMenu } from '../main-menu';
 import { SearchBar } from '../search/search-bar';
 import { Card } from '../../components/common/card';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Loading } from '../../components/common/loading';
 import { ThreadPreview } from '../../components/thread/thread-preview';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { notice } from '../../components/common/notice';
 import './home.scss';
 import { PublishThread } from '../../components/thread/publish-thread';
 import { PublishThreadButton } from '../../components/thread/publish-button';
 
 interface State {
-  data:DBResponse<'getThreadHome'>;
-  channels:DBResponse<'getAllChannels'>;
+  data:APIResponse<'getThreadHome'>;
+  channels:APIResponse<'getAllChannels'>;
   isLoading:boolean;
   page:'default'|'createPost';
 }
@@ -25,7 +25,7 @@ export class ThreadHome extends React.Component<MobileRouteProps, State> {
     data: {
       simple_threads: [],
       threads: [],
-      pagination: ResData.allocThreadPaginate(),
+      pagination: DB.allocThreadPaginate(),
     },
     channels: {},
     isLoading: true,
@@ -46,7 +46,7 @@ export class ThreadHome extends React.Component<MobileRouteProps, State> {
         return <PublishThread
           type={'thread'}
           onCancel={() => this.setState({page: 'default'})}
-          onSubmit={(spec) => this.props.core.db.publishThread(spec)
+          onSubmit={(spec) => this.props.core.api.publishThread(spec)
             .then((thread) => {
               notice.success('发布成功');
               this.props.core.route.thread(thread.id);
@@ -98,7 +98,7 @@ export class ThreadHome extends React.Component<MobileRouteProps, State> {
 
   public fetchData = async () => {
     try {
-      const data = await this.props.core.db.getThreadHome();
+      const data = await this.props.core.api.getThreadHome();
       this.setState({
         data,
         isLoading: false,

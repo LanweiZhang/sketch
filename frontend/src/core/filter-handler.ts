@@ -1,11 +1,11 @@
-import { DB } from './db';
+import { API } from './api';
 import { loadStorage, saveStorage, FilterDataType } from '../utils/storage';
-import { ResData } from '../config/api';
+import { DB } from '../config/db-type';
 
 const EXPIRE_TIME_MS = 1000 * 3600 * 24;
 
 class Filter<T> {
-  protected _db:DB;
+  protected _db:API;
   protected _selectedList:number[] = [];
   protected _list:T[] = [];
 
@@ -13,7 +13,7 @@ class Filter<T> {
   private _loadData:() => Promise<FilterDataType<T>>;
 
   constructor (
-    db:DB,
+    db:API,
     loadData:() => Promise<FilterDataType<T>>,
     saveData:(data:FilterDataType<T>) => void,
   ) {
@@ -63,17 +63,17 @@ class Filter<T> {
   }
 }
 
-export class TagFilter extends Filter<ResData.Tag> {
-  private _types:{[type:string]:ResData.Tag[]} = {};
+export class TagFilter extends Filter<DB.Tag> {
+  private _types:{[type:string]:DB.Tag[]} = {};
 
-  constructor (db:DB) {
+  constructor (db:API) {
     super(
       db,
       async () => {
         const data = loadStorage('tagFilter');
         if (data.updated_at - Date.now() > EXPIRE_TIME_MS || !data.list.length) {
           const res = await db.getAllTags();
-          const updatedData:FilterDataType<ResData.Tag> = {
+          const updatedData:FilterDataType<DB.Tag> = {
             updated_at: Date.now(),
             list: res.tags,
             selectedList: data.selectedList,
@@ -108,8 +108,8 @@ export class TagFilter extends Filter<ResData.Tag> {
   }
 }
 
-export class ChannelFilter extends Filter<ResData.Channel> {
-  constructor (db:DB) {
+export class ChannelFilter extends Filter<DB.Channel> {
+  constructor (db:API) {
     super (
       db,
       async () => {
@@ -134,7 +134,7 @@ export class ChannelFilter extends Filter<ResData.Channel> {
 }
 
 export class BianyuanFilter extends Filter<{id:number, name:string}> {
-  constructor (db:DB) {
+  constructor (db:API) {
     super (
       db,
       async () => {

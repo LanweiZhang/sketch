@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { MobileRouteProps } from '../router';
 import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
 import { List } from '../../components/common/list';
 import { Toolbar } from './toolbar';
 import { RewardItem } from './reward-item';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { notice } from '../../components/common/notice';
 
 interface State {
-  rewardsReceived:DBResponse<'getUserRewardsReceived'>;
-  rewardsSent:DBResponse<'getUserRewardsSent'>;
+  rewardsReceived:APIResponse<'getUserRewardsReceived'>;
+  rewardsSent:APIResponse<'getUserRewardsSent'>;
   filter:filterType;
 }
 
@@ -26,17 +26,17 @@ export class RewardNotice extends React.Component<MobileRouteProps, State> {
   public state:State = {
     rewardsReceived: {
       rewards: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     rewardsSent: {
       rewards: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     filter: 'all',
   };
 
   public async componentDidMount() {
-    const { getUserRewardsReceived, getUserRewardsSent } = this.props.core.db;
+    const { getUserRewardsReceived, getUserRewardsSent } = this.props.core.api;
     const fetchRewardsReceived = getUserRewardsReceived()
       .catch((e) => {
         notice.requestError(e);
@@ -53,14 +53,14 @@ export class RewardNotice extends React.Component<MobileRouteProps, State> {
 
   public deleteReward = (rewardId:number) => async () => {
     try {
-      await this.props.core.db.deleteReward(rewardId);
+      await this.props.core.api.deleteReward(rewardId);
       let rewardsSent = this.state.rewardsSent;
       const rewards = rewardsSent.rewards;
       rewards.splice(rewards.findIndex( (r) => r.id == rewardId), 1);
       this.setState({rewardsSent});
 
       // due to pagination, after we delete a reward, we have space for reward in page 2
-      rewardsSent = await this.props.core.db.getUserRewardsSent();
+      rewardsSent = await this.props.core.api.getUserRewardsSent();
       this.setState({rewardsSent});
     } catch (e) {
       notice.requestError(e);
@@ -88,7 +88,7 @@ export class RewardNotice extends React.Component<MobileRouteProps, State> {
 
   private getRewards() {
     const { rewardsReceived, rewardsSent, filter } = this.state;
-    let selectedRewards:ResData.Reward[] = [];
+    let selectedRewards:DB.Reward[] = [];
     switch (filter) {
       case 'all':
         selectedRewards = [...rewardsReceived.rewards, ...rewardsSent.rewards];

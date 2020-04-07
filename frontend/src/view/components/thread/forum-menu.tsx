@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from '../common/card';
 import { classnames } from '../../../utils/classname';
-import { ReqData } from '../../../config/api';
 import { List } from '../common/list';
 import { TagList } from '../common/tag-list';
 import { Tag } from '../common/tag';
@@ -10,6 +9,7 @@ import { RoutePath } from '../../../config/route-path';
 import { Button } from '../common/button';
 import { Colors } from '../../theme/theme';
 import './forum-menu.scss';
+import { RequestFilter } from '../../../config/request-filter';
 
 enum MenuList {
   none,
@@ -17,8 +17,8 @@ enum MenuList {
   filter,
 }
 
-const ordered = ReqData.Thread.ordered;
-type ordered = ReqData.Thread.ordered;
+const ordered = RequestFilter.thread.ordered;
+type ordered = RequestFilter.thread.ordered;
 type Filter = {
   id:number;
   name:string;
@@ -37,8 +37,8 @@ enum FilterType {
 export class ForumMenu extends React.PureComponent<{
   // props
   core:Core;
-  selectedSort:ReqData.Thread.ordered;
-  applySort:(sort:ReqData.Thread.ordered) => void;
+  selectedSort:RequestFilter.thread.ordered;
+  applySort:(sort:RequestFilter.thread.ordered) => void;
   applyFilter:() => void;
 }, State> {
   public state = {
@@ -46,7 +46,7 @@ export class ForumMenu extends React.PureComponent<{
   };
 
   public static SortText:{[name in ordered]:string} = {
-    [ordered.latest_added_component]: '最新章节',
+    [ordered.latest_add_component]: '最新章节',
     [ordered.jifen]: '总积分',
     [ordered.weighted_jifen]: '均字数积分',
     [ordered.latest_created]: '最新创建',
@@ -57,7 +57,7 @@ export class ForumMenu extends React.PureComponent<{
   };
 
   public displaySorts:ordered[] = [
-    ordered.latest_added_component,
+    ordered.latest_add_component,
     ordered.default,
     ordered.jifen,
     ordered.weighted_jifen,

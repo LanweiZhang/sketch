@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { ResData } from '../../../../config/api';
+import { DB } from '../../../../config/db-type';
 
 export function RegMailProgress (props:{
   email:string;
-  registrationStatus:ResData.RegistrationApplication;
+  registrationStatus:DB.RegistrationApplication;
   className?:string;
 }) {
   const { has_quizzed, email_verified_at, submitted_at, is_passed, last_invited_at } = props.registrationStatus.attributes;

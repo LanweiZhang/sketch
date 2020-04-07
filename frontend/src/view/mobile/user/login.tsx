@@ -28,17 +28,17 @@ export class LoginRoute extends React.Component<MobileRouteProps, State> {
       case '/login':
         this.location = 'login';
         return <Login core = {this.props.core} login={async (email, pwd) =>
-            this.props.core.db.login(email, pwd, fromUrl) }></Login>;
+            this.props.core.api.login(email, pwd, fromUrl) }></Login>;
       case '/register':
         this.location = 'register';
         return <Page top={<NavBar goBack={this.props.core.route.back}>Login</NavBar>} >
           <Register register={async (name, email, pwd) =>
-          this.props.core.db.register(name, pwd, email, fromUrl)}></Register>
+          this.props.core.api.register(name, pwd, email, fromUrl)}></Register>
           </Page>;
       case '/reset_password':
         this.location = 'reset password';
         return  <Page top={<NavBar goBack={this.props.core.route.back}>Login</NavBar>} >
-          <PasswordReset resetPassword={(email) => this.props.core.db.resetPassword(email)}></PasswordReset>;
+          <PasswordReset resetPassword={(email) => this.props.core.api.resetPassword(email)}></PasswordReset>;
           </Page>;
       default:
         return <div>wrong pathname {window.location.pathname}</div>;

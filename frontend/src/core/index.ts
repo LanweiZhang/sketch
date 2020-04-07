@@ -1,4 +1,4 @@
-import { DB } from './db';
+import { API } from './api';
 import { User } from './user';
 import { History, UnregisterCallback, createBrowserHistory } from 'history';
 import { EventBus } from '../utils/events';
@@ -8,7 +8,7 @@ import { Route } from './route';
 import { saveStorage, FontType } from '../utils/storage';
 import { Themes } from '../view/theme/theme';
 import { updateNoticeTheme } from '../view/components/common/notice';
-import { ResData } from '../config/api';
+import { DB } from '../config/db-type';
 import { FAQCache, ChannelsCache } from './cache-handler';
 const debounce = require('lodash/debounce');
 
@@ -25,12 +25,12 @@ export type Cache = {
 interface State {
   chapterIndex:{
     threadId:number;
-    chapters:ResData.Post[];
+    chapters:DB.Post[];
   };
 }
 
 export class Core {
-  public db:DB;
+  public api:API;
   public user:User;
   public history:History;
   public unlistenHistory:UnregisterCallback;
@@ -53,15 +53,15 @@ export class Core {
     });
 
     this.user = new User(this.history);
-    this.db = new DB(this.user, this.history);
+    this.api = new API(this.user, this.history);
     this.filter = {
-      tag: new TagFilter(this.db),
-      channel: new ChannelFilter(this.db),
-      bianyuan: new BianyuanFilter(this.db),
+      tag: new TagFilter(this.api),
+      channel: new ChannelFilter(this.api),
+      bianyuan: new BianyuanFilter(this.api),
     };
     this.cache = {
-      FAQ: new FAQCache(this.db),
-      channels: new ChannelsCache(this.db),
+      FAQ: new FAQCache(this.api),
+      channels: new ChannelsCache(this.api),
     };
     this.route = new Route(this.history);
     this.windowResizeEvent = new EventBus();

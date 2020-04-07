@@ -3,10 +3,10 @@ import { MobileRouteProps } from '../router';
 import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
 import { RoutePath } from '../../../config/route-path';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 
 interface State {
-  data:DBResponse<'getPageHome'>;
+  data:APIResponse<'getPageHome'>;
 }
 
 export class Suggestion extends React.Component<MobileRouteProps, State> {

@@ -4,13 +4,13 @@ import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
 import '../message/style.scss'; // TODO: extract common scss out
 import './style.scss';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { ExpandableMessage } from '../../components/message/expandable-message';
 import { Constant } from '../../../config/constant';
 
 interface State {
   typeName:string;
-  filteredFaqs:ResData.FAQ[];
+  filteredFaqs:DB.FAQ[];
 }
 
 export class FAQContent extends React.Component<MobileRouteProps, State> {

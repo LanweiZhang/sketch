@@ -1,17 +1,18 @@
 import * as React from 'react';
-import { ResData, ReqData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { MobileRouteProps } from '../router';
 import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
 import { Card } from '../../components/common/card';
 import { ChatBubble } from '../../components/message/chat-bubble';
 import { TextEditor } from '../../components/common/textEditor';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
+import { RequestFilter } from '../../../config/request-filter';
 
 // TODO: implement fetch new msg by scroll up: https://www.pubnub.com/blog/react-chat-message-history-and-infinite-scroll/
 
 interface State {
-  data:DBResponse<'getMessages'>;
+  data:APIResponse<'getMessages'>;
 }
 
 export class Dialogue extends React.Component<MobileRouteProps, State> {
@@ -19,17 +20,16 @@ export class Dialogue extends React.Component<MobileRouteProps, State> {
   public state:State = {
     data:{
       messages: [],
-      paginate: ResData.allocThreadPaginate(),
-      style: ReqData.Message.style.dialogue,
+      paginate: DB.allocThreadPaginate(),
+      style: 'dialogue',
     },
   };
   public async componentDidMount() {
     try {
-      const query = {
-        withStyle: ReqData.Message.style.dialogue,
+      const data = await this.props.core.api.getMessages({
+        withStyle: 'dialogue',
         chatWith: this.props.match.params.uid,
-      };
-      const data = await this.props.core.db.getMessages(query);
+      });
       data.messages.reverse();
       this.setState({data});
     } catch (e) {
@@ -84,7 +84,7 @@ export class Dialogue extends React.Component<MobileRouteProps, State> {
     const messageToSend = this.textEditorRef.current.getContent();
     if (!messageToSend) { return; }
     try {
-      const msg = await this.props.core.db.sendMessage(this.props.match.params.uid, messageToSend);
+      const msg = await this.props.core.api.sendMessage(this.props.match.params.uid, messageToSend);
       const data = {...this.state.data, messages: [...this.state.data.messages, msg.message]};
       this.setState({ data });
       this.textEditorRef.current.clearContent();
@@ -93,7 +93,7 @@ export class Dialogue extends React.Component<MobileRouteProps, State> {
     }
   }
 
-  private renderMessage (m:ResData.Message) : JSX.Element {
+  private renderMessage (m:DB.Message) : JSX.Element {
     const myID:number = this.props.core.user.id;
     const fromMe:boolean = myID == m.attributes.poster_id;
     const posterName:string = fromMe ? '我' : m.poster ? m.poster.attributes.name : ' ';

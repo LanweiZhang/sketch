@@ -22,7 +22,7 @@ export class CreateQuote extends React.Component<MobileRouteProps, State> {
   };
 
   public createQuote = async (body:string, isAnonymous:boolean, majia) =>
-    await this.props.core.db.addQuote({
+    await this.props.core.api.addQuote({
       body,
       is_anonymous: isAnonymous,
       majia: isAnonymous ? majia : undefined,

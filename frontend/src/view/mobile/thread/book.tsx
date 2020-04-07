@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ThreadProfile, ThreadMode } from '../../components/thread/thread-profile';
 import { ChapterList } from '../../components/thread/chapter-list';
-import { ResData, ReqData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { NavBar } from '../../components/common/navbar';
 import { MobileRouteProps } from '../router';
 import { Page } from '../../components/common/page';
@@ -10,30 +10,31 @@ import { notice } from '../../components/common/notice';
 import { Review } from '../../components/thread/review';
 import { Reply } from '../../components/thread/reply';
 import { Reward } from '../../components/thread/reward';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { RoutePath } from '../../../config/route-path';
 import { Loading } from '../../components/common/loading';
+import { RequestFilter } from '../../../config/request-filter';
 
 interface State {
-  data:DBResponse<'getThread'|'getThreadProfile'>;
+  data:APIResponse<'getThread'|'getThreadProfile'>;
   mode:ThreadMode;
   showReward:boolean;
   page:'review'|'default'|'reply';
-  reply_to_post:ResData.Post;
+  reply_to_post:DB.Post;
   isLoading:boolean;
 }
 
 export class Book extends React.Component<MobileRouteProps, State> {
   public state:State = {
     data: {
-      thread: ResData.allocThread(),
+      thread: DB.allocThread(),
       posts: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     mode: 'reading',
     showReward: false,
     page: 'default',
-    reply_to_post: ResData.allocPost(),
+    reply_to_post: DB.allocPost(),
     isLoading: true,
   };
 
@@ -42,11 +43,11 @@ export class Book extends React.Component<MobileRouteProps, State> {
       let data;
       switch (this.state.mode) {
         case 'discussion':
-          data = await this.props.core.db.getThread(+this.props.match.params.id);
+          data = await this.props.core.api.getThread(+this.props.match.params.id);
           break;
         case 'reading':
         default:
-          data = await this.props.core.db.getThreadProfile(+this.props.match.params.id, {});
+          data = await this.props.core.api.getThreadProfile(+this.props.match.params.id, {});
           break;
       }
       this.setState({data, isLoading: false});
@@ -95,7 +96,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
           thread={data.thread}
           changeMode={this.changeMode}
           onCollect={() => {
-            this.props.core.db.collectThread(data.thread.id)
+            this.props.core.api.collectThread(data.thread.id)
               .catch(notice.requestError);
           }}
           onReward={() => this.setState({showReward: true})}
@@ -131,7 +132,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
               fish={99 /* todo: */}
               ham={99 /* todo: */}
               onReward={(type, value) => {
-                this.props.core.db.addReward({
+                this.props.core.api.addReward({
                   value,
                   rewardable_type: 'Thread',
                   rewardable_id: data.thread.id,
@@ -151,7 +152,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
       data={post}
       isAuthor={post.author.id === this.state.data.thread.author.id}
       onVote={(attitude) => {
-        this.props.core.db.vote(ReqData.Vote.type.post, post.id, attitude)
+        this.props.core.api.vote('Post', post.id, attitude)
           .then(() => notice.success('投票成功'))
           .catch(notice.requestError);
       }}
@@ -167,7 +168,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
       goBack={() => this.setState({page: 'default'})}
       title={this.state.data.thread.attributes.title}
       publish={(data) => {
-        this.props.core.db.addPostToThread(this.state.data.thread.id, {
+        this.props.core.api.addPostToThread(this.state.data.thread.id, {
           body: data.body,
           title: data.title,
           use_markdown: data.useMarkdown,
@@ -175,7 +176,7 @@ export class Book extends React.Component<MobileRouteProps, State> {
           rating: data.rate,
           summary: data.suggest ? 'recommend' : undefined,
           brief: data.brief,
-          type: ReqData.Post.Type.review,
+          type: 'review',
           reviewee_type: 'thread',
           reviewee_id: this.state.data.thread.id,
         })
@@ -193,9 +194,9 @@ export class Book extends React.Component<MobileRouteProps, State> {
     return <Reply
       goBack={() => this.setState({page: 'default'})}
       submit={(body, anonymous) => {
-        this.props.core.db.addPostToThread(this.state.data.thread.id, {
+        this.props.core.api.addPostToThread(this.state.data.thread.id, {
           body,
-          type: ReqData.Post.Type.post,
+          type: 'post',
           is_anonymous: anonymous || false,
           in_component_id: reply_to_post.id,
           reply_to_id: reply_to_post.id,

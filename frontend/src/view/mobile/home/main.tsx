@@ -10,11 +10,11 @@ import { Button } from '../../components/common/button';
 import { Colors } from '../../theme/theme';
 import { HomeworkPreview } from '../../components/home/homework-preview';
 import './main.scss';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { Loading } from '../../components/common/loading';
 
 interface State {
-  data:DBResponse<'getPageHome'>;
+  data:APIResponse<'getPageHome'>;
   isLoading:boolean;
 }
 
@@ -34,7 +34,7 @@ export class HomeMain extends React.Component<MobileRouteProps, State> {
 
   public async componentDidMount () {
     try {
-      const data = await this.props.core.db.getPageHome();
+      const data = await this.props.core.api.getPageHome();
       this.setState({data, isLoading: false});
     } catch (err) {
       console.error(err);

@@ -1,6 +1,6 @@
 import { Themes } from '../view/theme/theme';
-import { ResData } from '../config/api';
-import { DBResponse } from '../core/db';
+import { DB } from '../config/db-type';
+import { APIResponse } from '../core/api';
 
 export type FontType = 'simplifiedChinese'|'traditionalChinese';
 
@@ -23,15 +23,15 @@ export interface Storage {
     userId:number,
   };
   theme:Themes;
-  tagFilter:FilterDataType<ResData.Tag>;
-  channelFilter:FilterDataType<ResData.Channel>;
+  tagFilter:FilterDataType<DB.Tag>;
+  channelFilter:FilterDataType<DB.Channel>;
   bianyuanFilter:FilterDataType<{id:number, name:string}>;
   readingSettings:{
     fontSize:number;
     fontType:FontType;
   };
-  faq:CacheData<DBResponse<'getFAQs'>>;
-  allChannels:CacheData<DBResponse<'getAllChannels'>>;
+  faq:CacheData<APIResponse<'getFAQs'>>;
+  allChannels:CacheData<APIResponse<'getAllChannels'>>;
 }
 
 export function allocStorage () : Storage {

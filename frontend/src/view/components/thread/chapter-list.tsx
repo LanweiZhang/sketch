@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import './chapter-list.scss';
 import { Card } from '../common/card';
 import { List } from '../common/list';
@@ -8,7 +8,7 @@ import { Loading } from '../common/loading';
 type ChapterOrder = 'created'|'latest';
 
 interface Props {
-  chapters:ResData.Post[];
+  chapters:DB.Post[];
   showFull?:boolean;
   goChapter:(chapterId:number) => void;
 }

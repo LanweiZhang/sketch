@@ -1,9 +1,9 @@
 import React from 'react';
 import { Page } from '../common/page';
 import { NavBar } from '../common/navbar';
-import { DBRequest } from '../../../core/db';
+import { APIRequest } from '../../../core/api';
 
-type RequestData = DBRequest<'publishThread'>[0];
+type RequestData = APIRequest<'publishThread'>[0];
 
 interface Props {
   onCancel:() => void;

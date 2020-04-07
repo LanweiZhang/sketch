@@ -1,12 +1,12 @@
 
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { List } from '../../components/common/list';
 import ClampLines from 'react-clamp-lines';
 
 export function ActivityItem (props:{
   read:boolean;
-  activity:ResData.Activity;
+  activity:DB.Activity;
   className?:string;
 }) {
   const { title, brief } = getTitle();
@@ -23,7 +23,7 @@ export function ActivityItem (props:{
       };
     }
 
-    const post = activity.item as ResData.Post;
+    const post = activity.item as DB.Post;
     const threadName = post.thread ? post.thread.attributes.title : '未知主题';
     return {
           title: `${authorName}回复了你的主题《${threadName}》`,

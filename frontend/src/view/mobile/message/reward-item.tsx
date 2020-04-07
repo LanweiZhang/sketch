@@ -1,13 +1,13 @@
 
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { List } from '../../components/common/list';
 import ClampLines from 'react-clamp-lines';
 import { Constant } from '../../../config/constant';
 
 export function RewardItem (props:{
   read:boolean;
-  reward:ResData.Reward;
+  reward:DB.Reward;
   userId:number;
   deleteReward:(rewardId:number) => (e:React.MouseEvent) => void;
   className?:string;

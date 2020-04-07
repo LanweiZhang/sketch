@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 
 interface Props {
-  status:ResData.Status;
+  status:DB.Status;
 }
 interface State {
 }

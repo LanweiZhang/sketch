@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Link } from 'react-router-dom';
 import { parseDate } from '../../../utils/date';
 
 // todo: mini version
 interface Props {
-  data:ResData.Thread;
+  data:DB.Thread;
   mini?:boolean;
 }
 interface State {

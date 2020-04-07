@@ -4,15 +4,15 @@ import { Page } from '../../components/common/page';
 import { List } from '../../components/common/list';
 import { NavBar } from '../../components/common/navbar';
 import './style.scss';
-import { DBResponse } from '../../../core/db';
-import { ResData } from '../../../config/api';
+import { APIResponse } from '../../../core/api';
+import { DB } from '../../../config/db-type';
 import { VoteItem } from './vote-item';
 import { Toolbar } from './toolbar';
 import { notice } from '../../components/common/notice';
 
 interface State {
-  votesReceived:DBResponse<'getUserVotesReceived'>;
-  votesSent:DBResponse<'getUserVotesSent'>;
+  votesReceived:APIResponse<'getUserVotesReceived'>;
+  votesSent:APIResponse<'getUserVotesSent'>;
   filter:filterType;
 }
 type filterType = 'all' | 'received' | 'sent';
@@ -29,17 +29,17 @@ export class Votes extends React.Component<MobileRouteProps, State> {
   public state:State = {
     votesReceived: {
       votes: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     votesSent: {
       votes: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
     filter: 'all',
   };
 
   public async componentDidMount() {
-    const { getUserVotesReceived, getUserVotesSent } = this.props.core.db;
+    const { getUserVotesReceived, getUserVotesSent } = this.props.core.api;
     const fetchVotesReceived = getUserVotesReceived()
       .catch((e) => {
         notice.requestError(e);
@@ -56,14 +56,14 @@ export class Votes extends React.Component<MobileRouteProps, State> {
 
   public deleteVote = (voteId:number) => async () => {
     try {
-      await this.props.core.db.deleteVote(voteId);
+      await this.props.core.api.deleteVote(voteId);
       let votesSent = this.state.votesSent;
       const votes = this.state.votesSent.votes;
       votes.splice(votes.findIndex( (r) => r.id == voteId), 1);
       this.setState({votesSent});
 
       // due to pagination, after we delete a vote, we have space for vote in page 2
-      votesSent = await this.props.core.db.getUserVotesSent();
+      votesSent = await this.props.core.api.getUserVotesSent();
       this.setState({votesSent});
     } catch (e) {
       // console.log(e);
@@ -91,7 +91,7 @@ export class Votes extends React.Component<MobileRouteProps, State> {
 
   private getVotes() {
     const { votesReceived, votesSent, filter } = this.state;
-    let selectedVotes:ResData.Vote[] = [];
+    let selectedVotes:DB.Vote[] = [];
     switch (filter) {
       case 'all':
         selectedVotes = [...votesReceived.votes, ...votesSent.votes];

@@ -1,11 +1,11 @@
-import { Database } from './database';
+import { DBTable } from './db-table';
 
 export type Timestamp = string;
 export type Token = string;
 export type UInt = number;
 export type Increments = number;
 
-export namespace ResData {
+export namespace DB {
   export interface Quote {
     type:'quote';
     id:number;
@@ -37,7 +37,7 @@ export namespace ResData {
   export interface User {
     type:'user';
     id:number;
-    attributes:Database.UserDefault;
+    attributes:DBTable.UserDefault;
     followInfo?:{
       keep_updated:boolean;
       is_updated:boolean;
@@ -57,38 +57,7 @@ export namespace ResData {
   export interface Channel {
     type:'channel';
     id:number;
-    attributes:Database.Channel;
-  }
-
-  export interface Reward {
-    type:'reward';
-    id:number;
-    attributes:{
-      rewardable_type:ReqData.Reward.rewardableType;
-      rewardable_id:number;
-      reward_type:ReqData.Reward.rewardType;
-      reward_value:number;
-      created_at:Timestamp;
-      deleted_at:Timestamp;
-    };
-    author?:User;   //available at reward_received
-    receiver?:User; //available at reward_sent
-  }
-
-  export function allocReward () : Reward {
-    return {
-      id: 0,
-      type: 'reward',
-      attributes: {
-        rewardable_type: ReqData.Reward.rewardableType.post,
-        rewardable_id: 0,
-        reward_value: 0,
-        reward_type: ReqData.Reward.rewardType.fish,
-        created_at: '',
-        deleted_at: '',
-      },
-      author: allocUser(),
-    };
+    attributes:DBTable.Channel;
   }
 
   export interface Tongren {
@@ -116,7 +85,7 @@ export namespace ResData {
   export interface Thread {
     type:'thread';
     id:number;
-    attributes:Database.Thread;
+    attributes:DBTable.Thread;
     author:User;
     tags:Tag[];
     last_component?:Post;
@@ -147,14 +116,14 @@ export namespace ResData {
   export interface Status {
     type:'status';
     id:number;
-    attributes:Database.Status;
+    attributes:DBTable.Status;
     author:User;
   }
 
   export interface Tag {
     type:'tag';
     id:number;
-    attributes:Database.Tag;
+    attributes:DBTable.Tag;
   }
 
   export interface ThreadPaginate {
@@ -178,7 +147,7 @@ export namespace ResData {
   export interface PostInfo {
     type:'post_info';
     id:number;
-    attributes:Database.PostInfo;
+    attributes:DBTable.PostInfo;
     reviewee:Thread;
   }
 
@@ -207,7 +176,7 @@ export namespace ResData {
   export interface Post {
     type:'post';
     id:number;
-    attributes:Database.Post;
+    attributes:DBTable.Post;
     author:User;
     info:PostInfo;
     parent:Post[];
@@ -239,7 +208,7 @@ export namespace ResData {
     type:'review';
     id:number;
     attributes:{};
-    reviewee:Database.Thread;
+    reviewee:DBTable.Thread;
   }
 
   export function allocReview () {
@@ -258,7 +227,7 @@ export namespace ResData {
       brief:string;
       body:string;
       type:'long'|'shot';
-      created_at:Database.Timestamp;
+      created_at:DBTable.Timestamp;
     };
     authors:User[];
   }
@@ -266,7 +235,7 @@ export namespace ResData {
   export interface Chapter {
     type:'chapter';
     id:number;
-    attributes:Database.Chapter;
+    attributes:DBTable.Chapter;
   }
 
   export function allocChapter () : Chapter {
@@ -282,7 +251,7 @@ export namespace ResData {
   export interface Volumn {
     type:'volumn';
     id:number;
-    attributes:Database.Volume;
+    attributes:DBTable.Volume;
   }
 
   export interface Date {
@@ -411,34 +380,53 @@ export namespace ResData {
       },
     };
   }
+  export type VoteType = 'Post'|'Quote'|'Status'|'Thread';
+  export type VoteAttribute = 'upvote'|'downvote'|'funnyvote'|'foldvote';
   export interface Vote {
     type:'vote';
     id:number;
     attributes:{
-      votable_type:ReqData.Vote.type;
+      votable_type:VoteType;
       votable_id:number;
-      attitude:ReqData.Vote.attitude;
+      attitude:VoteAttribute;
       created_at:Timestamp;
     };
     author?:User;
     receiver?:User;
-    votable?:null | ResData.Thread | ResData.Post | ResData.Status | ResData.Quote;
+    votable?:null | DB.Thread | DB.Post | DB.Status | DB.Quote;
   }
 
+  export type RewardType = 'salt'|'fish'|'ham';
+  export type RewardableType = 'post'|'status'|'thread'|'quote';
   export interface Reward {
     type:'reward';
     id:number;
     attributes:{
-      rewardable_type:ReqData.Reward.rewardableType;
+      rewardable_type:RewardableType;
       rewardable_id:number;
-      reward_type:ReqData.Reward.rewardType;
+      reward_type:RewardType;
       reward_value:number;
       created_at:Timestamp;
       deleted_at:Timestamp;
     };
     author?:User;   //available at reward_received
     receiver?:User; //available at reward_sent
-    rewardable?:null | ResData.Thread | ResData.Post | ResData.Status | ResData.Quote;
+    rewardable?:null | DB.Thread | DB.Post | DB.Status | DB.Quote;
+  }
+  export function allocReward () : Reward {
+    return {
+      id: 0,
+      type: 'reward',
+      attributes: {
+        rewardable_type:'post',
+        rewardable_id: 0,
+        reward_value: 0,
+        reward_type: 'fish',
+        created_at: '',
+        deleted_at: '',
+      },
+      author: allocUser(),
+    };
   }
 
   export interface Collection {
@@ -550,126 +538,5 @@ export namespace ResData {
         is_in_cooldown:false,
       },
     };
-  }
-}
-
-export namespace ReqData {
-  export namespace Thread {
-    export enum ordered {
-      default = 'default', //最后回复
-      latest_added_component = 'latest_added_component', //按最新更新时间排序
-      jifen = 'jifen',  //按总积分排序
-      weighted_jifen = 'weighted_jifen', //按平衡积分排序
-      latest_created = 'latest_created', //按创建时间排序
-      collection_count = 'collection_count', //按收藏总数排序
-      total_char = 'total_char', //按总字数排序
-      random = 'random',
-    }
-    // （是否仅返回边缘/非边缘内容）
-    export enum withBianyuan {
-      bianyuan_only = 'bianyuan_only',
-      none_bianyuan_only = 'none_bianyuan_only',
-    }
-
-    export enum Type {
-      thread = 'thread',
-      book = 'book',
-      list = 'list', //收藏单
-      column = 'column',
-      request = 'request',
-      homework = 'homework',
-    }
-  }
-
-  export namespace Message {
-    export enum style {
-      sendbox = 'sendbox',
-      receiveBox = 'receivebox',
-      dialogue = 'dialogue',
-    }
-
-    export enum ordered {
-      oldest,
-      latest,
-    }
-
-    export enum read {
-      read_only,
-      unread_only,
-    }
-  }
-
-  export namespace Collection {
-    export enum type {
-      thread = 'thread',
-      book = 'book',
-      list = 'list',
-      request = 'request',
-      homework = 'homework',
-    }
-  }
-
-  export namespace Title {
-    export enum status {
-      hide = 'hide',
-      public = 'public',
-      wear = 'wear',
-    }
-  }
-
-  export namespace Vote {
-    export enum type {
-      post = 'Post',
-      quote = 'Quote',
-      status = 'Status',
-      thread = 'Thread',
-    }
-    export enum attitude {
-      upvote = 'upvote',
-      downvote = 'downvote',
-      funnyvote = 'funnyvote',
-      foldvote = 'foldvote',
-    }
-  }
-
-  export namespace Reward {
-    export enum rewardableType {
-      post = 'post',
-      quote = 'quote',
-      status = 'status',
-      thread = 'thread',
-    }
-    export enum rewardType {
-      salt = 'salt',
-      fish = 'fish',
-      ham = 'ham',
-    }
-  }
-
-  export namespace Post {
-    export enum Type {
-      post = 'post',
-      comment = 'comment',
-      chapter = 'chatper',
-      review = 'review',
-    }
-    export enum withComponent {
-      component_only = 'component_only',
-      none_component_only = 'none_component_only',
-    }
-    export enum ordered {
-      latest_created = 'latest_created',
-      most_replied = 'most_replied',
-      most_upvoted = 'most_upvoted',
-      latest_responded = 'latest_responded',
-      random = 'random',
-    }
-  }
-
-  export namespace Registration {
-    export enum invitationType {
-      token = 'token',
-      email = 'email',
-    }
   }
 }

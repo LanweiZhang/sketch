@@ -1,4 +1,4 @@
-import { Timestamp } from '../config/api';
+import { Timestamp } from '../config/db-type';
 
 export function parseDate (date?:Timestamp) {
   if (!date) { return ''; }

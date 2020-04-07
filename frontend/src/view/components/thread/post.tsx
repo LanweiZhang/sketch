@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { ResData, ReqData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Card } from '../common/card';
+import { RequestFilter } from '../../../config/request-filter';
 
 interface Props {
-  data:ResData.Post;
+  data:DB.Post;
   isAuthor:boolean;
-  onVote:(attitude:ReqData.Vote.attitude) => void; //vote: true=点赞, false=移除点赞
+  onVote:(attitude:DB.VoteAttribute) => void; //vote: true=点赞, false=移除点赞
   onReply:() => void;
 }
 
@@ -17,8 +18,8 @@ export class Post extends React.Component<Props, State> {
     return <Card>
 
       {/* remove follow lines */}
-      <button onClick={() => this.props.onVote(ReqData.Vote.attitude.upvote)}>vote</button>
-      <button onClick={() => this.props.onVote(ReqData.Vote.attitude.upvote)}>unVote</button>
+      <button onClick={() => this.props.onVote('upvote')}>vote</button>
+      <button onClick={() => this.props.onVote('upvote')}>unVote</button>
       <button onClick={() => this.props.onReply()}>reply</button>
 
     </Card>;

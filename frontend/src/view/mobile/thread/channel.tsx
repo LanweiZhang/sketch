@@ -24,7 +24,7 @@ export class Channel extends React.Component < Props, State > {
         return <PublishThread
           type={'thread'}
           onCancel={() => this.setState({page: 'default'})}
-          onSubmit={(spec) => this.props.core.db.publishThread(spec)
+          onSubmit={(spec) => this.props.core.api.publishThread(spec)
             .then((thread) => {
               notice.success('发布成功');
               this.props.core.route.thread(thread.id);

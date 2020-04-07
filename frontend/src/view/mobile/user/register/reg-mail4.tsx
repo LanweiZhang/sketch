@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Card } from '../../../components/common/card';
-import { ResData } from '../../../../config/api';
+import { DB } from '../../../../config/db-type';
 
 export function RegMail4 (props:{
   email:string;
-  essay:ResData.Essay;
+  essay:DB.Essay;
   className?:string;
   essayAnswer:string;
   changeEssayAnswer:(essay:string) => () => void;

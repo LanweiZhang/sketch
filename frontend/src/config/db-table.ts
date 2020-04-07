@@ -1,4 +1,4 @@
-export namespace Database {
+export namespace DBTable {
   export type Token = string;
   export type IPAddress = string;
   export type Address = string;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './thread-profile.scss';
 import { parseDate, isNewThread } from '../../../utils/date';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Card } from '../common/card';
 import { TagList } from '../common/tag-list';
 import { Tag } from '../common/tag';
@@ -11,7 +11,7 @@ import { Colors } from '../../theme/theme';
 export type ThreadMode = 'reading'|'discussion';
 
 interface Props {
-  thread:ResData.Thread;
+  thread:DB.Thread;
   changeMode:(mode:ThreadMode) => void;
   onCollect:() => void;
   onReply:() => void;

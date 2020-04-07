@@ -49,7 +49,7 @@ import { Fragment } from 'react';
 import { fakeDB } from '../test/mock-data/fake-db';
 import { Button } from '../view/components/common/button';
 import { Colors } from '../view/theme/theme';
-import { ResData } from '../config/api';
+import { DB } from '../config/db-type';
 import { TextEditor } from '../view/components/common/textEditor';
 import { createBrowserHistory } from 'history';
 import { bbcode2html, html2bbcode, test } from '../utils/text-formater';
@@ -68,7 +68,7 @@ import { Checkbox } from '../view/components/common/input/checkbox';
 import { EmptyState } from '../view/components/common/empty-state';
 
 const core = new Core();
-fakeDB(core.db);
+fakeDB(core.api);
 
 addDecorator((storyFn, context) => withConsole()(storyFn)(context));
 addDecorator(withViewport());
@@ -763,7 +763,7 @@ storiesOf('Home Components/HomePage', module)
       console.log(`click id: ${id}`);
     }
 
-    private homeworks:ResData.BriefHomework[] = [
+    private homeworks:DB.BriefHomework[] = [
       {'type':'homework', 'id':5, 'attributes':{'title':'第五次作业', 'topic':'纽约客', 'level':0, 'is_active':true, 'purchase_count':0, 'worker_count':14, 'critic_count':6}},
       {'type':'homework', 'id':4, 'attributes':{'title':'第四次作业', 'topic':'合不上的行李箱', 'level':0, 'is_active':true, 'purchase_count':0, 'worker_count':10, 'critic_count':8}},
       {'type':'homework', 'id':3, 'attributes':{'title':'第三次作业', 'topic':'失控', 'level':0, 'is_active':true, 'purchase_count':0, 'worker_count':11, 'critic_count':23}},
@@ -912,14 +912,14 @@ storiesOf('Thread Components', module)
     <ThreadPreview
       mini={boolean('mini', false)}
       data={(() => {
-        const thread = ResData.allocThread();
+        const thread = DB.allocThread();
         thread.id = 1;
         thread.attributes.title = randomCnWords(number('title', 20), 0.15);
         thread.attributes.brief = randomCnWords(number('brief', 40), 0.2);
         thread.attributes.view_count = number('view', 200);
         thread.attributes.reply_count = number('reply', 40);
         thread.attributes.channel_id = 1;
-        thread.last_post = ResData.allocPost();
+        thread.last_post = DB.allocPost();
         thread.last_post.id = 1;
         thread.last_post.attributes.title = randomCnWords(number('post title', 40), 0.2);
         thread.last_post.attributes.brief = randomCnWords(20);

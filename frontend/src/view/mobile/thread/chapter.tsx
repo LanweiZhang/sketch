@@ -2,9 +2,9 @@ import * as React from 'react';
 import { MobileRouteProps } from '../router';
 import { NavBar } from '../../components/common/navbar';
 import { Page } from '../../components/common/page';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 import { notice } from '../../components/common/notice';
-import { ResData, ReqData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { Reply } from '../../components/thread/reply';
 import { hasData } from '../../../utils/backend-check';
 import { Button } from '../../components/common/button';
@@ -21,7 +21,7 @@ interface Props extends MobileRouteProps {
 }
 
 interface State {
-  data:DBResponse<'getPost'>;
+  data:APIResponse<'getPost'>;
   showReward:boolean;
   page:'reply'|'default'|'chapterIndex';
   showCustomize:boolean;
@@ -31,8 +31,8 @@ interface State {
 export class Chapter extends React.Component<Props, State> {
   public state:State = {
     data: {
-      thread: ResData.allocThread(),
-      post: ResData.allocPost(),
+      thread: DB.allocThread(),
+      post: DB.allocPost(),
     },
     showReward: false,
     showCustomize: false,
@@ -41,7 +41,7 @@ export class Chapter extends React.Component<Props, State> {
   };
 
   public fetchData (cid = +this.props.match.params.cid) {
-    this.props.core.db.getPost(+this.props.match.params.bid, cid)
+    this.props.core.api.getPost(+this.props.match.params.bid, cid)
     .then((data) => this.setState({
       data,
       loading: false,
@@ -53,7 +53,7 @@ export class Chapter extends React.Component<Props, State> {
     this.fetchData();
 
     if (!this.props.core.state.chapterIndex.threadId) {
-      this.props.core.db.getThreadProfile(+this.props.match.params.bid, {})
+      this.props.core.api.getThreadProfile(+this.props.match.params.bid, {})
       .then((data) => {
         this.props.core.state.chapterIndex = {
           threadId: data.thread.id,
@@ -158,7 +158,7 @@ export class Chapter extends React.Component<Props, State> {
         }
 
         <div className="actions">
-          <Button type="ellipse" onClick={() => this.props.core.db.collectThread(thread.id).catch(notice.requestError)}>收藏</Button>
+          <Button type="ellipse" onClick={() => this.props.core.api.collectThread(thread.id).catch(notice.requestError)}>收藏</Button>
           <Button type="ellipse" onClick={() => this.setState({page: 'reply'})}>回复</Button>
           <Button type="ellipse" onClick={() => this.setState({showReward: true})}>打赏</Button>
         </div>
@@ -179,7 +179,7 @@ export class Chapter extends React.Component<Props, State> {
         fish={99 /* todo: */}
         ham={99 /* todo: */}
         onReward={(type, value) => {
-          this.props.core.db.addReward({
+          this.props.core.api.addReward({
             value,
             rewardable_type: 'Post',
             rewardable_id: post.id,
@@ -198,9 +198,9 @@ export class Chapter extends React.Component<Props, State> {
     return <Reply
       goBack={() => this.setState({page: 'default'})}
       submit={(body, anonymous) => {
-        this.props.core.db.addPostToThread(post.id, {
+        this.props.core.api.addPostToThread(post.id, {
           body,
-          type: ReqData.Post.Type.post,
+          type: 'post',
           is_anonymous: anonymous || false,
           in_component_id: post.id,
           reply_to_id: post.id,
@@ -239,7 +239,7 @@ export class Chapter extends React.Component<Props, State> {
   }
 }
 
-function findChapterIndex (chapters:ResData.Post[], id:number) {
+function findChapterIndex (chapters:DB.Post[], id:number) {
   for (let i = 0; i < chapters.length; i++) {
     if (chapters[i].id === id) {
       return i;

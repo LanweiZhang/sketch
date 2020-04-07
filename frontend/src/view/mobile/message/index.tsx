@@ -8,24 +8,24 @@ import './style.scss';
 import { Toolbar } from './toolbar';
 import { Menu, MenuItem } from '../../components/common/menu';
 import { RoutePath } from '../../../config/route-path';
-import { ResData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { ActivityItem } from './activity-item';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
 
 interface State {
-  activities:DBResponse<'getActivities'>;
+  activities:APIResponse<'getActivities'>;
 }
 
 export class Message extends React.Component<MobileRouteProps, State> {
   public state:State = {
     activities:{
       activities: [],
-      paginate: ResData.allocThreadPaginate(),
+      paginate: DB.allocThreadPaginate(),
     },
   };
 
   public async componentDidMount() {
-    const { getActivities } = this.props.core.db;
+    const { getActivities } = this.props.core.api;
     const activities = await getActivities();
     this.setState({activities});
     // console.log(activities);

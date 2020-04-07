@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ResData, ReqData } from '../../../config/api';
+import { DB } from '../../../config/db-type';
 import { MobileRouteProps } from '../router';
 import { Page } from '../../components/common/page';
 import { NavBar } from '../../components/common/navbar';
@@ -8,11 +8,12 @@ import { List } from '../../components/common/list';
 import { RoutePath } from '../../../config/route-path';
 import { Toolbar } from './toolbar';
 import { Menu, MenuItem } from '../../components/common/menu';
-import { DBResponse } from '../../../core/db';
+import { APIResponse } from '../../../core/api';
+import { RequestFilter } from '../../../config/request-filter';
 
 interface State {
-  messageData:DBResponse<'getMessages'>;
-  publicNoticeData:DBResponse<'getPublicNotice'>;
+  messageData:APIResponse<'getMessages'>;
+  publicNoticeData:APIResponse<'getPublicNotice'>;
 }
 
 // TODO: 管理通知: waiting for API
@@ -25,8 +26,8 @@ export class PersonalMessage extends React.Component<MobileRouteProps, State> {
   public state:State = {
     messageData:{
       messages: [],
-      paginate: ResData.allocThreadPaginate(),
-      style: ReqData.Message.style.receiveBox,
+      paginate: DB.allocThreadPaginate(),
+      style: 'receivebox',
     },
     publicNoticeData:{
       public_notices: [],
@@ -34,9 +35,8 @@ export class PersonalMessage extends React.Component<MobileRouteProps, State> {
   };
 
   public async componentDidMount() {
-    const { getMessages, getPublicNotice } = this.props.core.db;
-    const query = {withStyle: ReqData.Message.style.receiveBox};
-    const fetchMsgData = getMessages(query)
+    const { getMessages, getPublicNotice } = this.props.core.api;
+    const fetchMsgData = getMessages({withStyle: 'receivebox'})
       .catch((e) => {
         // console.log(e);
         return this.state.messageData;
@@ -77,10 +77,10 @@ export class PersonalMessage extends React.Component<MobileRouteProps, State> {
     this.props.core.history.push(RoutePath.publicNotice, {publicNoticeData: this.state.publicNoticeData});
   }
   /** ===========            user messages           =============== **/
-  private getDialogues() : ResData.Message[] {
+  private getDialogues() : DB.Message[] {
     const { messages } = this.state.messageData;
-    const dialogues:{[key:string]:ResData.Message} = {};
-    const dialoguesArray:ResData.Message[] = [];
+    const dialogues:{[key:string]:DB.Message} = {};
+    const dialoguesArray:DB.Message[] = [];
     messages.forEach((m) => {
       if (!dialogues[m.attributes.poster_id]) {
         dialogues[m.attributes.poster_id] = m;
@@ -100,7 +100,7 @@ export class PersonalMessage extends React.Component<MobileRouteProps, State> {
   private renderMessages () {
     const dialogues = this.getDialogues();
 
-    const renderDialogue = (dialogue:ResData.Message) => {
+    const renderDialogue = (dialogue:DB.Message) => {
       const posterName:string = dialogue.poster ? dialogue.poster.attributes.name : '';
       const posterID:number = dialogue.attributes.poster_id;
       const seen:boolean = dialogue.attributes.seen;
