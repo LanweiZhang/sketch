@@ -495,36 +495,64 @@ storiesOf('Common Components/Dropdown', module)
 ;
 
 storiesOf('Common Components/Input', module)
-  .add('InputText', () => (React.createElement(class extends React.Component<{}, { value:string }> {
+  .add('InputText', () => (React.createElement(class extends React.Component<{}, { value:string, value2:string }> {
     public state = {
       value: '',
+      value2: '',
     };
     public render() {
       const placeholderCentered = boolean('placeholderCentered', true);
       const withLabel = boolean('withLabel', true);
-      return <InputText
-        label={withLabel ? <i className="fa fa-search" /> : null}
-        value={this.state.value}
-        placeholder="placeholder"
-        placeholderCentered={placeholderCentered}
-        style={{
-          height: '30px',
-        }}
-        onChange={(value) => {
-          this.setState({
-            value,
-          });
-        }}
-        onConfirm={() =>
-          console.log('onConfirm')
-        }
-        onClick={() =>
-          console.log('onClick')
-        }
-        onKeyDown={() =>
-          console.log('onKeyDown')
-        }
-      />;
+      return (
+        <div>
+          <p>type: default</p>
+          <InputText
+            label={withLabel ? <i className="fa fa-search" /> : null}
+            value={this.state.value}
+            placeholder="placeholder"
+            placeholderCentered={placeholderCentered}
+            style={{
+              height: '30px',
+            }}
+            onChange={(value) => {
+              this.setState({
+                value,
+              });
+            }}
+            onConfirm={() =>
+              console.log('onConfirm')
+            }
+            onClick={() =>
+              console.log('onClick')
+            }
+            onKeyDown={() =>
+              console.log('onKeyDown')
+            }
+          />
+          <br/>
+          <p>type: wide</p>
+          <InputText
+            value={this.state.value2}
+            placeholder="placeholder"
+            type="wide"
+            info="here goes some info msg"
+            warning="here goes some warnings"
+            onChange={(value2) => {
+              this.setState({
+                value2,
+              });
+            }}
+            onConfirm={() =>
+              console.log('onConfirm')
+            }
+            onClick={() =>
+              console.log('onClick')
+            }
+            onKeyDown={() =>
+              console.log('onKeyDown')
+            }
+          />
+        </div>);
     }
   })))
   .add('InputNumber', () => (React.createElement(class extends React.Component<{}, {

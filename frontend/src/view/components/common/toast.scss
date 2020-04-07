@@ -29,18 +29,18 @@ $info-color: #DDDFE6;
     border-top: 4px solid $color;
 }
 
-.error {
+.toast.error {
     @include toast-color($error-color)
 }
 
-.warning {
+.toast.warning {
     @include toast-color($warning-color)
 }
 
-.success {
+.toast.success {
     @include toast-color($success-color)
 }
 
-.info {
+.toast.info {
     @include toast-color($info-color)
 }
