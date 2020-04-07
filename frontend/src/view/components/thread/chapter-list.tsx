@@ -36,7 +36,7 @@ export class ChapterList extends React.Component<Props, State> {
         </div>
       </div>
 
-      {!list.length ? <Loading /> :
+      <Loading isLoading={!list.length}>
         <List noBorder>
           {list.map((chapter, i) => <List.Item
               noBorder
@@ -50,7 +50,7 @@ export class ChapterList extends React.Component<Props, State> {
           }
           {!this.props.chapters.length && <List.Item>无章节</List.Item>}
         </List>
-      }
+      </Loading>
     </Card>;
   }
 

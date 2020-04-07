@@ -25,7 +25,7 @@ interface State {
   showReward:boolean;
   page:'reply'|'default'|'chapterIndex';
   showCustomize:boolean;
-  loading?:boolean;
+  loading:boolean;
 }
 
 export class Chapter extends React.Component<Props, State> {
@@ -138,11 +138,7 @@ export class Chapter extends React.Component<Props, State> {
           }}>{indexLoaded ? nextIndex ? '下一章' : '这是最后一章' : '下一章'}</Button>
         </div>
 
-        {this.state.loading
-        ?
-        <Loading />
-        :
-        <>
+        <Loading isLoading={this.state.loading}>
           <div className="content">
             <div className="book-title">{post.attributes.title}</div>
             <div className="body" style={{
@@ -154,8 +150,7 @@ export class Chapter extends React.Component<Props, State> {
             <hr />
             <div className="body">{annotation}</div>
           </div>}
-        </>
-        }
+        </Loading>
 
         <div className="actions">
           <Button type="ellipse" onClick={() => this.props.core.api.collectThread(thread.id).catch(notice.requestError)}>收藏</Button>

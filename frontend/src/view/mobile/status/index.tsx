@@ -125,9 +125,9 @@ public render () {
                 关注
             </button>
           </div>
-          { this.state.isLoading ? <Loading /> :
-              <List> {this.renderList()} </List>
-          }
+          <Loading isLoading={this.state.isLoading}>
+            <List> {this.renderList()} </List>
+          </Loading>
         </div>
       </Page>
     );

@@ -170,9 +170,53 @@ export class API {
     return this._get('/thread_index');
   }
 
-  // 频道页面
-  public getChannelThreads (channelId:number) : Promise<{}> {
-    return this._get(`/channel/${channelId}`);
+  // 获取频道: 普通频道
+  public getChannel (channelId:number, spec:{
+    isPublic:RequestFilter.thread.isPublic;
+    withBianyuan?:boolean;
+    ordered?:RequestFilter.thread.ordered;
+    withTag?:number[][];
+  }) : Promise<{
+    channel:DB.ChannelBrief,
+    threads:DB.Thread[],
+    primary_tags:DB.ChannelPrimaryTag[],
+    request_data:[],
+    simplethreads:DB.Thread[],
+    paginate:DB.ThreadPaginate,
+  }> {
+    return this._get(`/channel/${channelId}`, {
+      query: {
+        isPublic: spec.isPublic,
+        withBianyuan: spec.withBianyuan ? 'include_bianyuan' : '',
+        ordered: spec.ordered || RequestFilter.thread.ordered.default,
+        withTag: spec.withTag ? spec.withTag.map((tagsOr) => tagsOr.join('_')).join('-') : '',
+      },
+    });
+  }
+
+  // 获取频道: 清单内书评列表
+  public getChannelReview (channelId:number, spec:{
+    withLength?:RequestFilter.review.withLength;
+    withBianyuan?:boolean;
+    reviewType?:RequestFilter.review.reviewType;
+    reviewRecommend?:RequestFilter.review.reviewRecommend;
+    reviewEditor?:RequestFilter.review.reviewEditor;
+    ordered?:RequestFilter.review.ordered;
+  }) : Promise<{
+    channel:DB.ChannelBrief,
+    threads:DB.Thread[],
+    primary_tags:DB.ChannelPrimaryTag[],
+    request_data:[],
+    simplethreads:DB.Thread[],
+    paginate:DB.ThreadPaginate,
+  }> {
+    const defaultReq = {
+      channel_mode: 'review',
+      withBianyuan: spec.withBianyuan && 'include_bianyuan' || '',
+    };
+    return this._get(`/channel/${channelId}`, {
+      query: Object.assign(defaultReq, spec),
+    });
   }
 
   // 关注用户
@@ -689,6 +733,8 @@ export class API {
       },
     });
   }
+
+  // 邀请码注册
   public registerByInvitation = (
     invitation_type:'token'|'email',
     invitation_token:string,
@@ -718,6 +764,8 @@ export class API {
       },
     });
   }
+
+  // 登录
   public async login (email:string, password:string, backTo?:string) {
     const res = await this._post('/login', {
       query: {

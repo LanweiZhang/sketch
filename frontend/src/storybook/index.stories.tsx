@@ -347,7 +347,7 @@ storiesOf('Common Components', module)
     startIndex={number('startIndex', 0)}
   />)
   .add('Loading', () =>
-    <Loading>
+    <Loading isLoading={boolean('isLoading', true)}>
       <div style={{
         width: '200px',
         height: '200px',
@@ -355,7 +355,7 @@ storiesOf('Common Components', module)
         lineHeight: '200px',
         textAlign: 'center',
       }}>
-        <p> 加载中请稍后</p>
+        <p> 加载好了 </p>
       </div>
     </Loading>,
   )

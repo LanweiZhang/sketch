@@ -2,8 +2,13 @@ import * as React from 'react';
 import './loading.scss';
 
 export function Loading (props:{
-  children?:React.ReactNode;
+  children:React.ReactNode;
+  isLoading:boolean;
+  loadingComponent?:React.ReactNode;
 }) {
+  if (!props.isLoading) {
+    return <>{props.children}</>;
+  }
   return (
     <div className="square">
       <div className="loading">
@@ -13,7 +18,7 @@ export function Loading (props:{
           </svg>
         </div>
       </div>
-      {props.children}
+      {props.loadingComponent}
     </div>
   );
 }

@@ -62,17 +62,16 @@ export class Library extends React.Component<MobileRouteProps, State> {
         }}
         applyFilter={() => this.fetchData()}
       />
-      {this.state.isLoading
-      ?
-      <Loading />
-      :
-      this.state.data.threads.map((thread) => <ThreadPreview
-        key={thread.id}
-        data={thread}
-        onTagClick={(channelId, tagId) => {}}
-        onClick={(id) => this.props.core.route.book(id)}
-        onUserClick={(id) => this.props.core.route.user(id)}
-      />)
+
+      <Loading isLoading={this.state.isLoading}>
+        {this.state.data.threads.map((thread) => <ThreadPreview
+          key={thread.id}
+          data={thread}
+          onTagClick={(channelId, tagId) => {}}
+          onClick={(id) => this.props.core.route.book(id)}
+          onUserClick={(id) => this.props.core.route.user(id)}
+        />)}
+      </Loading>
       }
     </Page>;
   }

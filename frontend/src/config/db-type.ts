@@ -60,6 +60,45 @@ export namespace DB {
     attributes:DBTable.Channel;
   }
 
+  export function allocChannel () : Channel {
+    return {
+      type: 'channel',
+      id: 0,
+      attributes: {
+        channel_name: '',
+        channel_type: '',
+      },
+    };
+  }
+
+  export interface ChannelBrief {
+    id:number;
+    channel_name:string;
+    channel_explanation:string;
+    order_by:string;
+    type:'thread';
+    allow_anonymous:boolean;
+    allow_edit:boolean;
+    allow_deletion:boolean;
+    is_public:boolean;
+    show_on_homepage:boolean;
+  }
+
+  export function allocChannelBrief () : ChannelBrief {
+    return {
+      type: 'thread',
+      id: 0,
+      channel_name: '',
+      channel_explanation: '',
+      order_by: '',
+      allow_anonymous: true,
+      allow_edit: true,
+      allow_deletion: true,
+      is_public: true,
+      show_on_homepage: false,
+    };
+  }
+
   export interface Tongren {
     id:number;
     type:'tongren';
@@ -69,6 +108,7 @@ export namespace DB {
       tongren_CP:string;
     };
   }
+
 
   export function allocTongren () : Tongren {
     return {
@@ -544,5 +584,19 @@ export namespace DB {
         is_in_cooldown:false,
       },
     };
+  }
+
+  export interface ChannelPrimaryTag {
+    id:number;
+    tag_name:string;
+    tag_explanation:string;
+    tag_type:string;
+    is_bianyuan:boolean;
+    is_primary:boolean;
+    channel_id:number;
+    parent_id:number;
+    thread_count:number;
+    created_at:Timestamp;
+    deleted_at:Timestamp;
   }
 }

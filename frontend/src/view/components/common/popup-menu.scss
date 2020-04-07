@@ -8,6 +8,7 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  z-index: 10;
 
   .background {
     background-color: rgba(10, 10, 10, 0.2);
@@ -26,7 +27,6 @@
     width: 100%;
     background-color: var(--color-bg-front);
     text-align: center;
-    z-index: 10;
     font-size: var(--font-size-14);
   }
 }

@@ -55,25 +55,50 @@ async function run () {
     }
   }
 
-  
-
-  let outputText = '';
-  outputText += `export namespace RequestFilter {\n`;
+  let requestFilter = '// generated from bin/parse-selector-php.js\n';
+  requestFilter += `export namespace RequestFilter {\n`;
+  let requestFilterText = `\n\nexport namespace RequestFilterText {\n`;
   for (const namespace in result) {
-    outputText += `  export namespace ${namespace} {\n`;
+    requestFilter += `  export namespace ${namespace} {\n`;
+    requestFilterText += `  export namespace ${namespace} {\n`;
     for (const enumName in result[namespace]) {
-      outputText += `    export enum ${enumName} {\n`;
+      requestFilter += `    export enum ${enumName} {\n`;
+      requestFilterText += `    export const ${enumName}:{[name in RequestFilter.${namespace}.${enumName}]:string} = {\n`;
       for (const enums of result[namespace][enumName]) {
-        outputText += `      ${enums.name} = '${enums.name}', // ${enums.comment}\n`;
+        const correctedName = changeName(enums.name, enums.comment);
+        requestFilter += `      ${correctedName} = '${enums.name}', // ${enums.comment}\n`;
+        requestFilterText += `      [RequestFilter.${namespace}.${enumName}.${correctedName}]: '${enums.comment}',\n`
       }
-      outputText += `    }\n`;
+      requestFilter += `    }\n`;
+      requestFilterText += `    };\n`;
     }
-    outputText += `  }\n\n`;
+    requestFilter += `  }\n\n`;
+    requestFilterText += `  }\n\n`;
   }
-  outputText += '}';
+  requestFilter += '}';
+  requestFilterText += '}';
 
-  console.log(outputText);
-  fs.writeFileSync(outputFile, outputText, 'utf8');
+  fs.writeFileSync(outputFile, requestFilter + requestFilterText, 'utf8');
+}
+
+function changeName (name, commentText) {
+  // when the name is a number, replace to string
+  switch (commentText) {
+    case '最新收藏':
+      return 'collect';
+    case '最新回复':
+      return 'reply';
+    case '最新章节':
+      return 'chapter';
+    case '最新创立':
+      return 'created';
+    case '原创小说':
+      return 'yuanchuang';
+    case '同人小说':
+      return 'tongren';
+    default:
+      return name;
+  }
 }
 
 run().catch(console.error);

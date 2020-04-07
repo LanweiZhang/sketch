@@ -44,7 +44,7 @@ export class HomeMain extends React.Component<MobileRouteProps, State> {
   public render () {
     return (<Page bottom={<MainMenu />} className="page-main">
       <SearchBar core={this.props.core} />
-      {this.state.isLoading ? <Loading /> : <>
+      <Loading isLoading={this.state.isLoading}>
         <Quotes
           quotes={this.state.data.quotes}
           core={this.props.core}
@@ -90,7 +90,7 @@ export class HomeMain extends React.Component<MobileRouteProps, State> {
           }))}
           goToThread={(id) => this.props.core.route.thread(id)}
         />
-      </>}
+      </Loading>
     </Page>);
   }
 

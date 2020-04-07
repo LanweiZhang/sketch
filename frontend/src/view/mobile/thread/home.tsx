@@ -61,11 +61,11 @@ export class ThreadHome extends React.Component<MobileRouteProps, State> {
   }
 
   public renderDefault () {
+    console.log(this.state);
     return <Page bottom={<MainMenu />} className="mobile-thread-index">
       <SearchBar core={this.props.core} />
 
-      {this.state.isLoading ? <Loading /> :
-      <>
+      <Loading isLoading={this.state.isLoading}>
         <Card>
           <div className="banner">
             {/* todo: fit this.state.data.simple_threads here */}
@@ -73,7 +73,8 @@ export class ThreadHome extends React.Component<MobileRouteProps, State> {
 
           <div className="channel-index">
             {this.channelIndex.map((channel) => {
-              const channelName = channel.rename || this.state.channels[channel.id].attributes.channel_name;
+              const channelData = this.state.channels[channel.id];
+              const channelName = channel.rename || (channelData ? channelData.attributes.channel_name : '');
               return <div className="item" key={channel.id} onClick={() => this.props.core.route.channel(channel.id)}>
                 <div className="logo">{channelName.charAt(0)}</div>
                 <div className="text">{channelName}</div>
@@ -89,8 +90,7 @@ export class ThreadHome extends React.Component<MobileRouteProps, State> {
           onClick={(id) => this.props.core.route.thread(id)}
           onUserClick={(id) => this.props.core.route.user(id)}
         />)}
-      </>
-      }
+      </Loading>
 
       <PublishThreadButton onClick={() => this.setState({page: 'createPost'})} />
     </Page>;

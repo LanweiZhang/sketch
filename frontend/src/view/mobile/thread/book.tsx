@@ -88,22 +88,19 @@ export class Book extends React.Component<MobileRouteProps, State> {
           </NavBar>}
         >
 
-        {this.state.isLoading
-        ?
-        <Loading />
-        :
-        <ThreadProfile
-          thread={data.thread}
-          changeMode={this.changeMode}
-          onCollect={() => {
-            this.props.core.api.collectThread(data.thread.id)
-              .catch(notice.requestError);
-          }}
-          onReward={() => this.setState({showReward: true})}
-          onReview={() => this.setState({page: 'review'})}
-          onReply={() => this.setState({page: 'reply'})}
-        />
-        }
+        <Loading isLoading={this.state.isLoading}>
+          <ThreadProfile
+            thread={data.thread}
+            changeMode={this.changeMode}
+            onCollect={() => {
+              this.props.core.api.collectThread(data.thread.id)
+                .catch(notice.requestError);
+            }}
+            onReward={() => this.setState({showReward: true})}
+            onReview={() => this.setState({page: 'review'})}
+            onReply={() => this.setState({page: 'reply'})}
+          />
+        </Loading>
 
         {this.renderBookMode()}
 
