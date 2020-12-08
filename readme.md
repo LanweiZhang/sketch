@@ -21,7 +21,7 @@
 ## 更新进展
 
 ##### Starting from April 2020, due to detected security concerns, the development of Laravel-sosad project was transferred into gitlab private repository. If you wish to make a contribution to the source code, please contact wenzhan.main@gmail.com directly.#####
-##### 从2020年4月开始，考虑到安全隐患问题，废文网的开发工作转至gitlab的private repository进行。如果你希望参与到工程的开发中，欢迎和 wenzhan.main@gmail.com 直接联系。#####
+##### 从2020年4月开始，考虑到安全隐患问题，废文网的开发工作转至gitlab的private repository进行。如果你希望参与到工程的开发中，欢迎和 wenzhan.main@gmail.com 直接联系。 #####
 
 ## License
 ## 协议
