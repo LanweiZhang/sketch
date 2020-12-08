@@ -14,7 +14,7 @@
 ## Questions and suggestions
 ## 问题与建议
 
-##### Any questions and suggestions please send to Lyn wenzhan.main@gmail.com. #####
+##### Any questions and suggestions please send to wenzhan wenzhan.main@gmail.com. #####
 ##### 任何问题与建议，请发送至邮箱 wenzhan.main@gmail.com. #####
 
 ## Development Update
